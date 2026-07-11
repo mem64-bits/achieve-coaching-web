@@ -1,1 +1,43 @@
+/* src/styles/global.css */
+
 @import "tailwindcss";
+
+:root {
+    --bg-body: #171717;                      /* Deep dark-gray canvas */
+    --bg-header: #100f0f;                    /* Subtle off-black header block */
+    --border-frame: rgba(255, 255, 255, 0.1); /* Subtle 10% opacity white border */
+
+    --text-primary: #ffffff;                 /* Pure white primary text */
+    --text-muted: #52525b;                   /* Zinc-600 muted gray */
+    --font-primary: 'Montserrat', sans-serif;
+}
+
+html, body {
+    background-color: var(--bg-body) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-primary), sans-serif !important;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+
+.site-header {
+    background-color: var(--bg-header) !important;
+    overflow: visible !important; /* Prevents vector logo clipping [2] */
+}
+
+.logo-container {
+    overflow: visible !important; /* Prevents vector logo clipping [2] */
+}
+
+.main-frame {
+    border: 2px solid var(--border-frame) !important; /* Sleek, thin border frame [1, 2] */
+}
+
+.site-footer {
+    color: var(--text-muted) !important;
+    font-size: 10px !important;
+    letter-spacing: 0.25em !important;
+    text-transform: uppercase !important;
+}

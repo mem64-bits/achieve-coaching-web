@@ -1,13 +1,22 @@
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+---
+// src/pages/index.astro
+import Layout from '../layouts/BaseLayout.astro';
+---
+
+
+<!--Inherits template HTML layout, code in this tag is actually wrapped in the
+ Layout component-->
+<Layout title="Achieve Coaching | Coming Soon">
+	<div slot="page-main" class="text-center">
+
+		<h1 class="text-3xl md:text-5xl font-black tracking-[0.25em] uppercase mb-4 leading-tight text-white">
+			Achieve Coaching Website Coming Soon
+		</h1>
+
+		<!-- Secondary label, smaller text -->
+		<p class="text-[12px] md:text-xs tracking-[0.4em] text-zinc-400 uppercase">
+			Follow this page, to reach new heights in fitness
+		</p>
+	</div>
+
+</Layout>

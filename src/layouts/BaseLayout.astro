@@ -1,0 +1,55 @@
+---
+// src/layouts/Layout.astro
+import '../styles/global.css';
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+    title: string;
+    description?: string;
+}
+const {
+    title,
+    description = "A website for help with fitness oriented goals, " +
+        "a way for clients to get in touch with a fitness mentor",
+} = Astro.props;
+const currentYear = new Date().getFullYear();
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/achieve-initials.svg" sizes="any" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body class="min-h-screen flex flex-col justify-between p-6 md:p-12 box-border">
+
+<header class="site-header rounded-2xl p-6">
+    <div class="logo-container">
+        <Icon
+                name="achieve-coaching-logo"
+                class="h-8 w-auto logo-stroke"
+        />
+    </div>
+</header>
+
+<main class="main-frame grow flex flex-col justify-center items-center rounded-2xl p-8 my-4">
+    <slot name="page-main" />
+</main>
+
+<footer class="site-footer text-center mt-6 mr-2 ml-2 pb-8">
+    <slot name="page-footer">
+        <p>&copy; Achieve Coaching {currentYear}. All Rights Reserved.</p>
+    </slot>
+</footer>
+
+</body>
+</html>
