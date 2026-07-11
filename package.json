@@ -14,6 +14,7 @@
   "dependencies": {
     "@astrojs/react": "^6.0.1",
     "@astrojs/ts-plugin": "^1.10.10",
+    "@libsql/client": "^0.17.4",
     "@tailwindcss/vite": "^4.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

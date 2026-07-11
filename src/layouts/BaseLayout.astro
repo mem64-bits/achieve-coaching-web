@@ -29,19 +29,18 @@ const currentYear = new Date().getFullYear();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-6 md:p-12 box-border">
 
-<body class="min-h-screen flex flex-col justify-between p-6 md:p-12 box-border">
-
-<header class="site-header rounded-2xl p-6">
+<header class="site-header rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-4" style="overflow: visible;">
     <div class="logo-container">
         <Icon
                 name="achieve-coaching-logo"
-                class="h-8 w-auto logo-stroke"
+                class="h-6 sm:h-8 w-auto logo-stroke"
         />
     </div>
 </header>
 
-<main class="main-frame grow flex flex-col justify-center items-center rounded-2xl p-8 my-4">
+<main class="main-frame grow flex flex-col justify-center items-center rounded-2xl p-6 sm:p-8 my-4">
     <slot name="page-main" />
 </main>
 
@@ -52,4 +51,4 @@ const currentYear = new Date().getFullYear();
 </footer>
 
 </body>
-</html>
+</html>c
