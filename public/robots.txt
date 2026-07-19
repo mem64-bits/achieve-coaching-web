@@ -1,0 +1,13 @@
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Exclude sensitive or private routes (Future proofing)
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /dashboard
+Disallow: /api/
+
+# Point to your sitemap (Update with your real domain)
+Sitemap: https://achievecoaching.com/sitemap-index.xml

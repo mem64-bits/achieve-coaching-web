@@ -1,17 +1,29 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import {defineConfig} from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import react from '@astrojs/react'; // 1. IMPORT REACT
-import icon from 'astro-icon';       // 2. IMPORT ICON
+import react from '@astrojs/react';
+import icon from 'astro-icon';
+import compress from 'astro-compress';
 
-// https://astro.build/config
+import sitemap from '@astrojs/sitemap';
+
 export default defineConfig({
-  // 3. ADD THE INTEGRATIONS ARRAY
-  integrations: [
-    react(),
-    icon()
-  ],
-  vite: {
-    plugins: [tailwindcss()]
-  }
+    integrations: [react(), icon(), compress({
+        CSS: true,
+        Image: false,
+        HTML: true,
+        SVG: true,
+        Logger: 1,
+    }), sitemap()],
+    vite: {
+        plugins: [tailwindcss()],
+        build: {
+            minify: 'esbuild',
+            cssMinify: 'lightningcss',
+        },
+        esbuild: {
+            drop: ['console', 'debugger'],
+            legalComments: 'none',
+        }
+    }
 });
