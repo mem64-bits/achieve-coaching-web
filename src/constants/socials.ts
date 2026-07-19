@@ -1,7 +1,7 @@
 // src/constants/socials.ts
-import instagramIcon from '../icons/instagram.svg';
-import whatsappIcon from '../icons/whatsapp.svg';
-import gmailIcon from '../icons/gmail.svg';
+import instagramIcon from '@icons/instagram.svg';
+import whatsappIcon from '@icons/whatsapp.svg';
+import gmailIcon from '@icons/gmail.svg';
 
 export const SOCIAL_LINKS = [
     {
