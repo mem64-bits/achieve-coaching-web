@@ -1,3 +1,27 @@
 ---
-import BaseLayout from "./BaseLayout.astro"
+// src/layouts/ComingSoonLayout.astro
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+    title: string;
+    description?: string;
+}
+
+const {
+    title,
+    description = "A preview of the upcoming Achieve Coaching website"
+} = Astro.props;
 ---
+
+<BaseLayout title={title} description={description}>
+    <div slot="page-main" class="text-center">
+        <h1 class="text-3xl md:text-5xl font-black tracking-[0.25em] uppercase mb-4 leading-tight text-white">
+            Achieve Coaching Page in Progress!
+        </h1>
+
+        <p class="text-[12px] md:text-xs tracking-[0.4em] uppercase mb-12 text-zinc-400">
+            Please come back later, to see the latest improvements in our website for our users.
+        </p>
+        <slot name="coming-soon-extras"/>
+    </div>
+</BaseLayout>
