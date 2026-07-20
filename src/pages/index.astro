@@ -3,7 +3,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import AchieveSeparator from '../components/AchieveSeparator';
 
-// Placeholder data (Eventually from Turso)
 const stats = [
     {label: "Active Clients", value: "50+"},
     {label: "Kg Lost", value: "1,200+"},
@@ -11,64 +10,84 @@ const stats = [
 ];
 ---
 
-<BaseLayout title="Achieve Coaching | Peak Performance">
-    <div slot="page-main" class="w-full h-full overflow-y-auto scrollbar-none flex flex-col gap-24 py-12 px-4 md:px-12">
+<BaseLayout title="Achieve Coaching | Home">
+    <div slot="page-main" class="w-full h-full overflow-y-auto scrollbar-none flex flex-col gap-24 py-16 px-6 md:px-12">
 
-        <!-- SECTION 1: HERO STATEMENT -->
-        <section class="flex flex-col items-center text-center space-y-6 max-w-4xl mx-auto">
-            <div class="inline-block px-3 py-1 rounded-full border border-achieve-blue/20 bg-achieve-blue/5 text-[10px] font-bold tracking-[0.4em] uppercase text-achieve-blue animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        <!-- SECTION 1: PHILOSOPHY STATEMENT -->
+        <section class="flex flex-col items-center text-center space-y-8 max-w-225 mx-auto shrink-0">
+            <div class="inline-block px-4 py-1.5 rounded-full border border-achieve-blue/20 bg-achieve-blue/5 text-[10px] font-bold tracking-[0.4em] uppercase text-achieve-blue animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 Elite Fitness Mentorship
             </div>
+
             <h1 class="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] text-white">
                 Transform your <span class="text-achieve-blue">Physics</span><br/>
                 Master your <span class="text-achieve-blue">Mind</span>
             </h1>
+
             <p class="text-zinc-500 text-xs md:text-sm tracking-[0.2em] uppercase max-w-2xl leading-relaxed">
                 A science-based protocol designed for high-performers who demand results.
             </p>
+
+            <div class="pt-4">
+                <a href="/coming-soon"
+                   class="inline-block bg-achieve-blue text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(59,67,193,0.4)] active:scale-95">
+                    Explore the Protocol
+                </a>
+            </div>
         </section>
 
         <!-- SECTION 2: BENTO STATS -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-6xl mx-auto">
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-300 mx-auto shrink-0">
             {stats.map((stat) => (
-                    <div class="group relative p-8 rounded-3xl bg-white/[0.02] border border-white/5 overflow-hidden transition-all hover:border-achieve-blue/30">
-                        <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-achieve-blue/5 blur-3xl group-hover:bg-achieve-blue/10 transition-colors"/>
-                        <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-500">{stat.label}</span>
-                        <h2 class="text-4xl font-black text-white mt-2">{stat.value}</h2>
+                    <div class="group relative p-10 rounded-4xl bg-white/2 border border-white/5 overflow-hidden transition-all duration-500 hover:border-achieve-blue/30 hover:bg-white/4">
+                        <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-achieve-blue/10 blur-[80px] rounded-full group-hover:bg-achieve-blue/20 transition-colors duration-500"/>
+                        <span class="relative z-10 text-[10px] font-bold tracking-[0.4em] uppercase text-zinc-500 group-hover:text-achieve-blue transition-colors">{stat.label}</span>
+                        <h2 class="relative z-10 text-5xl font-black text-white mt-4 tracking-tighter">{stat.value}</h2>
                     </div>
             ))}
         </section>
 
         <!-- SECTION 3: THE SEPARATOR BREAK -->
-        <div class="max-w-md mx-auto w-full">
-            <AchieveSeparator thickness="1px" variant="glow"/>
+        <div class="max-w-100 mx-auto w-full shrink-0">
+            <AchieveSeparator thickness="2px" variant="glow" color="#3b43c1"/>
         </div>
 
-        <!-- SECTION 4: TRANSFORMATION PREVIEW (Cloudinary Placeholder) -->
-        <section class="w-full max-w-6xl mx-auto space-y-12">
-            <div class="flex flex-col md:flex-row justify-between items-end gap-4">
-                <h2 class="text-3xl font-black uppercase tracking-tighter">Latest <span class="text-achieve-blue">Results</span>
-                </h2>
-                <a href="/transformations"
-                   class="text-[10px] font-bold tracking-widest uppercase text-zinc-500 hover:text-white transition-colors">View
-                    All Case Studies →</a>
+        <!-- SECTION 4: TRANSFORMATION PREVIEW -->
+        <section class="w-full max-w-300 mx-auto space-y-12 shrink-0 pb-20">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/5 pb-8">
+                <div>
+                    <span class="text-achieve-blue font-bold text-[10px] tracking-[0.4em] uppercase">Proof of Concept</span>
+                    <h2 class="text-4xl font-black uppercase tracking-tighter text-white mt-2">Latest <span
+                            class="text-achieve-blue">Results</span></h2>
+                </div>
+                <a href="/coming-soon"
+                   class="group text-[10px] font-bold tracking-widest uppercase text-zinc-500 hover:text-white transition-colors">
+                    View All Case Studies <span
+                        class="inline-block transition-transform group-hover:translate-x-1">→</span>
+                </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="aspect-video rounded-3xl bg-zinc-900 border border-white/5 overflow-hidden relative group">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"/>
-                    <div class="absolute bottom-8 left-8 z-20">
-                        <span class="text-achieve-blue font-bold text-[10px] tracking-widest uppercase">12 Week Protocol</span>
-                        <h3 class="text-2xl font-black uppercase">Client: Alex M.</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Card 1 */}
+                <div class="aspect-16/10 rounded-[40px] bg-zinc-900 border border-white/5 overflow-hidden relative group cursor-pointer shadow-2xl">
+                    <div class="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity duration-500"/>
+                    <div class="absolute bottom-10 left-10 z-20">
+                        <span class="text-achieve-blue font-bold text-[11px] tracking-[0.3em] uppercase">12 Week Protocol</span>
+                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white mt-1">Client: Alex M.</h3>
                     </div>
-                    <!-- Replace with <img src={...} /> later -->
+                    {/* Placeholder for Cloudinary Image */}
+                    <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200')] bg-cover bg-center grayscale-50 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"/>
                 </div>
-                <div class="aspect-video rounded-3xl bg-zinc-900 border border-white/5 overflow-hidden relative group">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"/>
-                    <div class="absolute bottom-8 left-8 z-20">
-                        <span class="text-achieve-blue font-bold text-[10px] tracking-widest uppercase">Muscle Hypertrophy</span>
-                        <h3 class="text-2xl font-black uppercase">Client: Sarah J.</h3>
+
+                {/* Card 2 */}
+                <div class="aspect-16/10 rounded-[40px] bg-zinc-900 border border-white/5 overflow-hidden relative group cursor-pointer shadow-2xl">
+                    <div class="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity duration-500"/>
+                    <div class="absolute bottom-10 left-10 z-20">
+                        <span class="text-achieve-blue font-bold text-[11px] tracking-[0.3em] uppercase">Muscle Hypertrophy</span>
+                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white mt-1">Client: Sarah J.</h3>
                     </div>
+                    {/* Placeholder for Cloudinary Image */}
+                    <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1200')] bg-cover bg-center grayscale-50 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"/>
                 </div>
             </div>
         </section>
