@@ -9,7 +9,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
     integrations: [react(), icon(), compress({
-        CSS: true,
+        CSS: false,
         Image: false,
         HTML: true,
         SVG: true,
