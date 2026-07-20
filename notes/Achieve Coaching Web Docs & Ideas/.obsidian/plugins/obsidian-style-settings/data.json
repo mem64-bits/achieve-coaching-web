@@ -1,0 +1,8 @@
+{
+  "catppuccin-theme-settings@@catppuccin-theme-dark": "ctp-mocha",
+  "catppuccin-theme-settings@@catppuccin-theme-accents": "ctp-accent-blue",
+  "catppuccin-interface-styles@@ctp-bold-folder-title": false,
+  "catppuccin-pdf@@ctp-pdf-darken": true,
+  "catppuccin-pdf@@ctp-seamless-pdf": true,
+  "minimal-advanced@@animations": "default"
+}
