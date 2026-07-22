@@ -25,6 +25,6 @@ pnpm-debug.log*
 .vscode/
 .vercel
 .env*
-.obsidian/
+.obsidian/*
 
 repomix-output.xml
