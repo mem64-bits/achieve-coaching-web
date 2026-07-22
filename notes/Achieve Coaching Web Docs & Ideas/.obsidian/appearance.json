@@ -1,0 +1,8 @@
+{
+  "cssTheme": "Atom",
+  "baseFontSize": 19,
+  "baseFontSizeAction": true,
+  "textFontFamily": "Helvetica",
+  "monospaceFontFamily": "JetBrains Mono NL",
+  "showViewHeader": false
+}
