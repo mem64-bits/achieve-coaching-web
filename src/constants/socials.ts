@@ -7,21 +7,21 @@ export const SOCIAL_LINKS = [
     {
         label: "WhatsApp",
         icon: whatsappIcon.src,
-        href: "https://wa.me/1234567890",
-        description: ""
+        href: "https://wa.me/17215530897",
+        description: "A Link to contact Achieve Coaching through WhatsApp."
     },
 
     {
         label: "Instagram",
         icon: instagramIcon.src,
-        href: "https://instagram.com/achieve_coaching",
-        description: ""
+        href: "https://www.instagram.com/bobbyok_/",
+        description: "A Link to Coach Bobby's Official Instagram Account."
     },
 
     {
         label: "Gmail",
         icon: gmailIcon.src,
-        href: "mailto:contact@achievecoaching.com",
-        description: ""
+        href: "mailto:contact@achieve-coaching.net",
+        description: "Achieve Coaching's email for any business related queries."
     },
 ];

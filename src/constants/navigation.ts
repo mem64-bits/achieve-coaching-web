@@ -12,7 +12,7 @@ export const PATHS = {
     TRANSFORMATIONS: '/transformations',
     PHILOSOPHY: '/philosophy',
     BLOGS: '/blogs',
-    PRACTICE: '/pge-min',
+    PRACTICE: '/page-main',
     COMING_SOON: '/coming-soon'
 };
 

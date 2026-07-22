@@ -1,4 +1,10 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Error 404 | Achieve Fitness"></BaseLayout>
+<BaseLayout title="Error 404 | Achieve Fitness" slot={"page-main"}>
+    <div slot="page-main">
+        <h2 class="text-3xl md:text-5xl font-black tracking-[0.25em] uppercase mb-4 leading-tight text-white">Error 404
+            -
+            Achieve Fitness Page Not Found</h2>
+    </div>
+</BaseLayout>
