@@ -5,7 +5,7 @@ import {Sheet, SheetContent, SheetTrigger} from '@/components/ui/sheet';
 import {Skeleton} from '@/components/ui/skeleton';
 
 import achieveLogo from "@icons/achieve-coaching-white-outline.svg";
-import {SOCIAL_LINKS} from '../constants/socials';
+import {SOCIAL_LINKS} from '@constants/socials';
 import SocialLinks from "@components/SocialLinks.tsx";
 import AchieveSeparator from "@components/AchieveSeparator.tsx";
 

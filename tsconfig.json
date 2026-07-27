@@ -29,8 +29,10 @@
       ],
       "@icons/*": [
         "./src/icons/*"
+      ],
+      "@constants/*": [
+        "./src/constants/*"
       ]
-      // <--- ADD THIS LINE
     },
     "plugins": [
       {
