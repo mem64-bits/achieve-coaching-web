@@ -1,7 +1,8 @@
 ---
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
-import AchieveSeparator from '../components/AchieveSeparator';
+import AchieveSeparator from '@components/AchieveSeparator';
+import AchieveCarousel from '@components/AchieveCarousel';
 
 const stats = [
     {label: "Active Clients", value: "50+"},
@@ -19,15 +20,15 @@ const stats = [
                 Elite Fitness Coaching
             </div>
 
-            <h1 class="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] text-white">
+            <h1 class="text-4xl md:text-7xl font-black uppercase text-white
+           leading-[1.1] md:leading-[1.1]
+           tracking-tight">
                 Transform your <span class="text-achieve-blue">Physique</span><br/>
                 Master your <span class="text-achieve-blue">Mind</span>
             </h1>
-
             <p class="text-zinc-500 text-xs md:text-sm tracking-[0.2em] uppercase max-w-2xl leading-relaxed">
                 A tried and tested program with real results, making your fitness oriented goals a reality.
             </p>
-
         </section>
 
         <!-- SECTION 2: BENTO STATS -->
@@ -45,44 +46,8 @@ const stats = [
         <div class="max-w-100 mx-auto w-full shrink-0">
             <AchieveSeparator thickness="2px" variant="glow" color="#3b43c1"/>
         </div>
-
-        <!-- SECTION 4: TRANSFORMATION PREVIEW -->
-        <section class="w-full max-w-300 mx-auto space-y-12 shrink-0 pb-20">
-            <div class="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/5 pb-8">
-                <div>
-                    <h2 class="text-4xl font-black uppercase tracking-tighter text-white mt-2">Latest <span
-                            class="text-achieve-blue">Results</span></h2>
-                </div>
-                <a href="/coming-soon"
-                   class="group text-[10px] font-bold tracking-widest uppercase text-zinc-500 hover:text-white transition-colors">
-                    View All Transformations <span
-                        class="inline-block transition-transform group-hover:translate-x-1">→</span>
-                </a>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Card 1 */}
-                <div class="aspect-16/10 rounded-[40px] bg-zinc-900 border border-white/5 overflow-hidden relative group cursor-pointer shadow-2xl">
-                    <div class="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity duration-500"/>
-                    <div class="absolute bottom-10 left-10 z-20">
-                        <span class="text-achieve-blue font-bold text-[11px] tracking-[0.3em] uppercase">12 Week Protocol</span>
-                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white mt-1">Client: Alex M.</h3>
-                    </div>
-                    {/* Placeholder for Cloudinary Image */}
-                    <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200')] bg-cover bg-center grayscale-50 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"/>
-                </div>
-
-                {/* Card 2 */}
-                <div class="aspect-16/10 rounded-[40px] bg-zinc-900 border border-white/5 overflow-hidden relative group cursor-pointer shadow-2xl">
-                    <div class="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent z-10 opacity-80 group-hover:opacity-60 transition-opacity duration-500"/>
-                    <div class="absolute bottom-10 left-10 z-20">
-                        <span class="text-achieve-blue font-bold text-[11px] tracking-[0.3em] uppercase">Muscle Hypertrophy</span>
-                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white mt-1">Client: Sarah J.</h3>
-                    </div>
-                    {/* Placeholder for Cloudinary Image */}
-                    <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1200')] bg-cover bg-center grayscale-50 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"/>
-                </div>
-            </div>
+        <section class="w-full py-20 overflow-visible px-4">
+            <AchieveCarousel client:visible/>
         </section>
 
     </div>
