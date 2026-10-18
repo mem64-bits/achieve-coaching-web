@@ -9,6 +9,7 @@ interface ButtonProps {
     type?: "button" | "submit" | "reset";
     children: React.ReactNode;
     className?: string;
+    disabled?: boolean;
 }
 
 export function AchieveBtn({href, type = "button", children, className}: ButtonProps) {

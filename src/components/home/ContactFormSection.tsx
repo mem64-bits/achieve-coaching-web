@@ -1,6 +1,8 @@
 // src/components/home/ContactFormSection.tsx
-import React from "react";
+import React, {useState} from "react";
 import {AchieveBtn} from "./Primitives";
+import {PhoneInput} from "react-international-phone";
+import "react-international-phone/style.css";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     id: string;
@@ -18,53 +20,81 @@ function FormInput({id, label, ...rest}: InputProps) {
     );
 }
 
-interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-    id: string;
-    label: React.ReactNode;
-    options: string[];
-}
-
-function FormSelect({id, label, options, ...rest}: SelectProps) {
-    return (
-        <div>
-            <label htmlFor={id} className="achieve-label">
-                {label}
-            </label>
-            <select id={id} className="achieve-field" {...rest}>
-                {options.map((option) => (
-                    <option key={option} value={option} className="bg-background text-foreground">
-                        {option}
-                    </option>
-                ))}
-            </select>
-        </div>
-    );
-}
-
-interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-    id: string;
-    label: React.ReactNode;
-}
-
-function FormTextarea({id, label, ...rest}: TextareaProps) {
-    return (
-        <div>
-            <label htmlFor={id} className="achieve-label">
-                {label}
-            </label>
-            <textarea id={id} className="achieve-field" {...rest} />
-        </div>
-    );
-}
-
 export default function ContactFormSection() {
+    const [phone, setPhone] = useState<string>("");
+    const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+    const [errorMessage, setErrorMessage] = useState<string>("");
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setStatus("loading");
+        setErrorMessage("");
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch("/api/apply", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                setStatus("success");
+            } else {
+                setStatus("error");
+                setErrorMessage(data.error || "Failed to submit application. Please check your details.");
+            }
+        } catch (err: any) {
+            setStatus("error");
+            setErrorMessage("Network error. Please try again later.");
+        }
+    }
+
+    if (status === "success") {
+        return (
+            <section className="apply scroll-mt-24 text-center" id="apply">
+                <div className="max-w-[500px] mx-auto py-12">
+                    <div
+                        className="w-16 h-16 bg-achieve-blue/15 text-achieve-blue border border-achieve-blue/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                        ✓
+                    </div>
+                    <h2 className="achieve-h2 text-3xl font-extrabold text-foreground mb-3">Application Received!</h2>
+                    <p className="text-muted-foreground text-lg mb-6">
+                        Thanks for reaching out! We will review your application and send you a WhatsApp message within
+                        24 hours.
+                    </p>
+                    <button
+                        onClick={() => setStatus("idle")}
+                        className="text-achieve-blue text-sm underline hover:opacity-80 transition-opacity"
+                    >
+                        Submit another response
+                    </button>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className="apply scroll-mt-24" id="apply">
             <form
-                action="#"
-                method="post"
+                onSubmit={handleSubmit}
                 className="max-w-[720px] mx-auto flex flex-col gap-[18px]"
             >
+                {/* Honeypot field (hidden from real users, catches automated bots) */}
+                <input
+                    type="checkbox"
+                    name="botcheck"
+                    className="hidden"
+                    style={{display: "none"}}
+                    tabIndex={-1}
+                    autoComplete="off"
+                />
+
                 <h2 className="achieve-h2">
                     Contact <span className="a">Form</span>
                 </h2>
@@ -78,30 +108,46 @@ export default function ContactFormSection() {
                     id="ig"
                     name="instagram"
                     label="Instagram or LinkedIn Username"
-                    placeholder="@"
+                    placeholder="@yourhandle or profile link"
                 />
 
                 <div className="half">
+                    {/* International Phone Input with Flag & Country Picker */}
+                    <div>
+                        <label htmlFor="ph" className="achieve-label">
+                            Phone Number (WhatsApp)
+                        </label>
+                        <PhoneInput
+                            defaultCountry="ie" // Defaults to Ireland (+353)
+                            value={phone}
+                            onChange={(phoneValue) => setPhone(phoneValue)}
+                            inputProps={{
+                                id: "ph",
+                                required: true,
+                            }}
+                        />
+                        {/* Hidden input carrying the clean international number (+353871234567) to /api/apply */}
+                        <input type="hidden" name="phone" value={phone}/>
+                    </div>
+
                     <FormInput
-                        id="ph"
-                        name="phone"
-                        type="tel"
-                        label="Phone Number"
+                        id="em"
+                        name="email"
+                        type="email"
+                        label="Email"
+                        placeholder="you@example.com"
                         required
                     />
-                    <FormInput id="em" name="email" type="email" label="Email" required/>
                 </div>
 
+                {status === "error" && (
+                    <div className="p-3.5 rounded-md bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                        {errorMessage}
+                    </div>
+                )}
 
-                {/*<FormSelect*/}
-                {/*    id="goal"*/}
-                {/*    name="goal"*/}
-                {/*    label="Main goal"*/}
-                {/*    options={["Lose fat", "Build muscle", "Both", "Something else"]}*/}
-                {/*/>*/}
-
-                <AchieveBtn type="submit" className="w-full mt-2">
-                    Submit application
+                <AchieveBtn type="submit" disabled={status === "loading"} className="w-full mt-2">
+                    {status === "loading" ? "Submitting..." : "Submit application"}
                 </AchieveBtn>
             </form>
         </section>
