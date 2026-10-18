@@ -253,3 +253,66 @@
     background: var(--achieve-blue);
     box-shadow: 0 0 10px var(--achieve-blue-glow);
 }
+
+/* ========================================================
+   REACT-INTERNATIONAL-PHONE (Dark Theme Alignment)
+   ======================================================== */
+.react-international-phone-input-container {
+    width: 100% !important;
+}
+
+.react-international-phone-country-selector-button {
+    background-color: #1A1B1D !important;
+    border-color: #373A3F !important;
+    min-height: 48px !important;
+    border-radius: 6px 0 0 6px !important;
+    padding: 0 12px !important;
+    cursor: pointer;
+}
+
+.react-international-phone-input {
+    background-color: #0A0A0B !important;
+    color: #FFFFFF !important;
+    border-color: #373A3F !important;
+    min-height: 48px !important;
+    width: 100% !important;
+    border-radius: 0 6px 6px 0 !important;
+    font-size: 15px !important;
+}
+
+.react-international-phone-input:focus {
+    border-color: var(--achieve-blue) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 1px var(--achieve-blue) !important;
+}
+
+/* Dropdown popover list */
+.react-international-phone-country-selector-dropdown {
+    background-color: #1A1B1D !important;
+    color: #FFFFFF !important;
+    border: 1px solid #373A3F !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+    z-index: 50 !important;
+    max-height: 280px !important;
+}
+
+.react-international-phone-country-selector-dropdown__list-item {
+    color: #FFFFFF !important;
+    padding: 10px 14px !important;
+    cursor: pointer;
+}
+
+.react-international-phone-country-selector-dropdown__list-item:hover,
+.react-international-phone-country-selector-dropdown__list-item--focused {
+    background-color: var(--achieve-blue) !important;
+    color: #FFFFFF !important;
+}
+
+.react-international-phone-country-selector-dropdown__list-item-country-name {
+    color: #8B93A1 !important;
+}
+
+.react-international-phone-country-selector-dropdown__list-item:hover .react-international-phone-country-selector-dropdown__list-item-country-name {
+    color: #FFFFFF !important;
+}
