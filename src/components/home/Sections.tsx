@@ -19,6 +19,8 @@ export function HeroSection() {
     return (
         <section className="w hero">
             {/* Left Content Column */}
+
+            {/*Header Quote*/}
             <div className="flex-1 basis-[440px] flex flex-col gap-6">
                 <h1 className="achieve-h1">
                     <span className="block">{HERO_CONTENT.titlePrefix}</span>
