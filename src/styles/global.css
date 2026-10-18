@@ -4,7 +4,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @import "@fontsource/montserrat/400.css";
+@import "@fontsource/montserrat/600.css";
 @import "@fontsource/montserrat/700.css";
+@import "@fontsource/montserrat/800.css";
 @import "@fontsource/montserrat/900.css";
 
 @custom-variant dark (&:is(.dark *));
@@ -15,18 +17,16 @@
     --achieve-blue-glow: rgba(59, 67, 193, 0.4);
 
     /* --- 2. BLUE-TINTED DARK PALETTE --- */
-    /* We move away from zinc-grays to desaturated blues for a premium look */
-    --bg-pure: #000000; /* The floor */
-    --bg-surface: #0a0a0f; /* Blue-tinted off-black (Header/Cards) */
-    --bg-muted: #151624; /* Dark blue-gray for muted elements */
+    --bg-pure: #000000;
+    --bg-surface: #0a0a0f;
+    --bg-muted: #151624;
 
     --text-primary: #ffffff;
-    --text-muted: #71748a; /* Desaturated blue-gray */
+    --text-muted: #8B93A1; /* Matched to template.html muted text */
 
-    --border-subtle: rgba(59, 67, 193, 0.2); /* 20% Achieve Blue for borders */
+    --border-subtle: rgba(59, 67, 193, 0.2);
 
     /* --- 3. SHADCN BRIDGE --- */
-    /* Mapping your brand to Shadcn variables so UI components update automatically */
     --background: var(--bg-pure);
     --foreground: var(--text-primary);
 
@@ -53,7 +53,9 @@
     --ring: var(--achieve-blue);
 
     --radius: 0.75rem;
-    --font-primary: 'Montserrat', sans-serif;
+
+    /* 1:1 Font Stack from template.html */
+    --font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* --- 4. GLOBAL BASE STYLES --- */
@@ -63,24 +65,23 @@
     }
 
     body {
+        margin: 0;
         background-color: var(--background);
         color: var(--foreground);
-        font-family: var(--font-primary), var(--font-sans);
+        font-family: var(--font-primary);
+        line-height: 1.5;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Standardizes your Frame style globally */
     .main-frame {
         @apply border border-border rounded-2xl;
     }
 
-    /* Refined Typography for Footer */
     .site-footer {
         @apply text-muted-foreground text-[10px] tracking-[0.3em] uppercase py-8;
     }
 
-    /* Prevent SVG clipping in containers */
     .logo-container, .site-header {
         @apply overflow-visible;
     }
@@ -98,13 +99,134 @@
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
 
-    --font-sans: 'Geist Variable', 'Montserrat', sans-serif;
-    --font-heading: 'Montserrat', sans-serif;
+    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
 }
 
+/* --- 6. TEMPLATE COMPONENT CLASSES (Exact Typography Parity) --- */
+@layer components {
+    .w {
+        @apply max-w-[1100px] mx-auto px-6 w-full;
+    }
+
+    .sec {
+        @apply pb-[72px];
+    }
+
+    /* Update these two classes inside @layer components in src/styles/global.css */
+    .a {
+        color: var(--achieve-blue);
+    }
+
+    /* Matches: .lab { font-weight: 700; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px } */
+    .lab {
+        font-family: var(--font-primary);
+        @apply font-bold text-[14px] tracking-[0.1em] uppercase text-achieve-blue mb-4;
+    }
+
+    /* Matches: h1 { margin: 0; font-weight: 800; text-transform: uppercase; font-size: clamp(44px, 7vw, 84px); line-height: .98 } */
+    .achieve-h1 {
+        font-family: var(--font-primary);
+        @apply m-0 font-extrabold uppercase text-foreground text-[clamp(44px,7vw,84px)] leading-[0.98] tracking-normal;
+    }
+
+    /* Matches: h2 { margin: 0; font-weight: 800; text-transform: uppercase; line-height: 1; font-size: clamp(34px, 5vw, 54px) } */
+    .achieve-h2 {
+        font-family: var(--font-primary);
+        @apply m-0 font-extrabold uppercase text-foreground text-[clamp(34px,5vw,54px)] leading-none tracking-normal;
+    }
+
+    /* Matches: .btn { font-weight: 800; font-size: 17px; padding: 16px 28px; border-radius: 6px; text-transform: uppercase; letter-spacing: .03em } */
+    .btn {
+        font-family: var(--font-primary);
+        @apply inline-block text-white font-extrabold text-[17px] px-[28px] py-[16px] rounded-[6px] no-underline uppercase tracking-[0.03em] border-0 cursor-pointer text-center leading-[1.5] transition-all duration-200 hover:shadow-[0_0_20px_var(--achieve-blue-glow)];
+        background-color: var(--achieve-blue);
+    }
+
+    .hero {
+        @apply flex flex-wrap gap-12 items-center pt-8 pb-16;
+    }
+
+    .mosaic {
+        @apply flex flex-wrap gap-3 items-start;
+    }
+
+    .mc {
+        @apply flex-1 basis-[280px] flex flex-col gap-3;
+    }
+
+    /* Matches: .quote { border: 1px solid #373A3F; border-radius: 8px; padding: 28px; background: #1A1B1D } */
+    .quote {
+        font-family: var(--font-primary);
+        @apply border border-border rounded-[8px] p-7 flex flex-col justify-center bg-card;
+    }
+
+    .quote p {
+        @apply m-0 text-[22px] font-bold leading-[1.3];
+    }
+
+    .quote.long p:first-child {
+        @apply text-[17px] font-semibold;
+    }
+
+    .step {
+        font-family: var(--font-primary);
+        @apply flex gap-6 py-6 border-t border-border last:border-b;
+    }
+
+    .step b {
+        @apply flex-[0_0_100px] text-[56px] leading-none text-achieve-blue font-extrabold;
+    }
+
+    .step h3 {
+        @apply m-0 mb-1 text-[22px] font-bold leading-[1.5] text-foreground;
+    }
+
+    .step p {
+        @apply m-0 text-muted-foreground text-[16px] leading-[1.5];
+    }
+
+    .two {
+        font-family: var(--font-primary);
+        @apply flex flex-wrap gap-10;
+    }
+
+    .two h2 {
+        @apply text-[34px] mb-[14px];
+    }
+
+    .two p {
+        @apply m-0 mb-2 text-muted-foreground text-[16px];
+    }
+
+    .apply {
+        font-family: var(--font-primary);
+        @apply bg-card py-[72px] px-6 border-t border-border rounded-2xl w-full;
+    }
+
+    .half {
+        @apply flex flex-wrap gap-4;
+    }
+
+    .half > div {
+        @apply flex-1 basis-[280px];
+    }
+
+    /* Matches: label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px } */
+    .achieve-label {
+        font-family: var(--font-primary);
+        @apply block font-bold text-[14px] leading-[1.5] text-foreground mb-[6px];
+    }
+
+    /* Matches: input, select, textarea { min-height: 48px; padding: 12px 14px; border-radius: 6px; font: inherit } */
+    .achieve-field {
+        font: inherit;
+        @apply w-full min-h-[48px] px-[14px] py-[12px] border border-border rounded-[6px] bg-background text-foreground transition-colors duration-200 focus:outline-none focus:border-achieve-blue;
+    }
+}
 
 [data-radix-collection-item] > button {
     top: 1.5rem !important;
@@ -112,9 +234,7 @@
     opacity: 0.5;
 }
 
-/* src/styles/global.css */
-
-/* 1. The Scrollbar Track (The background) */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -123,14 +243,12 @@
     background: #000000;
 }
 
-/* 2. The Scrollbar Handle (The moving part) */
 ::-webkit-scrollbar-thumb {
-    background: #151624; /* Muted blue-gray from your theme */
+    background: #151624;
     border-radius: 5px;
-    border: 2px solid #000000; /* Creates a small gap around the handle */
+    border: 2px solid #000000;
 }
 
-/* 3. Handle on Hover (Achieve Blue Glow) */
 ::-webkit-scrollbar-thumb:hover {
     background: var(--achieve-blue);
     box-shadow: 0 0 10px var(--achieve-blue-glow);

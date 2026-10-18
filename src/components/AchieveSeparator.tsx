@@ -10,8 +10,8 @@ interface Props {
 }
 
 export default function AchieveSeparator({
-                                             thickness = "2px",
-                                             color = "#3b43c1", // Default to Achieve Blue
+                                             thickness = "0.5px",
+                                             color = "achieve-blue", // Default to Achieve Blue
                                              variant = "glow",
                                              className,
                                          }: Props) {

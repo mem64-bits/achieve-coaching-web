@@ -23,6 +23,8 @@ const {
     <meta name="viewport" content="width=device-width"/>
     <meta name="generator" content={Astro.generator}/>
     <meta name="description" content={description}/>
+    <meta name="color-scheme" content="dark">
+    <meta name="format-detection" content="telephone=no"> <!-- Stops iOS from making phone numbers blue -->
     <title>{title}</title>
     <link rel="preload" href="/fonts/montserrat-bold.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="icon" type="image/svg+xml" href="/achieve-initials.svg" sizes="any"/>
@@ -33,7 +35,7 @@ const {
 
 <Header client:visible>
     <div class="logo-container">
-        <Icon name="achieve-coaching-white-outline" class="h-8 w-auto"/>
+        <Icon name="achieve-coaching-logo" class="h-8 w-auto"/>
     </div>
 </Header>
 
