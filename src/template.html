@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Achieve Coaching</title>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: #0A0A0B;
+            color: #FFFFFF;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.5
+        }
+
+        .w {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px
+        }
+
+        .a {
+            color: #3D7BFF
+        }
+
+        h1, h2 {
+            margin: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1
+        }
+
+        h1 {
+            font-size: clamp(44px, 7vw, 84px);
+            line-height: .98
+        }
+
+        h2 {
+            font-size: clamp(34px, 5vw, 54px)
+        }
+
+        img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 8px
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px
+        }
+
+        .nav img {
+            height: 22px;
+            width: auto;
+            border-radius: 0
+        }
+
+        .nav a {
+            color: #3D7BFF;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            text-decoration: none
+        }
+
+        .btn {
+            display: inline-block;
+            background: #3D7BFF;
+            color: #fff;
+            font-weight: 800;
+            font-size: 17px;
+            padding: 16px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            border: 0;
+            cursor: pointer
+        }
+
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 48px;
+            align-items: center;
+            padding-top: 32px;
+            padding-bottom: 64px
+        }
+
+        .hero > div:first-child {
+            flex: 1 1 440px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px
+        }
+
+        .hero p {
+            margin: 0;
+            font-size: 19px;
+            max-width: 520px;
+            color: #8B93A1
+        }
+
+        .hero > div:last-child {
+            flex: 1 1 320px;
+            max-width: 440px
+        }
+
+        .lab {
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: #3D7BFF;
+            margin-bottom: 16px
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px
+        }
+
+        .row > * {
+            flex: 1 1 300px
+        }
+
+        .mosaic {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-start
+        }
+
+        .mc {
+            flex: 1 1 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .mc > img {
+            width: 100%
+        }
+
+        .quote {
+            border: 1px solid #373A3F;
+            border-radius: 8px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #1A1B1D
+        }
+
+        .quote.long p:first-child {
+            font-size: 17px;
+            font-weight: 600
+        }
+
+        .quote p {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.3
+        }
+
+        .step {
+            display: flex;
+            gap: 24px;
+            padding: 24px 0;
+            border-top: 1px solid #373A3F
+        }
+
+        .step:last-child {
+            border-bottom: 1px solid #373A3F
+        }
+
+        .step b {
+            flex: 0 0 100px;
+            font-size: 56px;
+            line-height: 1;
+            color: #3D7BFF;
+            font-weight: 800
+        }
+
+        .step h3 {
+            margin: 0 0 4px;
+            font-size: 22px
+        }
+
+        .step p {
+            margin: 0;
+            color: #8B93A1
+        }
+
+        .sec {
+            padding-bottom: 72px
+        }
+
+        .two {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px
+        }
+
+        .two > div {
+            flex: 1 1 420px;
+            max-width: 720px
+        }
+
+        .two h2 {
+            font-size: 34px;
+            margin-bottom: 14px
+        }
+
+        .two p {
+            margin: 0 0 8px;
+            color: #8B93A1
+        }
+
+        .no h2, .no p {
+            color: #8B93A1
+        }
+
+        .apply {
+            background: #1A1B1D;
+            padding: 72px 24px;
+            border-top: 1px solid #373A3F
+        }
+
+        .apply form {
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 6px
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: 0;
+            border-color: #3D7BFF
+        }
+
+        input, select, textarea {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 14px;
+            border: 1px solid #373A3F;
+            border-radius: 6px;
+            background: #0A0A0B;
+            color: #FFFFFF;
+            font: inherit
+        }
+
+        .half {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px
+        }
+
+        .half > div {
+            flex: 1 1 280px
+        }
+
+        .foot {
+            padding: 40px 24px;
+            text-align: center;
+            color: #8B93A1;
+            font-size: 14px
+        }
+
+        .foot img {
+            height: 18px;
+            width: auto;
+            margin: 0 auto 12px;
+            opacity: .7;
+            border-radius: 0
+        }
+    </style>
+</head>
+<body class="">
+<div class="w nav"><img src="assets/images/image-1.png" alt="Achieve Coaching"><a href="#apply">APPLY NOW →</a></div>
+<div class="w hero">
+    <div><h1>Get lean <span class="a">without giving up</span> your social life.</h1>
+        <p>
+        <p data-pm-slice="1 1 []"
+           style="font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration: none; caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);">
+            <span style="caret-color: rgb(184, 184, 184); color: rgb(184, 184, 184); background-color: rgb(11, 11, 12);">Online coaching for busy people who need visible results, still want to eat out, travel and enjoy their weekends.</span><br>
+        </p></p>
+        <div><a class="btn" href="#apply">APPLY NOW<br></a></div>
+    </div>
+    <div><img src="assets/images/image-2.jpg" alt="Coach"></div>
+</div>
+<div class="w sec">
+    <div class="lab">Client results</div>
+    <h2 style="margin-bottom:24px">Real clients. <span class="a">Real results.</span></h2>
+    <div class="mosaic">
+        <div class="mc"><img src="assets/images/image-3.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-4.png" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-5.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-6.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-7.png" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-8.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-9.png" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-10.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-11.jpg" alt="Achieve Coaching client" loading="lazy"></div>
+        <div class="mc"><img src="assets/images/image-12.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-13.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                src="assets/images/image-14.jpg" alt="Achieve Coaching client" loading="lazy">
+            <div class="quote long"><p>“Training with Bobby was so much fun! Super effective, with a huge variety of
+                exercises – he’s always coming up with new ideas 💡 We trained for a few months and I could clearly feel
+                I was stronger, more energetic and fitter overall. Highly recommend if you want to fall in love with the
+                gym 🙂”</p>
+                <p class="a" style="font-size:16px;margin-top:16px">— Sofya T. 29</p></div>
+            <img src="assets/images/image-15.png" alt="Achieve Coaching client" loading="lazy"><img
+                    src="assets/images/image-16.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                    src="assets/images/image-17.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                    src="assets/images/image-18.jpg" alt="Achieve Coaching client" loading="lazy"></div>
+        <div class="mc"><img src="assets/images/image-19.jpg" alt="Achieve Coaching client" loading="lazy">
+            <div class="quote "><p>“I’ve seen more progress in these 4 months than I did over the last ten years on my
+                own.”</p>
+                <p class="a" style="font-size:16px;margin-top:16px">— Maneesh 36</p></div>
+            <img src="assets/images/image-20.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                    src="assets/images/image-21.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                    src="assets/images/image-22.jpg" alt="Achieve Coaching client" loading="lazy"><img
+                    src="assets/images/image-23.jpg" alt="Achieve Coaching client" loading="lazy">
+            <div class="quote long"><p>“Thanks Bobby! Honestly, since we started working together I’m seeing, and
+                feeling, a difference in all my limbs, so I’m very motivated to do better! My abs have appeared too .
+                I’m motivated to keep adding muscle mass everywhere, including legs and glutes. Very happy.”</p>
+                <p class="a" style="font-size:16px;margin-top:16px">— Client 30</p></div>
+            <img src="assets/images/image-24.png" alt="Achieve Coaching client" loading="lazy"><img
+                    src="assets/images/image-25.jpg" alt="Achieve Coaching client" loading="lazy"></div>
+    </div>
+    <p style="color:#8B93A1;font-size:13px;margin:16px 0 24px"><br></p><a class="btn" href="#apply">Apply&nbsp;</a>
+</div>
+<div class="w sec"><h2 style="margin-bottom:24px">How it <span class="a">works</span></h2>
+    <div class="step"><b>1</b>
+        <div><h3>Fill Contact Form</h3>
+            <p>Fill in the short contact form so we know your goals and whether we're a fit.</p></div>
+    </div>
+    <div class="step"><b>2</b>
+        <div><h3>We'll Send You A Call Link&nbsp;</h3>
+            <p>Pick a time that suits you and we'll go through your plan together.</p></div>
+    </div>
+    <div class="step"><b>3</b>
+        <div><h3>Start Your Plan</h3>
+            <p>Get a training and nutrition plan built around your life, along with premium online coaching.</p></div>
+    </div>
+</div>
+<div class="w sec two">
+    <div><h2>This is for you <span class="a">if</span></h2>
+        <p>You want to get lean and keep your social life.</p>
+        <p>You want to become more confident and build discipline.</p>
+        <p>You're ready to commit to coaching, not a quick fix.<br></p></div>
+</div>
+<div class="apply" id="apply">
+    <form action="#" method="post">
+        <h2>Contact FORM</h2>
+        <p style="margin:0;color:#8B93A1"><br></p>
+        <div class="half">
+            <div><label for="fn">First name</label><input id="fn" name="first_name" required=""></div>
+            <div><label for="ln">Last name</label><input id="ln" name="last_name" required=""></div>
+        </div>
+        <div><label for="ig">Instagram or LinkedIn Username</label><input id="ig" name="instagram" placeholder="@">
+        </div>
+        <div class="half">
+            <div><label for="ph">WhatsApp Phone number&nbsp;<br><br></label><input id="ph" name="phone" type="tel"
+                                                                                   required=""></div>
+            <div><label for="em">Email</label><input id="em" name="email" type="email" required=""></div>
+        </div>
+        <div><label for="goal">Main goal</label><select id="goal" name="goal">
+            <option>Lose fat</option>
+            <option>Build muscle</option>
+            <option>Both</option>
+            <option>Something else</option>
+        </select></div>
+        <div><label for="tried">What have you tried before, and what stopped it working?</label><textarea id="tried"
+                                                                                                          name="tried"
+                                                                                                          rows="3"></textarea>
+        </div>
+        <div class="half">
+            <div><label for="when">How soon do you want to start?</label><select id="when" name="start">
+                <option>Now</option>
+                <option>Within 30 days</option>
+                <option>Just exploring</option>
+            </select></div>
+            <div><label for="exp">Training experience</label><select id="exp" name="experience">
+                <option>Beginner</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+            </select></div>
+        </div>
+        <div><label for="price"><br></label><select id="price" name="price_ok">
+            <option>Yes</option>
+            <option>No</option>
+        </select></div>
+        <div><label for="more">Anything else you'd like me to know?&nbsp;</label><textarea id="more" name="notes"
+                                                                                           rows="2"></textarea></div>
+        <button class="btn" type="submit">Submit application</button>
+    </form>
+</div>
+<div class="foot"><img src="assets/images/image-26.png" alt="Achieve Coaching">
+    <div>[@YOURHANDLE]</div>
+</div>
+
+
+</body>
+</html>
