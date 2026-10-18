@@ -18,22 +18,28 @@ import {
 export function HeroSection() {
     return (
         <section className="w hero">
-            <div className="flex-1 basis-110 flex flex-col gap-6">
+            {/* Left Content Column */}
+            <div className="flex-1 basis-[440px] flex flex-col gap-6">
                 <h1 className="achieve-h1">
                     {HERO_CONTENT.titlePrefix}{" "}
-                    <span className="a">{HERO_CONTENT.titleHighlight}</span>{" "}
+                    <span className="a">{HERO_CONTENT.titleHighlight}</span>
+                    {" "}
                     {HERO_CONTENT.titleSuffix}
                 </h1>
-                <p className="m-0 text-[19px] font-normal max-w-130 text-[#B8B8B8] leading-normal">
+
+                <p className="m-0 text-[19px] font-normal max-w-[520px] text-muted-foreground leading-normal">
                     {HERO_CONTENT.subtitle}
                 </p>
+
                 <div>
                     <AchieveBtn href={HERO_CONTENT.ctaHref}>
                         {HERO_CONTENT.ctaLabel}
                     </AchieveBtn>
                 </div>
             </div>
-            <div className="flex-1 basis-[320px] max-w-110">
+
+            {/* Right Image Column */}
+            <div className="flex-1 basis-[320px] max-w-[440px] w-full">
                 <AchieveImage
                     filename={HERO_CONTENT.imageFilename}
                     alt={HERO_CONTENT.imageAlt}
