@@ -18,10 +18,10 @@ export const SOCIAL_LINKS = [
         description: "A Link to Coach Bobby's Official Instagram Account."
     },
 
-    {
-        label: "Gmail",
-        icon: gmailIcon.src,
-        href: "mailto:contact@achieve-coaching.net",
-        description: "Achieve Coaching's email for any business related queries."
-    },
+    // {
+    //     label: "Gmail",
+    //     icon: gmailIcon.src,
+    //     href: "mailto:contact@achieve-coaching.net",
+    //     description: "Achieve Coaching's email for any business related queries."
+    // },
 ];
