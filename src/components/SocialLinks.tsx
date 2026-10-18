@@ -17,7 +17,7 @@ const SocialIcon = ({label, icon, href}: SocialLink) => {
             className="group relative flex items-center justify-center w-5 h-5"
             aria-label={`Follow Achieve Coaching on ${label}`}
         >
-            {/*DETECTION BOX (Hitbox) */}
+            {/* DETECTION BOX (Hitbox) */}
             {/* The inset-6 creates the large clickable area without moving the icon */}
             <span className="absolute -inset-6 z-30 cursor-pointer"/>
 
@@ -39,11 +39,13 @@ const SocialIcon = ({label, icon, href}: SocialLink) => {
 
                     /* ANIMATION: Triggered by group-hover on the parent <a> */
                     group-hover:scale-125 group-hover:-translate-y-1
-                    bg-muted-foreground/40 group-hover:bg-achieve-blue
+
+                    /* COLOR: Soft 85% white by default (easy on the eyes), brightens to achieve-blue on hover */
+                    bg-white/85 group-hover:bg-achieve-blue
                 "
             />
 
-            {/*GLOW EFFECT*/}
+            {/* GLOW EFFECT */}
             <div className="
                 absolute inset-0 -m-8
                 bg-achieve-blue/25 blur-2xl rounded-full
@@ -56,7 +58,7 @@ const SocialIcon = ({label, icon, href}: SocialLink) => {
     );
 };
 
-export default function SocialLinks({links, className = "flex gap-10"}: { links: any[], className?: string }) {
+export default function SocialLinks({links, className = "flex gap-10"}: { links: SocialLink[], className?: string }) {
     return (
         <ul className={className}>
             {links.map((link) => (

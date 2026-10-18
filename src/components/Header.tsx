@@ -48,9 +48,9 @@ export default function Header({children}: { children?: React.ReactNode }) {
             {/* Permanent Blue Separator */}
             <div className="absolute -bottom-px left-0 right-0 w-full z-60">
                 <AchieveSeparator
-                    thickness="2px"
+                    thickness="1px"
                     variant="glow"
-                    color="#3b43c1"
+                    color="#E2E8F0"
                 />
             </div>
         </header>

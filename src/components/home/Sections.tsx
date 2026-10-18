@@ -86,8 +86,13 @@ export function ResultsMosaicSection() {
 export function HowItWorksSection() {
     return (
         <section id="process" className="w sec scroll-mt-24">
-            <SectionTitle titleStart="How it" titleAccent="works"/>
-            <div>
+            {/* Center the title */}
+            <div className="text-center mb-8">
+                <SectionTitle titleStart="How it" titleAccent="works"/>
+            </div>
+
+            {/* Constrain width and center with mx-auto */}
+            <div className="max-w-[720px] mx-auto">
                 {HOW_IT_WORKS_STEPS.map((step) => (
                     <StepRow key={step.stepNumber} {...step} />
                 ))}
@@ -99,16 +104,27 @@ export function HowItWorksSection() {
 /** SECTION 4: Qualification (.w.sec.two) */
 export function QualificationSection() {
     return (
-        <section id="philosophy" className="w sec two scroll-mt-24">
-            <div className="flex-1 basis-105 max-w-180">
-                <h2 className="achieve-h2 text-[34px]! !mb-3.5">
+        <section id="philosophy" className="w sec two justify-center scroll-mt-24">
+            <div className="flex-1 basis-105 max-w-180 mx-auto">
+                <h2 className="achieve-h2 text-[34px]! !mb-6">
                     This is for you <span className="a">if</span>
                 </h2>
-                {FOR_YOU_IF_LIST.map((line, idx) => (
-                    <p key={idx} className="m-0 mb-2 text-muted-foreground">
-                        {line}
-                    </p>
-                ))}
+
+                <ul className="flex flex-col gap-3.5 m-0 p-0 list-none">
+                    {FOR_YOU_IF_LIST.map((line, idx) => (
+                        <li
+                            key={idx}
+                            className="flex items-start gap-3.5 text-[17px] text-zinc-200 leading-relaxed"
+                        >
+                            {/* Achieve-Blue Solid Square */}
+                            <span
+                                className="shrink-0 mt-2 h-2.5 w-2.5 rounded-[2px] bg-achieve-blue shadow-[0_0_8px_rgba(61,123,255,0.6)]"
+                                aria-hidden="true"
+                            />
+                            <span>{line}</span>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </section>
     );
