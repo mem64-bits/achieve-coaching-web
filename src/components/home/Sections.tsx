@@ -20,10 +20,10 @@ export function HeroSection() {
         <section className="w hero">
             {/* Left Content Column */}
             <div className="flex-1 basis-[440px] flex flex-col gap-6">
-                <h1 className="achieve-h1">
+                <h1 className="achieve-h1 whitespace-pre-line">
                     {HERO_CONTENT.titlePrefix}{" "}
                     <span className="a">{HERO_CONTENT.titleHighlight}</span>
-                    {" "}
+                    {"\n"}
                     {HERO_CONTENT.titleSuffix}
                 </h1>
 

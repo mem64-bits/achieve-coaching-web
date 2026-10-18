@@ -23,7 +23,7 @@ export type MosaicEntry =
 export const HERO_CONTENT = {
     titlePrefix: "Get lean",
     titleHighlight: "without giving up",
-    titleSuffix: "your social life.",
+    titleSuffix: " your social life.",
     subtitle:
         "Online coaching for busy people who need visible results, still want to eat out, travel and enjoy their weekends.",
     ctaLabel: "APPLY NOW",
