@@ -8,55 +8,9 @@
 @import "@fontsource/montserrat/700.css";
 @import "@fontsource/montserrat/800.css";
 @import "@fontsource/montserrat/900.css";
+@import "./theme.css";
 
 @custom-variant dark (&:is(.dark *));
-
-:root {
-    /* --- 1. ACHIEVE BRAND CORE --- */
-    --achieve-blue: #3d7bff;
-    --achieve-blue-glow: rgba(59, 67, 193, 0.4);
-
-    /* --- 2. BLUE-TINTED DARK PALETTE --- */
-    --bg-pure: #000000;
-    --bg-surface: #0a0a0f;
-    --bg-muted: #151624;
-
-    --text-primary: #ffffff;
-    --text-muted: #8B93A1; /* Matched to template.html muted text */
-
-    --border-subtle: rgba(59, 67, 193, 0.2);
-
-    /* --- 3. SHADCN BRIDGE --- */
-    --background: var(--bg-pure);
-    --foreground: var(--text-primary);
-
-    --card: var(--bg-surface);
-    --card-foreground: var(--text-primary);
-
-    --popover: var(--bg-surface);
-    --popover-foreground: var(--text-primary);
-
-    --primary: var(--achieve-blue);
-    --primary-foreground: #ffffff;
-
-    --secondary: var(--bg-muted);
-    --secondary-foreground: var(--text-primary);
-
-    --muted: var(--bg-muted);
-    --muted-foreground: var(--text-muted);
-
-    --accent: var(--achieve-blue);
-    --accent-foreground: #ffffff;
-
-    --border: var(--border-subtle);
-    --input: var(--border-subtle);
-    --ring: var(--achieve-blue);
-
-    --radius: 0.75rem;
-
-    /* 1:1 Font Stack from template.html */
-    --font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
 
 /* --- 4. GLOBAL BASE STYLES --- */
 @layer base {
@@ -87,26 +41,7 @@
     }
 }
 
-/* --- 5. TAILWIND v4 THEME CONFIG --- */
-@theme inline {
-    --color-achieve-blue: var(--achieve-blue);
-    --color-achieve-glow: var(--achieve-blue-glow);
-
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-card: var(--card);
-    --color-border: var(--border);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
-
-    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
-
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-}
-
-/* --- 6. TEMPLATE COMPONENT CLASSES (Exact Typography Parity) --- */
+/* Shared home component classes. Keep component-specific layout in each component file. */
 @layer components {
     .w {
         @apply max-w-[1100px] mx-auto px-6 w-full;
@@ -262,8 +197,8 @@
 }
 
 .react-international-phone-country-selector-button {
-    background-color: #1A1B1D !important;
-    border-color: #373A3F !important;
+    background-color: var(--card) !important;
+    border-color: var(--border) !important;
     min-height: 48px !important;
     border-radius: 6px 0 0 6px !important;
     padding: 0 12px !important;
@@ -271,9 +206,9 @@
 }
 
 .react-international-phone-input {
-    background-color: #0A0A0B !important;
-    color: #FFFFFF !important;
-    border-color: #373A3F !important;
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
+    border-color: var(--border) !important;
     min-height: 48px !important;
     width: 100% !important;
     border-radius: 0 6px 6px 0 !important;
@@ -288,9 +223,9 @@
 
 /* Dropdown popover list */
 .react-international-phone-country-selector-dropdown {
-    background-color: #1A1B1D !important;
-    color: #FFFFFF !important;
-    border: 1px solid #373A3F !important;
+    background-color: var(--card) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 8px !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
     z-index: 50 !important;
@@ -298,7 +233,7 @@
 }
 
 .react-international-phone-country-selector-dropdown__list-item {
-    color: #FFFFFF !important;
+    color: var(--foreground) !important;
     padding: 10px 14px !important;
     cursor: pointer;
 }
@@ -310,7 +245,7 @@
 }
 
 .react-international-phone-country-selector-dropdown__list-item-country-name {
-    color: #8B93A1 !important;
+    color: var(--text-muted) !important;
 }
 
 .react-international-phone-country-selector-dropdown__list-item:hover .react-international-phone-country-selector-dropdown__list-item-country-name {
