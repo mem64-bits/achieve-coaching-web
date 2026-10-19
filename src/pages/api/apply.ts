@@ -5,7 +5,15 @@ import {Resend} from 'resend';
 // Required: tells Astro & Vercel to run this on-demand as a serverless function
 export const prerender = false;
 
-const resend = new Resend(import.meta.env.RESEND_API_KEY);
+// Safe retrieval for Vercel Serverless environment variables
+const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+const resend = new Resend(apiKey);
+
+// Fallback recipient email to guarantee delivery
+const targetNotificationEmail =
+    import.meta.env.NOTIFICATION_EMAIL ||
+    process.env.NOTIFICATION_EMAIL ||
+    "coachbobbyachieve@gmail.com";
 
 // -------------------------------------------------------------
 // Validation Helpers
@@ -105,11 +113,12 @@ export const POST: APIRoute = async ({request}) => {
             );
         }
 
-        // 6. Send notification email via Resend
+        // 6. Send notification email via Resend with your verified domain
         const {data, error} = await resend.emails.send({
-            from: 'Achieve Coaching <onboarding@resend.dev>',
-            to: [import.meta.env.NOTIFICATION_EMAIL],
-            subject: `🔥 New Achieve Coaching Client: ${first_name.trim()} ${last_name.trim()}`,
+            from: 'Achieve Coaching <notifications@achieve-coaching.net>', // <-- YOUR VERIFIED DOMAIN
+            replyTo: email.trim(), // <-- Hitting "Reply" in Gmail replies to the client
+            to: [targetNotificationEmail],
+            subject: `New Achieve Coaching Client: ${first_name.trim()} ${last_name.trim()}`,
             html: `
                 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #373A3F; border-radius: 8px; background: #0A0A0B; color: #FFFFFF;">
                     <h2 style="color: #3D7BFF; text-transform: uppercase; margin-top: 0; font-size: 22px;">New Achieve Coaching Application</h2>
