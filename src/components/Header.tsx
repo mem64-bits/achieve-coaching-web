@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import AchieveSeparator from "@components/AchieveSeparator.tsx";
 import {PATHS} from "@constants/navigation.ts";
+import {AchieveBtn} from "./home/AchieveBtn";
 
 export default function Header({children}: { children?: React.ReactNode }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -41,6 +42,12 @@ export default function Header({children}: { children?: React.ReactNode }) {
                     </div>
 
 
+                </div>
+
+                <div className="flex items-center relative z-25">
+                    <AchieveBtn href="#apply" className="text-sm sm:text-base px-4 py-2 sm:px-5 sm:py-2.5">
+                        Book Consultation Call
+                    </AchieveBtn>
                 </div>
 
             </div>

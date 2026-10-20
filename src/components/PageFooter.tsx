@@ -4,7 +4,7 @@ import {SOCIAL_LINKS} from "@/constants/socials.ts";
 import {Phone} from "lucide-react";
 
 export default function Footer() {
-    const currentYear = new Date().getFullYear();
+    const currentYear = 2021;
 
     return (
         <footer className="mt-auto w-full border-t border-white/2">

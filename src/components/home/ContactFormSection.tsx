@@ -3,6 +3,8 @@ import React, {useState} from "react";
 import {AchieveBtn} from "./AchieveBtn";
 import {PhoneInput} from "react-international-phone";
 import "react-international-phone/style.css";
+import {submitApplication} from "../../lib/api";
+import type {ApplyRequestPayload} from "../../types/apply";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     id: string;
@@ -32,32 +34,20 @@ export default function ContactFormSection() {
 
         const form = e.currentTarget;
         const formData = new FormData(form);
-        const payload = Object.fromEntries(formData.entries());
+        const payload = Object.fromEntries(formData.entries()) as unknown as ApplyRequestPayload;
 
         try {
-            const response = await fetch("/api/apply", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(payload),
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                setStatus("success");
-            } else {
-                setStatus("error");
-                setErrorMessage(data.error || "Failed to submit application. Please check your details.");
-            }
+            await submitApplication(payload);
+            setStatus("success");
         } catch (err: any) {
             setStatus("error");
-            setErrorMessage("Network error. Please try again later.");
+            setErrorMessage(err.message || "Failed to submit application. Please check your details.");
         }
     }
 
     if (status === "success") {
         return (
-            <section className="apply scroll-mt-24 text-center" id="apply">
+            <section className="apply scroll-mt-24 text-center sec" id="apply">
                 <div className="max-w-[500px] mx-auto py-12">
                     <div
                         className="w-16 h-16 bg-achieve-blue/15 text-achieve-blue border border-achieve-blue/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
@@ -80,7 +70,7 @@ export default function ContactFormSection() {
     }
 
     return (
-        <section className="apply scroll-mt-24" id="apply">
+        <section className="apply scroll-mt-24 sec" id="apply">
             <form
                 onSubmit={handleSubmit}
                 className="max-w-[720px] mx-auto flex flex-col gap-[18px]"

@@ -53,7 +53,7 @@ export const MOSAIC_COLUMNS: MosaicEntry[][] = [
         {
             type: "quote",
             isLong: true,
-            quote: "“Training with Bobby was so much fun! Super effective, with a huge variety of exercises – he’s always coming up with new ideas 💡 We trained for a few months and I could clearly feel I was stronger, more energetic and fitter overall. Highly recommend if you want to fall in love with the gym 🙂”",
+            quote: "“I could clearly feel I was stronger, more energetic and fitter overall. Highly recommend if you want to fall in love with the gym 🙂”",
             author: "— Sofya T. 29",
         },
         {type: "image", filename: "image-15.png"},
@@ -77,8 +77,8 @@ export const MOSAIC_COLUMNS: MosaicEntry[][] = [
         {
             type: "quote",
             isLong: true,
-            quote: "“Thanks Bobby! Honestly, since we started working together I’m seeing, and feeling, a difference in all my limbs, so I’m very motivated to do better! My abs have appeared too . I’m motivated to keep adding muscle mass everywhere, including legs and glutes. Very happy.”",
-            author: "— Client 30",
+            quote: "“After not seeing much progress for a while, Bobby helped me see improvements again. He created a new training program and diet tailored to my schedule. he’s always great at motivating me to push harder. Over the 3 months , I significantly reduced my body fat and increased muscle. ”",
+            author: "— Y.Rey 43",
         },
         {type: "image", filename: "image-24.png"},
         {type: "image", filename: "image-25.jpg"},

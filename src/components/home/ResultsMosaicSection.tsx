@@ -8,7 +8,7 @@ import {SectionTitle} from "./SectionTitle";
 export function ResultsMosaicSection() {
     return (
         <section id="transformations" className="w sec scroll-mt-24">
-            <SectionTitle label="Client results" titleStart="Real clients." titleAccent="Real results."/>
+            <SectionTitle label="" titleStart="Real clients." titleAccent="Real results."/>
             <div className="mosaic">
                 {MOSAIC_COLUMNS.map((column, columnIndex) => (
                     <div key={`col-${columnIndex}`} className="mc">

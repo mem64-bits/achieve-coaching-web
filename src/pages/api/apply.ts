@@ -6,7 +6,7 @@ import {Resend} from 'resend';
 export const prerender = false;
 
 // Safe retrieval for Vercel Serverless environment variables
-const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+const apiKey = import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY || "re_dummy_test_key";
 const resend = new Resend(apiKey);
 
 // Fallback recipient email to guarantee delivery
@@ -20,21 +20,20 @@ const targetNotificationEmail =
 // -------------------------------------------------------------
 
 // 1. Phone / WhatsApp Validation (E.164 standard: 8 to 15 digits)
-function validateAndCleanPhone(phone: string) {
+export function validateAndCleanPhone(phone: string) {
     if (!phone) return {isValid: false, cleanDigits: "", formatted: ""};
 
     const formatted = phone.trim();
-    // Allow digits, spaces, plus, dashes, parentheses
-    const hasValidChars = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\./0-9]{6,16}$/.test(formatted);
-    // Extract pure digits for wa.me link
     const cleanDigits = formatted.replace(/\D/g, '');
+    // Allow plus, digits, spaces, dashes, parentheses, dots
+    const hasValidChars = /^[\+\d\s\-\(\)\.]+$/.test(formatted);
 
     const isValid = hasValidChars && cleanDigits.length >= 8 && cleanDigits.length <= 15;
     return {isValid, cleanDigits, formatted};
 }
 
 // 2. Instagram Validation (1-30 chars, letters, numbers, periods, underscores)
-function validateAndCleanInstagram(input?: string) {
+export function validateAndCleanInstagram(input?: string) {
     if (!input || !input.trim()) return {isValid: true, handle: "", url: ""};
 
     let handle = input.trim();
@@ -51,7 +50,7 @@ function validateAndCleanInstagram(input?: string) {
 }
 
 // 3. Email Validation
-function validateEmail(email: string): boolean {
+export function validateEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 

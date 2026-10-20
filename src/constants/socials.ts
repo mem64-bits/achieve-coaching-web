@@ -1,6 +1,7 @@
 // src/constants/socials.ts
 import instagramIcon from '@icons/instagram.svg';
 import whatsappIcon from '@icons/whatsapp.svg';
+import linkedInIcon from '@icons/linkedin.svg';
 import gmailIcon from '@icons/gmail.svg';
 
 export const SOCIAL_LINKS = [
@@ -18,10 +19,10 @@ export const SOCIAL_LINKS = [
         description: "A Link to Coach Bobby's Official Instagram Account."
     },
 
-    // {
-    //     label: "Gmail",
-    //     icon: gmailIcon.src,
-    //     href: "mailto:contact@achieve-coaching.net",
-    //     description: "Achieve Coaching's email for any business related queries."
-    // },
+    {
+        label: "LinkedIn",
+        icon: linkedInIcon.src,
+        href: "https://www.linkedin.com/in/bobby-okodogbe-0b33b51a5",
+        description: "A Link to Coach Bobby's Official LinkedIn."
+    }
 ];
