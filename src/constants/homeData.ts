@@ -94,21 +94,21 @@ export interface StepItem {
 export const HOW_IT_WORKS_STEPS: StepItem[] = [
     {
         stepNumber: "1",
-        title: "Fill Contact Form",
+        title: "Fill Out the Contact Form",
         description:
-            "Fill in the short contact form so we know your goals and whether we're a fit.",
+            "Complete our short form to get started.",
     },
     {
         stepNumber: "2",
-        title: "We'll Send You A Call Link",
+        title: "Book Your Free Call",
         description:
-            "Pick a time that suits you and we'll go through your plan together.",
+            "We'll send you a link to book your complimentary call and discuss the next steps.",
     },
     {
         stepNumber: "3",
-        title: "Start Your Plan",
+        title: "Start Your Coaching",
         description:
-            "Get a training and nutrition plan built around your life, along with premium online coaching.",
+            "Get personalised training, tailored nutrition and ongoing accountability designed to deliver lasting results without compromising your lifestyle.",
     },
 ];
 
