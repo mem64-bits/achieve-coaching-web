@@ -3,8 +3,9 @@ import React, {useState} from "react";
 import {AchieveBtn} from "./AchieveBtn";
 import {PhoneInput} from "react-international-phone";
 import "react-international-phone/style.css";
-import {submitApplication} from "../../lib/api";
-import type {ApplyRequestPayload} from "../../types/apply";
+import {submitApplication} from "@/lib/api.ts";
+import type {ApplyRequestPayload} from "@/types/apply.ts";
+import {SectionContainer} from "../ui/SectionContainer";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     id: string;
@@ -47,8 +48,13 @@ export default function ContactFormSection() {
 
     if (status === "success") {
         return (
-            <section className="apply scroll-mt-24 text-center sec" id="apply">
-                <div className="max-w-[500px] mx-auto py-12">
+            <SectionContainer
+                id="apply"
+                maxWidth="narrow"
+                spacing="relaxed"
+                className="apply scroll-mt-24 text-center"
+            >
+                <div className="max-w-125 mx-auto py-12">
                     <div
                         className="w-16 h-16 bg-achieve-blue/15 text-achieve-blue border border-achieve-blue/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
                         ✓
@@ -65,15 +71,20 @@ export default function ContactFormSection() {
                         Submit another response
                     </button>
                 </div>
-            </section>
+            </SectionContainer>
         );
     }
 
     return (
-        <section className="apply scroll-mt-24 sec" id="apply">
+        <SectionContainer
+            id="apply"
+            maxWidth="narrow"
+            spacing="relaxed"
+            className="apply scroll-mt-24"
+        >
             <form
                 onSubmit={handleSubmit}
-                className="max-w-[720px] mx-auto flex flex-col gap-[18px]"
+                className="max-w-180 mx-auto flex flex-col gap-4.5"
             >
                 {/* Honeypot field (hidden from real users, catches automated bots) */}
                 <input
@@ -140,6 +151,6 @@ export default function ContactFormSection() {
                     {status === "loading" ? "Submitting..." : "Submit application"}
                 </AchieveBtn>
             </form>
-        </section>
+        </SectionContainer>
     );
 }
