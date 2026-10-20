@@ -46,7 +46,7 @@ export default function Header({children}: { children?: React.ReactNode }) {
 
                 <div className="flex items-center relative z-25">
                     <AchieveBtn href="#apply" className="text-sm sm:text-base px-4 py-2 sm:px-5 sm:py-2.5">
-                        Book Consultation Call
+                        Book Free Call
                     </AchieveBtn>
                 </div>
 
