@@ -31,9 +31,7 @@ export function ResultsMosaicSection() {
                     </div>
                 ))}
             </div>
-            <div className="mt-6">
-                <AchieveBtn href="#apply">Apply</AchieveBtn>
-            </div>
+
         </section>
     );
 }
