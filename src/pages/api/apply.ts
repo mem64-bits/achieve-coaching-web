@@ -13,7 +13,7 @@ const resend = new Resend(apiKey);
 const targetNotificationEmail =
     import.meta.env.NOTIFICATION_EMAIL ||
     process.env.NOTIFICATION_EMAIL ||
-    "coachbobbyachieve@gmail.com";
+    "bobby@achievecoaching.net";
 
 // -------------------------------------------------------------
 // Validation Helpers

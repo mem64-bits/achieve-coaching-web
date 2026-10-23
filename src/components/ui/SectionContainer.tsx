@@ -95,7 +95,7 @@ export const SectionContainer = forwardRef(function SectionContainer<
             id={id}
             style={Object.keys(dynamicStyle).length > 0 ? dynamicStyle : undefined}
             className={cn(
-                'mx-auto w-full px-6',
+                'mx-auto w-full px-4 sm:px-6',
                 isMaxWidthPreset && maxWidthMap[maxWidth as ContainerMaxWidthPreset],
                 isSpacingPreset && spacingMap[spacing as ContainerSpacingPreset],
                 isPaddingTopPreset && paddingTopMap[paddingTop as ContainerSpacingPreset],

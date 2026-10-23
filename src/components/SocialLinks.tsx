@@ -14,7 +14,7 @@ const SocialIcon = ({label, icon, href}: SocialLink) => {
             target="_blank"
             rel="noopener noreferrer"
             /* We keep the anchor size fixed */
-            className="group relative flex items-center justify-center w-5 h-5"
+            className="group relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6"
             aria-label={`Follow Achieve Coaching on ${label}`}
         >
             {/* DETECTION BOX (Hitbox) */}
@@ -34,7 +34,7 @@ const SocialIcon = ({label, icon, href}: SocialLink) => {
                 }}
                 className="
                     /* Force explicit size here so it doesn't disappear */
-                    w-5 h-5 z-10
+                    w-5 h-5 sm:w-6 sm:h-6 z-10
                     transition-all duration-300 ease-out
 
                     /* ANIMATION: Triggered by group-hover on the parent <a> */

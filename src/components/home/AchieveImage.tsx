@@ -22,7 +22,7 @@ export function AchieveImage({
             loading={eager ? "eager" : "lazy"}
             fetchPriority={eager ? "high" : "auto"}
             decoding={eager ? "sync" : "async"}
-            className={cn("block w-full h-auto rounded-[8px]", className)}
+            className={cn("block w-full h-auto rounded-[8px] object-cover shadow-sm", className)}
         />
     );
 }
