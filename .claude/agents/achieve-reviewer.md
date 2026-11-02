@@ -9,7 +9,7 @@ model: inherit
 
 You review changes in the Achieve Coaching Astro site. You do not edit files; you report findings.
 
-Start with `git branch --show-current`, `git status --short` and `git diff origin/dev...HEAD` (fall back to `git diff HEAD` if the branch has no upstream). Read `AGENTS.md` and `GEMINI.md` for the rules you enforce.
+Start with `git branch --show-current`, `git status --short` and `git diff origin/dev...HEAD` (fall back to `git diff HEAD` if the branch has no upstream). The rules you enforce are in `CLAUDE.md`, which imports `AGENTS.md`; its "Architecture principles" section is the maintained version of `GEMINI.md`.
 
 Check, in this order, and only report real problems with file and line:
 

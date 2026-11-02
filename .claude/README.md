@@ -6,7 +6,7 @@ Everything in `.claude/`, plus `CLAUDE.md`, `AGENTS.md` and `.mcp.json`, is shar
 
 | Piece | File | When it costs context | What it is for |
 | --- | --- | --- | --- |
-| Project memory | `CLAUDE.md` -> imports `AGENTS.md` and `GEMINI.md` | Every session | Stack, commands, branch flow, contribution rules |
+| Project memory | `CLAUDE.md` (imports `AGENTS.md`) | Every session | Stack, commands, branch flow, contribution rules, architecture principles ported from `GEMINI.md`, the clean-base backlog |
 | Path rules | `.claude/rules/*.md` | Only when Claude touches matching files | API/email, UI, database specifics |
 | Skills | `.claude/skills/*/SKILL.md` | Name and description always; body only when used | Repeatable workflows (`/new-section`, `/shadcn-component`, `/ship`, `sql-database`) |
 | Subagent | `.claude/agents/achieve-reviewer.md` | Runs in its own context window | Pre-PR review against the house rules |

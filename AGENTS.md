@@ -2,7 +2,7 @@
 
 Marketing and lead-capture site for Achieve Coaching (achieve-coaching.net). Visitors read about the coaching program and submit an application form; the form posts to a serverless API route that emails the coach through Resend.
 
-Shared instructions for every coding agent (Claude Code, Gemini, Copilot, Junie). Architecture principles live in `GEMINI.md`; read it before structural changes.
+Shared instructions for every coding agent (Claude Code, Gemini, Copilot, Junie). Architecture principles were first written in `GEMINI.md`; the maintained version is the "Architecture principles" section of `CLAUDE.md`. Read it before structural changes.
 
 ## Stack
 
