@@ -85,7 +85,6 @@ export default function ApplyForm() {
                         <TextField
                             id="apply-social"
                             label={fields.social.label}
-                            optionalTag={fields.social.optionalTag}
                             hint={fields.social.hint}
                             placeholder={fields.social.placeholder}
                             autoComplete="off"

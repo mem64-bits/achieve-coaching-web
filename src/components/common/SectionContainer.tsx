@@ -15,6 +15,7 @@ export interface SectionContainerBaseProps {
     spacing?: ContainerSpacing;
     paddingTop?: ContainerSpacing;
     animationVariant?: ContainerAnimation;
+    deferRender?: boolean;
     style?: React.CSSProperties;
     children?: React.ReactNode;
 }
@@ -69,6 +70,7 @@ export const SectionContainer = forwardRef(function SectionContainer<
         spacing = "normal",
         paddingTop,
         animationVariant = "none",
+        deferRender = false,
         as,
         style,
         children,
@@ -98,6 +100,7 @@ export const SectionContainer = forwardRef(function SectionContainer<
                 isPreset(spacing, spacingMap) && spacingMap[spacing],
                 isPreset(paddingTop, paddingTopMap) && paddingTopMap[paddingTop],
                 animationMap[animationVariant],
+                deferRender && "defer-render",
                 className,
             )}
             {...rest}

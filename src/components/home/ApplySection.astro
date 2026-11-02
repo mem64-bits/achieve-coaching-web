@@ -1,5 +1,4 @@
 ---
-import {Check} from "lucide-react";
 import ApplyForm from "@components/apply/ApplyForm";
 import {SectionContainer} from "@components/common/SectionContainer";
 import {SectionTitle} from "@components/common/SectionTitle";
@@ -20,12 +19,9 @@ const whatsApp = SOCIAL_LINKS.find((link) => link.label === "WhatsApp");
         align="center"
     />
 
-    <ul class="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2">
+    <ul class="mt-6 flex flex-wrap items-center justify-center gap-2">
         {APPLY_FORM_COPY.trustPoints.map((point) => (
-            <li class="flex items-center gap-1.5 text-sm font-semibold text-subtle">
-                <Check aria-hidden="true" className="size-4 text-achieve-blue"/>
-                {point}
-            </li>
+            <li class="chip">{point}</li>
         ))}
     </ul>
 

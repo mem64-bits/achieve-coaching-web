@@ -4,8 +4,10 @@ import {getImage} from "astro:assets";
 import montserratDisplay from "@fontsource/montserrat/files/montserrat-latin-800-normal.woff2?url";
 import SiteHeader from "@components/layout/SiteHeader.astro";
 import SiteFooter from "@components/layout/SiteFooter.astro";
+import BrandLogoDefs from "@components/layout/BrandLogoDefs.astro";
 import {HERO_CONTENT} from "@constants/homeData";
 import {SITE} from "@constants/site";
+import {SOCIAL_LINKS} from "@constants/socials";
 import "../styles/global.css";
 
 interface Props {
@@ -37,6 +39,24 @@ const ogImage = await getImage({
     quality: 80,
 });
 const ogImageUrl = new URL(ogImage.src, canonicalUrl);
+const siteUrl = new URL("/", Astro.site ?? SITE.url).href;
+const structuredData = JSON.stringify([
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: SITE.name,
+        alternateName: SITE.alternateName,
+        url: siteUrl,
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: SITE.name,
+        url: siteUrl,
+        logo: new URL("/icon-512.png", siteUrl).href,
+        sameAs: SOCIAL_LINKS.map((link) => link.href),
+    },
+]);
 ---
 
 <!DOCTYPE html>
@@ -65,7 +85,11 @@ const ogImageUrl = new URL(ogImage.src, canonicalUrl);
     <meta property="og:image:alt" content={socialImageAlt}/>
     <meta name="twitter:card" content="summary_large_image"/>
 
-    <link rel="icon" type="image/svg+xml" href="/achieve-initials.svg" sizes="any"/>
+    <link rel="icon" href="/favicon.ico" sizes="48x48"/>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="manifest" href="/site.webmanifest"/>
+    <script type="application/ld+json" set:html={structuredData}/>
     <link rel="preload" href={montserratDisplay} as="font" type="font/woff2" crossorigin/>
     <slot name="head"/>
 </head>
@@ -78,6 +102,7 @@ const ogImageUrl = new URL(ogImage.src, canonicalUrl);
     Skip to content
 </a>
 
+<BrandLogoDefs/>
 <SiteHeader/>
 
 <main id="main" class="flex grow flex-col">

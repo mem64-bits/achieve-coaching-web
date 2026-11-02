@@ -55,11 +55,10 @@ export const APPLY_FORM_COPY = {
         name: {label: "Full name", placeholder: "Alex Murphy"},
         social: {
             label: "Instagram or LinkedIn",
-            optionalTag: "Optional",
             hint: "@yourname or linkedin.com/in/yourname",
             placeholder: "@yourname",
         },
-        phone: {label: "WhatsApp number", hint: "Include your country code."},
+        phone: {label: "WhatsApp number", hint: "Tap the flag to search countries or codes, like 35 or Ireland.", placeholder: "87 123 4567"},
         email: {label: "Email", placeholder: "you@example.com"},
     },
     actions: {
@@ -67,6 +66,16 @@ export const APPLY_FORM_COPY = {
         back: "Back",
         submit: "Send application",
         submitting: "Sending...",
+    },
+    countryPicker: {
+        title: "Choose your country code",
+        searchLabel: "Search countries or dial codes",
+        placeholder: "Country or code, e.g. 35",
+        hint: "Type digits to match dial codes, or letters to match country names.",
+        listLabel: "Countries",
+        close: "Close country list",
+        triggerLabel: (country: string, dialCode: string) => `Country code: ${country}, +${dialCode}. Change country`,
+        empty: (query: string) => `No country matches "${query}".`,
     },
     progressLabel: (current: number, total: number) => `Step ${current} of ${total}`,
     success: {

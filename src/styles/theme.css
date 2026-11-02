@@ -15,6 +15,9 @@
     --border-subtle: rgba(59, 67, 193, 0.2);
     --border-strong: rgba(139, 147, 161, 0.35);
     --hairline-glow: rgba(226, 232, 240, 0.5);
+    --hairline-light: rgba(255, 255, 255, 0.18);
+    --hairline-light-strong: rgba(255, 255, 255, 0.32);
+    --surface-sheen: rgba(255, 255, 255, 0.06);
 
     --danger: #f87171;
     --success: #34d399;

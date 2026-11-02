@@ -24,7 +24,7 @@ export function SectionTitle({
 }: SectionTitleProps) {
     return (
         <div className={cn("flex flex-col gap-3", align === "center" && "items-center text-center", className)}>
-            {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+            {eyebrow && <p className="eyebrow-pill">{eyebrow}</p>}
             <Heading id={id} className="font-display text-title font-extrabold uppercase text-balance text-foreground">
                 {titleStart}
                 {titleAccent && <span className="text-achieve-blue"> {titleAccent}</span>}

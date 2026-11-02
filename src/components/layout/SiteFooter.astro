@@ -5,8 +5,6 @@ import {SocialLinks} from "./SocialLinks";
 import {SITE} from "@constants/site";
 import {SOCIAL_LINKS} from "@constants/socials";
 
-const currentYear = new Date().getFullYear();
-const copyrightYears = currentYear > SITE.foundedYear ? `${SITE.foundedYear}–${currentYear}` : `${currentYear}`;
 ---
 
 <footer class="mt-auto border-t border-white/5 bg-linear-to-t from-black via-card/40 to-transparent">
@@ -16,7 +14,7 @@ const copyrightYears = currentYear > SITE.foundedYear ? `${SITE.foundedYear}–$
                 <BrandLogo/>
             </a>
             <p class="text-[0.6875rem] uppercase tracking-[0.3em] text-muted-foreground">
-                &copy; {copyrightYears} {SITE.name}
+                <span class="font-bold text-achieve-blue/80">{SITE.name}</span> &copy; {SITE.foundedYear}
             </p>
         </div>
 

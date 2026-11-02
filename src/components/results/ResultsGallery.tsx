@@ -2,6 +2,7 @@ import {useRef, useState} from "react";
 import {ChevronLeft, ChevronRight, Expand} from "lucide-react";
 import {GALLERY_LABELS} from "@constants/results";
 import type {GalleryPhoto} from "@/types/results";
+import {ResponsivePicture} from "@/components/common/ResponsivePicture";
 import {Lightbox} from "./Lightbox";
 import {prefersReducedMotion, scrollItemIntoCenter, useSnapIndex} from "./useSnapIndex";
 
@@ -35,15 +36,8 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
                             onClick={() => setOpenIndex(index)}
                             className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-card transition-[border-color,box-shadow] duration-300 hover:border-achieve-blue/60 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] lg:w-full"
                         >
-                            <img
-                                src={photo.thumb.src}
-                                srcSet={photo.thumb.srcSet}
-                                sizes={photo.thumb.sizes}
-                                width={photo.thumb.width}
-                                height={photo.thumb.height}
-                                alt={photo.thumb.alt}
-                                loading="lazy"
-                                decoding="async"
+                            <ResponsivePicture
+                                image={photo.thumb}
                                 className="block h-[min(58svh,26rem)] w-auto max-w-none object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none md:h-[30rem] lg:h-auto lg:w-full lg:max-w-full"
                             />
                             <span className="sr-only">{GALLERY_LABELS.openPhoto(index + 1, photos.length)}</span>

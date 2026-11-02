@@ -1,5 +1,4 @@
 ---
-import {CircleCheck} from "lucide-react";
 import {AchieveBtn} from "@components/common/AchieveBtn";
 import {SectionContainer} from "@components/common/SectionContainer";
 import {SectionTitle} from "@components/common/SectionTitle";
@@ -7,14 +6,14 @@ import {QUALIFICATION} from "@constants/homeData";
 import {SECTION_IDS} from "@constants/site";
 ---
 
-<SectionContainer id={SECTION_IDS.qualification} maxWidth="narrow" animationVariant="slide" aria-labelledby="for-you-title">
+<SectionContainer id={SECTION_IDS.qualification} maxWidth="narrow" animationVariant="slide" deferRender aria-labelledby="for-you-title">
     <div class="surface relative isolate overflow-hidden p-6 sm:p-10">
         <div aria-hidden="true" class="glow-backdrop absolute inset-0 -z-10"></div>
         <SectionTitle id="for-you-title" titleStart={QUALIFICATION.titleStart} titleAccent={QUALIFICATION.titleAccent}/>
         <ul class="mt-8 flex flex-col gap-4">
             {QUALIFICATION.points.map((point) => (
-                <li class="flex items-start gap-3.5 text-lead text-subtle">
-                    <CircleCheck aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-achieve-blue drop-shadow-[0_0_8px_var(--achieve-blue-glow)]"/>
+                <li class="flex items-start gap-4 text-lead text-subtle">
+                    <span aria-hidden="true" class="bullet-mark mt-[0.6em]"></span>
                     <span>{point}</span>
                 </li>
             ))}

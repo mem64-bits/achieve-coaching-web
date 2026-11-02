@@ -1,5 +1,6 @@
 export const SITE = {
     name: "Achieve Coaching",
+    alternateName: "achieve-coaching.net",
     url: "https://www.achieve-coaching.net",
     defaultTitle: "Achieve Coaching | Online coaching that fits your life",
     description:
@@ -11,6 +12,7 @@ export const SITE = {
 
 export const SECTION_IDS = {
     results: "results",
+    transformations: "transformations",
     qualification: "for-you",
     process: "process",
     apply: "apply",

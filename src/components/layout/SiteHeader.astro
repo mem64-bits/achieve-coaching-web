@@ -10,14 +10,20 @@ import {PRIMARY_CTA, SITE} from "@constants/site";
             <a
                 href="/"
                 aria-label={`${SITE.name} home`}
-                class="block min-w-0 shrink grow-0 basis-[clamp(9rem,44vw,15.5rem)] transition-opacity hover:opacity-80"
+                class="block min-w-0 shrink grow-0 basis-[clamp(10rem,48vw,17rem)] transition-opacity hover:opacity-85"
             >
                 <BrandLogo/>
             </a>
-            <AchieveBtn href={PRIMARY_CTA.href} size="sm" className="shrink-0">
+            <AchieveBtn
+                href={PRIMARY_CTA.href}
+                size="sm"
+                className="shrink-0 max-[400px]:px-3 max-[400px]:text-[0.75rem] max-[400px]:tracking-[0.02em]"
+            >
                 {PRIMARY_CTA.headerLabel}
             </AchieveBtn>
         </div>
     </div>
-    <div aria-hidden="true" class="h-px bg-linear-to-r from-transparent via-white/45 to-transparent shadow-[0_0_15px_var(--hairline-glow)]"></div>
+    <div aria-hidden="true" class="site-header__rim relative h-px">
+        <div class="scroll-progress"></div>
+    </div>
 </header>

@@ -8,8 +8,10 @@ export const achieveButtonVariants = cva(
     {
         variants: {
             variant: {
-                primary: "bg-achieve-cta text-white hover:shadow-[0_0_24px_var(--achieve-blue-glow)]",
-                outline: "border border-border-strong bg-transparent text-foreground hover:border-achieve-blue hover:bg-achieve-soft",
+                primary:
+                    "bg-achieve-cta text-white shadow-[inset_0_0_0_1px_var(--hairline-light),0_10px_30px_-14px_var(--achieve-blue-glow)] hover:shadow-[inset_0_0_0_1px_var(--hairline-light-strong),0_0_28px_-6px_var(--achieve-blue-glow)]",
+                outline:
+                    "border border-white/15 bg-white/[0.02] text-foreground hover:border-achieve-blue/70 hover:bg-achieve-soft",
                 ghost: "bg-transparent text-muted-foreground hover:text-foreground",
             },
             size: {
