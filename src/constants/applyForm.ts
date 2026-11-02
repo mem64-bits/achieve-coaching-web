@@ -7,13 +7,14 @@ export type GoalId = (typeof GOAL_IDS)[number];
 export interface GoalOption {
     label: string;
     description: string;
+    aim: string;
 }
 
 export const GOAL_OPTIONS: Record<GoalId, GoalOption> = {
-    "lose-fat": {label: "Get lean", description: "Lose fat and see definition"},
-    "build-muscle": {label: "Build muscle", description: "Add size and strength"},
-    recomposition: {label: "Both", description: "Lose fat and build muscle together"},
-    fitness: {label: "Feel fitter", description: "More energy, confidence and discipline"},
+    "lose-fat": {label: "Get lean", description: "Lose fat and see definition", aim: "get lean"},
+    "build-muscle": {label: "Build muscle", description: "Add size and strength", aim: "build muscle"},
+    recomposition: {label: "Both", description: "Lose fat and build muscle together", aim: "lose fat and build muscle"},
+    fitness: {label: "Feel fitter", description: "More energy, confidence and discipline", aim: "feel fitter"},
 };
 
 export const APPLY_STEP_IDS = ["goal", "about", "contact"] as const;

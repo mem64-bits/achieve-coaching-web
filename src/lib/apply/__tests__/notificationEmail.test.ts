@@ -21,7 +21,8 @@ describe("buildNotificationEmail", () => {
     it("includes every detail in both the HTML and plain-text versions", () => {
         const email = buildNotificationEmail(application);
 
-        expect(email.subject).toBe("New Achieve Coaching client: Seán O'Brien");
+        expect(email.subject).toBe("New Achieve Coaching client: Seán O'Brien (Both)");
+        expect(email.html).toContain("wants to <span style=\"color: #3D7BFF;\">lose fat and build muscle.</span>");
         expect(email.html).toContain("Seán O&#39;Brien");
         expect(email.html).toContain("https://wa.me/353871234567");
         expect(email.html).toContain("https://www.linkedin.com/in/sean-obrien");
@@ -35,6 +36,21 @@ describe("buildNotificationEmail", () => {
 
         expect(email.html).not.toContain(`"onmouseover="`);
         expect(email.html).toContain("&quot;onmouseover=&quot;");
+    });
+
+    it("lists every goal and marks the one the client picked", () => {
+        const email = buildNotificationEmail(application);
+
+        for (const label of ["Get lean", "Build muscle", "Both", "Feel fitter"]) {
+            expect(email.html).toContain(label);
+        }
+        expect(email.html.match(/Their goal/g)).toHaveLength(1);
+    });
+
+    it("stamps the time the application arrived in Irish time", () => {
+        const email = buildNotificationEmail(application, {receivedAt: new Date("2026-07-01T12:30:00Z")});
+
+        expect(email.text).toContain("Received: 1 Jul 2026, 13:30");
     });
 
     it("says when no social profile was given", () => {
