@@ -1,10 +1,17 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
+import {AchieveBtn} from "@components/common/AchieveBtn";
+import {SectionContainer} from "@components/common/SectionContainer";
+import {SITE} from "@constants/site";
 ---
-<BaseLayout title="Error 404 | Achieve Fitness" slot={"page-main"}>
-    <div slot="page-main">
-        <h2 class="text-3xl md:text-5xl font-black tracking-[0.25em] uppercase mb-4 leading-tight text-white">Error 404
-            -
-            Achieve Fitness Page Not Found</h2>
-    </div>
+
+<BaseLayout title={`Page not found | ${SITE.name}`} noindex>
+    <SectionContainer maxWidth="narrow" paddingTop="normal" className="flex grow flex-col items-center justify-center gap-6 text-center">
+        <p class="eyebrow">Error 404</p>
+        <h1 class="font-display text-title font-extrabold uppercase text-balance text-foreground">
+            This page doesn't exist
+        </h1>
+        <p class="text-lead text-muted-foreground">The link may be old, or the page may have moved.</p>
+        <AchieveBtn href="/" size="lg">Back to home</AchieveBtn>
+    </SectionContainer>
 </BaseLayout>

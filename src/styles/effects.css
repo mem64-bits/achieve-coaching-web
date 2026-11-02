@@ -1,0 +1,59 @@
+@media (prefers-reduced-motion: no-preference) {
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+        @keyframes reveal-fade {
+            from {
+                opacity: 0;
+            }
+        }
+
+        @keyframes reveal-rise {
+            from {
+                opacity: 0;
+                translate: 0 2rem;
+            }
+        }
+
+        .reveal-fade {
+            animation: reveal-fade auto linear backwards;
+            animation-timeline: view();
+            animation-range: entry 0% entry 80%;
+        }
+
+        .reveal-rise {
+            animation: reveal-rise auto linear backwards;
+            animation-timeline: view();
+            animation-range: entry 0% entry 80%;
+        }
+    }
+}
+
+.site-header {
+    container-type: scroll-state;
+    container-name: site-header;
+}
+
+.site-header__bar {
+    background-color: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+@container site-header scroll-state(stuck: top) {
+    .site-header__bar {
+        background-color: rgba(5, 5, 5, 0.88);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+}
+
+dialog.lightbox:modal {
+    overscroll-behavior: contain;
+}
+
+dialog.lightbox::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
+    background-color: rgba(0, 0, 0, 0.92);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}

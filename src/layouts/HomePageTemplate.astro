@@ -1,21 +1,18 @@
 ---
-// src/layouts/HomePageTemplate.astro
 import BaseLayout from "./BaseLayout.astro";
 import {
+    ApplySection,
     HeroSection,
-    ResultsMosaicSection,
     HowItWorksSection,
     QualificationSection,
-} from "../components/home";
-import ContactFormSection from "../components/home/ContactFormSection";
+    ResultsSection,
+} from "@components/home";
 ---
 
-<BaseLayout title="Achieve Coaching | Home">
-    <div slot="page-main" class="w-full h-full overflow-y-auto scrollbar-none flex flex-col">
-        <HeroSection/>
-        <ResultsMosaicSection/>
-        <ContactFormSection client:visible/>
-        <HowItWorksSection/>
-        <QualificationSection/>
-    </div>
+<BaseLayout>
+    <HeroSection/>
+    <ResultsSection/>
+    <QualificationSection/>
+    <HowItWorksSection/>
+    <ApplySection/>
 </BaseLayout>

@@ -1,0 +1,23 @@
+---
+import BrandLogo from "./BrandLogo.astro";
+import {AchieveBtn} from "@components/common/AchieveBtn";
+import {PRIMARY_CTA, SITE} from "@constants/site";
+---
+
+<header class="site-header sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
+    <div class="site-header__bar">
+        <div class="mx-auto flex h-header max-w-[90rem] items-center justify-between gap-3 px-gutter">
+            <a
+                href="/"
+                aria-label={`${SITE.name} home`}
+                class="block min-w-0 shrink grow-0 basis-[clamp(9rem,44vw,15.5rem)] transition-opacity hover:opacity-80"
+            >
+                <BrandLogo/>
+            </a>
+            <AchieveBtn href={PRIMARY_CTA.href} size="sm" className="shrink-0">
+                {PRIMARY_CTA.headerLabel}
+            </AchieveBtn>
+        </div>
+    </div>
+    <div aria-hidden="true" class="h-px bg-linear-to-r from-transparent via-white/45 to-transparent shadow-[0_0_15px_var(--hairline-glow)]"></div>
+</header>

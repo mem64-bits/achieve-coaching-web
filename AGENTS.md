@@ -52,8 +52,11 @@ From `notes/Achieve Coaching Web Docs & Ideas/Contribution.md`:
 
 ## Conventions
 
-- Content and copy live in `src/constants/` (for example `homeData.ts`), not inline in components.
-- Every page section uses `SectionContainer` (`src/components/ui/SectionContainer.tsx`) and its spacing/width props instead of ad-hoc padding.
+- Read `docs/ARCHITECTURE.md` for the folder map and a "where do I change..." table.
+- Content and copy live in `src/constants/` (for example `homeData.ts`, `applyForm.ts`, `results.ts`), not inline in components.
+- Page sections are `.astro` files in `src/components/home/`; interactive parts are React islands in feature folders (`src/components/results/`, `src/components/apply/`).
+- Every page section uses `SectionContainer` (`src/components/common/SectionContainer.tsx`) and its spacing/width props instead of ad-hoc padding.
+- Form validation rules live once in `src/lib/apply/schema.ts` and are shared by the form and the API route.
 - Shared types go in `src/types/`; client fetch helpers go in `src/lib/api.ts`.
 - Use the `cn()` helper from `src/lib/utils.ts` to merge class names.
 - Use theme tokens (`bg-background`, `text-muted-foreground`, `text-achieve-blue`) instead of hard-coded hex colours.

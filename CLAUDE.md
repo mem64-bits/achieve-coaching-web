@@ -7,21 +7,31 @@ Ported from `GEMINI.md`, which stays as Gemini's copy. This section is the maint
 ### 1. Stack boundaries
 
 - Astro owns routing, layouts, the page shell and serverless functions. Files in `src/pages/api/` run as Vercel functions.
-- React (`.tsx`) is for UI. Sections without state render to static HTML with no `client:` directive; anything with state or event handlers is an island loaded with `client:visible`, `client:idle` or, only when it must work immediately, `client:load`.
+- Page sections are `.astro` files (`src/components/home/*Section.astro`). They render to static HTML and can use `astro:assets` for images.
+- React (`.tsx`) is for interactive islands and for small presentational components shared by sections and islands (`AchieveBtn`, `SectionTitle`, `QuoteCard`, `StepRow`). Islands load with `client:visible` (with a `rootMargin` so they hydrate just before they are seen), `client:idle`, or, only when they must work immediately, `client:load`.
+- Island props are serialised into the HTML: pass plain data only. No functions, class instances or image imports.
 - Styling is Tailwind v4 utilities backed by the CSS variables in `src/styles/theme.css` and the layers in `src/styles/global.css`.
 - API routes validate and sanitise every input before calling Resend (or, later, the database).
 
 ### 2. Modularity
 
-- Copy and structured data live in `src/constants/` (`homeData.ts`, `socials.ts`, `navigation.ts`). Components import them and never hard-code content.
-- Shared TypeScript interfaces live in `src/types/` (for example `apply.ts`), so the API route and the browser use one definition.
+- Copy and structured data live in `src/constants/` (`site.ts`, `homeData.ts`, `results.ts`, `resultPhotos.ts`, `applyForm.ts`, `socials.ts`, `navigation.ts`). Components import them and never hard-code content.
+- Constants files that import images (`homeData.ts`, `resultPhotos.ts`) are server-only. Islands never import them; `.astro` files optimise the images and pass plain data down.
+- Components are grouped by feature: `layout/` (header, footer), `home/` (sections), `results/` and `apply/` (islands and their parts), `common/` (shared building blocks), `effects/` (decorative), `ui/` (shadcn primitives). `docs/ARCHITECTURE.md` has a "where do I change..." table; keep it current.
+- Shared TypeScript interfaces live in `src/types/` (for example `apply.ts`, `images.ts`, `results.ts`), so the API route and the browser use one definition.
 - The browser calls APIs only through typed helpers in `src/lib/api.ts`. Components never call `fetch` directly.
+- Validation rules live once, in `src/lib/apply/schema.ts`, and are used by both the form (through `zodResolver`) and the API route. Never write a second copy of a rule in a component.
+- Server logic depends on interfaces, not SDKs: `handleApplicationRequest` receives an `ApplicationNotifier`, and only `notifier.ts` knows about Resend. Keep API routes as thin wrappers so the logic stays unit-testable.
 
 ### 3. Theming and CSS
 
 - Colours, spacing and radii are CSS custom properties in `src/styles/theme.css`.
 - `@theme inline` in `theme.css` maps those variables to Tailwind utilities. A new token means a variable plus its mapping, then the utility in components.
 - No raw hex or rgb values in components. The one exception is inline styles in email HTML, which email clients require.
+- Type and spacing are fluid tokens (`text-display`, `text-title`, `text-subtitle`, `text-lead`, `px-gutter`, `pt-section`, `pb-section`), built from `clamp()` with `rem` plus `vw`. Use them instead of stacking breakpoint font sizes.
+- Mobile first: design at 360px, then add `md:` and `lg:` changes. Every flex row that holds a logo or long text next to a button needs `min-w-0` on the text side and `shrink-0` on the button side.
+- Form inputs are at least 16px (`text-base`) so iOS Safari does not zoom, and tap targets are at least 44px tall (48px or more for form controls).
+- Motion runs only under `motion-safe:` or `@media (prefers-reduced-motion: no-preference)`. Newer CSS (scroll-driven animations, `scroll-state` queries) is a progressive enhancement: the page must look complete without it.
 
 ### 4. Testing and quality
 
@@ -30,8 +40,8 @@ Ported from `GEMINI.md`, which stays as Gemini's copy. This section is the maint
 
 ### 5. DRY component design and SectionContainer
 
-- Every page section is wrapped in `SectionContainer` (`src/components/ui/SectionContainer.tsx`).
-- Layout behaviour is configured through its props, not rebuilt in each section: `maxWidth`, `spacing`, `paddingTop`, `animationVariant`, `as`, plus `className` for responsive tweaks. Use the presets first; pass explicit sizes only when no preset fits.
+- Every page section is wrapped in `SectionContainer` (`src/components/common/SectionContainer.tsx`).
+- Layout behaviour is configured through its props, not rebuilt in each section: `maxWidth`, `spacing`, `paddingTop`, `animationVariant` (`fade` or `slide` scroll reveal), `as`, plus `className` for responsive tweaks. Use the presets first; pass explicit sizes only when no preset fits.
 - When a section needs layout behaviour the container does not have, add a prop or preset to `SectionContainer` instead of wrapping it or repeating padding and width classes. A change there affects every section, so list the sections it touches and check each one.
 - Anything used twice becomes a component or a function. A page structure used twice becomes a layout in `src/layouts/`.
 
@@ -57,8 +67,11 @@ Astro 7, Tailwind 4, React 19, shadcn base-nova and Resend all changed recently,
 - Start feature work on a branch off `dev` (`git switch dev && git switch -c feature/<name>`), or in a worktree with `claude --worktree <name>`.
 - Before deleting or rewriting existing code, list what will be removed and wait for approval (contribution rule 3).
 - Do not write code comments. If something non-obvious needs a comment, tell the user where and what it should explain so they can write it in their own words.
-- Reuse `AchieveBtn`, `SectionTitle`, `QuoteCard`, `StepRow`, `AchieveImage` and the `ui/` primitives before creating new components.
-- For UI changes, run the dev server and check the page with the Playwright MCP tools (desktop and a 390px mobile viewport) before saying it looks right.
+- Reuse `AchieveBtn` (variants, sizes, `effect="shimmer"`), `SectionContainer`, `SectionTitle`, `QuoteCard`, `StepRow`, the `effects/` components and the `ui/` primitives before creating new components.
+- For UI effects, look at Magic UI (MIT, shadcn-compatible) first and prefer CSS-only components; record anything adapted in `THIRD_PARTY_NOTICES.md` and `src/components/effects/README.md`.
+- For UI changes, run the dev server and check the page with the Playwright MCP tools (desktop and a 390px mobile viewport) before saying it looks right. Also check that `document.documentElement.scrollWidth` equals the viewport width at 360px.
+- Check hydration on a production build (`npm run build`, then serve `.vercel/output/static`), not only in `astro dev`: some mismatches only appear after the build.
+- Do not turn on `astro-compress` HTML minification. It rewrites the text markers React uses for hydration (see `docs/ARCHITECTURE.md`).
 - When a fix reveals a rule the codebase was missing, add that rule to this file (or to `.claude/rules/`) in the same change.
 
 ### Project skills and agents
@@ -71,12 +84,9 @@ Astro 7, Tailwind 4, React 19, shadcn base-nova and Resend all changed recently,
 
 ## Clean-base backlog
 
-Work through these one at a time, in order, when the user says "go". Each fix lists any deletions for approval first, passes `npm run verify`, and is committed on its own. Afterwards remove the item from this list and record any new rule above.
+Work through these one at a time when the user says "go". Each fix lists any deletions for approval first, passes `npm run verify`, and is committed on its own. Afterwards remove the item from this list and record any new rule above.
 
-1. **Email HTML injection.** `src/pages/api/apply.ts` puts `first_name`, `last_name` and `email` into the notification HTML unescaped, and returns raw Resend and exception messages to the browser. Escape all user input in the template and return a generic error message.
-2. **Unoptimised images.** `AchieveImage` renders originals resolved through `import.meta.glob`, so the build ships about 65 MB of images, including a 19.7 MB PNG. Serve them through `astro:assets` with explicit sizes and modern formats.
-3. **Wrong `cn` import.** `src/components/ui/select.tsx` imports `cn` from the npm package `cn` instead of `@/lib/utils`. Fix the import, then remove the unused `cn` and `components` dependencies.
-4. **Dead code flagged by `astro check`.** Unused `AchieveBtn` imports in `ResultsMosaicSection.tsx` and `BaseLayout.astro`, unused `gmailIcon` in `src/constants/socials.ts` (which also has an uncommitted edit; leave that edit alone), and the deprecated `React.FormEvent` type in `ContactFormSection.tsx`.
-5. **No sitemap.** `astro.config.mjs` has no `site`, so `@astrojs/sitemap` skips generation. Set it to the production domain.
-6. **Line endings.** Add a `.gitattributes` (`* text=auto eol=lf`) and renormalise, so Windows and Linux tools agree. `ResultsMosaicSection.tsx` is currently stored with CRLF.
-7. **Possible leftover.** `src/template.html` (425 lines) is not imported anywhere. Ask whether it is still needed before removing it.
+1. **Dead import.** `src/constants/socials.ts` still imports `gmailIcon` without using it. The file also has an uncommitted edit on the user's machine; leave that edit alone and ask before touching the file.
+2. **Line endings.** Add a `.gitattributes` (`* text=auto eol=lf`) so Windows and Linux tools agree. Do it on a branch with a clean working tree, because changing line-ending rules can make Git report every file as modified until it is renormalised.
+3. **Possible leftover.** `src/template.html` (425 lines) is not imported anywhere. Ask whether it is still needed before removing it.
+4. **Large originals.** `src/assets/images/` holds about 65 MB of originals (one PNG is 19.7 MB). Visitors only get resized copies, but replacing the originals with 2400px JPEG or WebP masters would speed up clones and builds. Ask before replacing the client's photos.

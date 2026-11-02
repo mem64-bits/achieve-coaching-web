@@ -1,0 +1,50 @@
+.phone-field {
+    --react-international-phone-height: 3.25rem;
+    --react-international-phone-font-size: 1rem;
+    --react-international-phone-border-radius: 0.625rem;
+    --react-international-phone-background-color: var(--background);
+    --react-international-phone-text-color: var(--foreground);
+    --react-international-phone-border-color: var(--input);
+    --react-international-phone-country-selector-background-color: var(--bg-elevated);
+    --react-international-phone-country-selector-background-color-hover: var(--bg-muted);
+    --react-international-phone-country-selector-border-color: var(--input);
+    --react-international-phone-country-selector-arrow-color: var(--text-muted);
+    --react-international-phone-dropdown-item-background-color: var(--bg-surface);
+    --react-international-phone-dropdown-item-text-color: var(--foreground);
+    --react-international-phone-dropdown-item-dial-code-color: var(--text-muted);
+    --react-international-phone-selected-dropdown-item-background-color: var(--achieve-blue);
+    --react-international-phone-selected-dropdown-item-text-color: #ffffff;
+    --react-international-phone-selected-dropdown-item-dial-code-color: #ffffff;
+    --react-international-phone-dropdown-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    --react-international-phone-dropdown-item-height: 2.75rem;
+    --react-international-phone-dropdown-item-font-size: 1rem;
+    --react-international-phone-dropdown-preferred-list-divider-color: var(--border);
+}
+
+.phone-field .react-international-phone-input-container {
+    width: 100%;
+}
+
+.phone-field .react-international-phone-input {
+    flex: 1;
+    min-width: 0;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.phone-field .react-international-phone-input:focus {
+    outline: none;
+    border-color: var(--achieve-blue);
+    box-shadow: 0 0 0 1px var(--achieve-blue);
+}
+
+.phone-field[data-invalid="true"] .react-international-phone-input,
+.phone-field[data-invalid="true"] .react-international-phone-country-selector-button {
+    border-color: var(--danger);
+}
+
+.phone-field .react-international-phone-country-selector-dropdown {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    max-height: 18rem;
+    z-index: 50;
+}
