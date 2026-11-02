@@ -1,0 +1,48 @@
+:root {
+    --achieve-blue: #3d7bff;
+    --achieve-blue-glow: rgba(59, 67, 193, 0.4);
+
+    --bg-pure: #000000;
+    --bg-surface: #0a0a0f;
+    --bg-muted: #151624;
+
+    --text-primary: #ffffff;
+    --text-muted: #8b93a1;
+    --border-subtle: rgba(59, 67, 193, 0.2);
+
+    --background: var(--bg-pure);
+    --foreground: var(--text-primary);
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
+    --popover: var(--bg-surface);
+    --popover-foreground: var(--text-primary);
+    --primary: var(--achieve-blue);
+    --primary-foreground: #ffffff;
+    --secondary: var(--bg-muted);
+    --secondary-foreground: var(--text-primary);
+    --muted: var(--bg-muted);
+    --muted-foreground: var(--text-muted);
+    --accent: var(--achieve-blue);
+    --accent-foreground: #ffffff;
+    --border: var(--border-subtle);
+    --input: var(--border-subtle);
+    --ring: var(--achieve-blue);
+
+    --radius: 0.75rem;
+    --font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@theme inline {
+    --color-achieve-blue: var(--achieve-blue);
+    --color-achieve-glow: var(--achieve-blue-glow);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-border: var(--border);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --font-sans: var(--font-primary);
+    --font-heading: var(--font-primary);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+}
