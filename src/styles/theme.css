@@ -46,6 +46,7 @@
     --font-display-family: "Montserrat", var(--font-primary);
 
     --header-height: 4rem;
+    --header-subnav: 2.3rem;
     --page-gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
     --section-space: clamp(4rem, 2.75rem + 5.5vw, 8rem);
 }

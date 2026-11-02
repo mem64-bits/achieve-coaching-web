@@ -2,27 +2,12 @@
 import {Phone} from "lucide-react";
 import BrandLogo from "./BrandLogo.astro";
 import {SocialLinks} from "./SocialLinks";
-import {FOOTER_LINKS, SECTION_IDS, SITE} from "@constants/site";
+import {SECTION_IDS, SITE} from "@constants/site";
 import {SOCIAL_LINKS} from "@constants/socials";
 ---
 
 <footer class="mt-auto border-t border-white/5 bg-linear-to-t from-black via-card/40 to-transparent">
     <div class="mx-auto flex max-w-[1100px] flex-col items-center gap-10 px-gutter pt-14 pb-[max(2rem,env(safe-area-inset-bottom))]">
-        <nav aria-label="Footer">
-            <ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-                {FOOTER_LINKS.map((link) => (
-                    <li>
-                        <a
-                            href={link.href}
-                            class="inline-flex min-h-11 items-center font-display text-sm font-bold uppercase tracking-[0.12em] text-subtle transition-colors hover:text-achieve-blue"
-                        >
-                            {link.label}
-                        </a>
-                    </li>
-                ))}
-            </ul>
-        </nav>
-
         <div id={SECTION_IDS.contact} class="flex flex-col items-center gap-3">
             <h2 class="eyebrow flex items-center gap-2 text-muted-foreground">
                 <Phone aria-hidden="true" className="size-4 text-achieve-blue"/>
