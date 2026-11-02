@@ -22,5 +22,5 @@ This file defines the architectural principles, conventions, and modularity guid
 - **Type Checking & Build:** Always verify builds (`npm run build`) before finalizing changes.
 
 ## 5. DRY & Component Design Fundamentals (Section Containers)
-- **Reusable Section Containers:** All page sections should utilize the modular `SectionContainer` component (`src/components/ui/SectionContainer.tsx`).
+- **Reusable Section Containers:** All page sections should utilize the modular `SectionContainer` component (`src/components/common/SectionContainer.tsx`).
 - **Configurable Parameters (OOP Principles):** Encapsulate layout properties (such as max-width, spacing variables, animation hooks, and responsive mobile/desktop flex behavior) as props to ensure maintainability, easy edits, and strict adherence to the DRY principle (Don't Repeat Yourself).

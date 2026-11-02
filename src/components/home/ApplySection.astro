@@ -1,0 +1,38 @@
+---
+import ApplyForm from "@components/apply/ApplyForm";
+import {SectionContainer} from "@components/common/SectionContainer";
+import {SectionTitle} from "@components/common/SectionTitle";
+import {ShineBorder} from "@components/effects/ShineBorder";
+import {APPLY_FORM_COPY} from "@constants/applyForm";
+import {SOCIAL_LINKS} from "@constants/socials";
+
+const whatsApp = SOCIAL_LINKS.find((link) => link.label === "WhatsApp");
+---
+
+<SectionContainer id={APPLY_FORM_COPY.sectionId} maxWidth="narrow" spacing="relaxed" aria-labelledby="apply-title">
+    <SectionTitle
+        id="apply-title"
+        eyebrow={APPLY_FORM_COPY.eyebrow}
+        titleStart={APPLY_FORM_COPY.titleStart}
+        titleAccent={APPLY_FORM_COPY.titleAccent}
+        description={APPLY_FORM_COPY.intro}
+        align="center"
+    />
+
+    <ul class="mt-6 flex flex-wrap items-center justify-center gap-2">
+        {APPLY_FORM_COPY.trustPoints.map((point) => (
+            <li class="chip">{point}</li>
+        ))}
+    </ul>
+
+    <div class="relative mt-8 rounded-3xl border border-white/10 bg-card p-5 shadow-[0_30px_80px_-20px_var(--achieve-blue-glow)] sm:p-8">
+        <ShineBorder duration={12}/>
+        <ApplyForm client:visible={{rootMargin: "400px"}}/>
+        <noscript>
+            <p class="mt-4 text-sm text-muted-foreground">
+                This form needs JavaScript.
+                {whatsApp && <a class="text-achieve-blue underline" href={whatsApp.href}>Message us on WhatsApp</a>} instead.
+            </p>
+        </noscript>
+    </div>
+</SectionContainer>

@@ -1,0 +1,12 @@
+---
+import {Icon} from "astro-icon/components";
+import {SITE} from "@constants/site";
+
+interface Props {
+    class?: string;
+}
+
+const {class: className} = Astro.props;
+---
+
+<Icon name="achieve-coaching-logo" title={SITE.name} class:list={["brand-logo block h-auto w-full", className]}/>

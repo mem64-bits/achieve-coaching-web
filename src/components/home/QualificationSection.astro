@@ -1,0 +1,25 @@
+---
+import {AchieveBtn} from "@components/common/AchieveBtn";
+import {SectionContainer} from "@components/common/SectionContainer";
+import {SectionTitle} from "@components/common/SectionTitle";
+import {QUALIFICATION} from "@constants/homeData";
+import {SECTION_IDS} from "@constants/site";
+---
+
+<SectionContainer id={SECTION_IDS.qualification} maxWidth="narrow" animationVariant="slide" deferRender aria-labelledby="for-you-title">
+    <div class="surface relative isolate overflow-hidden p-6 sm:p-10">
+        <div aria-hidden="true" class="glow-backdrop absolute inset-0 -z-10"></div>
+        <SectionTitle id="for-you-title" titleStart={QUALIFICATION.titleStart} titleAccent={QUALIFICATION.titleAccent}/>
+        <ul class="mt-8 flex flex-col gap-4">
+            {QUALIFICATION.points.map((point) => (
+                <li class="flex items-start gap-4 text-lead text-subtle">
+                    <span aria-hidden="true" class="bullet-mark mt-[0.6em]"></span>
+                    <span>{point}</span>
+                </li>
+            ))}
+        </ul>
+        <AchieveBtn href={QUALIFICATION.ctaHref} variant="outline" size="lg" className="mt-9 w-full sm:w-auto">
+            {QUALIFICATION.ctaLabel}
+        </AchieveBtn>
+    </div>
+</SectionContainer>

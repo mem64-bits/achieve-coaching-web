@@ -1,14 +1,14 @@
-export interface ApplyRequestPayload {
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-    instagram?: string;
-    botcheck?: string | boolean;
-}
+import type {ApplicationField} from "@/lib/apply/schema";
+
+export type {
+    Application,
+    ApplicationField,
+    ApplicationInput,
+    ApplicationSubmission,
+} from "@/lib/apply/schema";
 
 export interface ApplyResponseData {
     success?: boolean;
     error?: string;
-    id?: string;
+    fieldErrors?: Partial<Record<ApplicationField, string>>;
 }
