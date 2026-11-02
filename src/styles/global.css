@@ -58,12 +58,6 @@
         box-shadow: inset 0 1px 0 var(--surface-sheen), 0 0 24px -8px var(--achieve-blue-glow);
     }
 
-    .eyebrow-pill::before {
-        content: "";
-        @apply size-1.5 shrink-0 rounded-full bg-achieve-blue;
-        box-shadow: 0 0 8px var(--achieve-blue);
-    }
-
     .chip {
         @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold text-subtle;
     }

@@ -26,7 +26,7 @@ export const RESULTS_SECTIONS: Record<ResultsPlacement, ResultsSectionCopy> = {
         eyebrow: "Client results",
         titleStart: "Real clients.",
         titleAccent: "Real results.",
-        hint: "Tap any photo to see it full screen.",
+        hint: "Tap any photo to see it fullscreen.",
     },
     more: {
         id: SECTION_IDS.transformations,
@@ -40,7 +40,7 @@ export const RESULTS_SECTIONS: Record<ResultsPlacement, ResultsSectionCopy> = {
 
 export const GALLERY_LABELS = {
     transformationBadge: "Before / After",
-    openPhoto: (position: number, total: number) => `Open full screen, photo ${position} of ${total}`,
+    openPhoto: (position: number, total: number) => `Open fullscreen, photo ${position} of ${total}`,
     previous: "Previous photo",
     next: "Next photo",
     close: "Close photo viewer",
