@@ -123,3 +123,69 @@ dialog.lightbox::backdrop {
     -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
 }
+
+.brand-loader__track {
+    stroke: var(--achieve-blue);
+    opacity: 0.22;
+}
+
+.brand-loader--idle .brand-loader__track {
+    display: none;
+}
+
+.brand-loader__ring {
+    stroke: var(--achieve-blue);
+    transform-origin: 50% 50%;
+    transform-box: view-box;
+}
+
+.brand-loader__disc {
+    fill: var(--bg-pure);
+    stroke: var(--achieve-blue);
+}
+
+.brand-loader__mark {
+    fill: #ffffff;
+}
+
+.brand-loader--loading svg {
+    filter: drop-shadow(0 0 6px var(--achieve-blue-glow)) drop-shadow(0 0 14px rgba(61, 123, 255, 0.35));
+}
+
+.brand-loader--idle .brand-loader__ring {
+    stroke: var(--border-strong);
+}
+
+.brand-loader--idle .brand-loader__disc {
+    fill: var(--bg-surface);
+    stroke: var(--border-strong);
+}
+
+.brand-loader--idle .brand-loader__mark {
+    fill: var(--text-muted);
+    opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    @keyframes brand-loader-spin {
+        to {
+            rotate: 360deg;
+        }
+    }
+
+    .brand-loader--loading .brand-loader__ring {
+        animation: brand-loader-spin 1.6s linear infinite;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    @keyframes brand-loader-pulse {
+        50% {
+            opacity: 0.45;
+        }
+    }
+
+    .brand-loader--loading .brand-loader__ring {
+        animation: brand-loader-pulse 2s ease-in-out infinite;
+    }
+}

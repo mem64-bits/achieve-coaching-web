@@ -3,6 +3,7 @@ import {A11y, Keyboard, Zoom} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
 import "swiper/css";
 import "swiper/css/zoom";
+import {BrandLoader} from "@/components/common/BrandLoader";
 import {ResponsivePicture} from "@/components/common/ResponsivePicture";
 import type {GalleryPhoto} from "@/types/results";
 
@@ -35,6 +36,7 @@ export default function LightboxSwiper({
             keyboard={{enabled: true}}
             a11y={{enabled: true, containerRoleDescriptionMessage: "photo viewer", itemRoleDescriptionMessage: "photo"}}
             lazyPreloadPrevNext={1}
+            lazyPreloaderClass="lightbox-preloader"
             onSwiper={onReady}
             onSlideChange={(swiper) => onIndexChange(swiper.activeIndex)}
             onClick={(_swiper, event) => {
@@ -54,7 +56,9 @@ export default function LightboxSwiper({
                             className="h-auto max-h-full w-auto max-w-full rounded-xl object-contain shadow-2xl"
                         />
                     </div>
-                    <div className="swiper-lazy-preloader swiper-lazy-preloader-white"/>
+                    <div className="lightbox-preloader pointer-events-none absolute inset-0 -z-10 grid place-items-center">
+                        <BrandLoader className="size-16"/>
+                    </div>
                 </SwiperSlide>
             ))}
         </Swiper>

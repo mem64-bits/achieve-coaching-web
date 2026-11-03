@@ -72,6 +72,7 @@ Astro 7, Tailwind 4, React 19, shadcn base-nova and Resend all changed recently,
 - For UI changes, run the dev server and check the page with the Playwright MCP tools (desktop and a 390px mobile viewport) before saying it looks right. Also check that `document.documentElement.scrollWidth` equals the viewport width at 360px.
 - Check hydration on a production build (`npm run build`, then serve `.vercel/output/static`), not only in `astro dev`: some mismatches only appear after the build.
 - Heavy client libraries load on demand with `React.lazy` or `import()` (Swiper only loads when the photo viewer opens). Do not add one to an island's main bundle without measuring the gzipped size first.
+- Loading and broken-image states use `BrandLoader` (`state="loading"` or `"idle"`); do not add other spinners.
 - Section sub-headings use the `eyebrow-pill` class, list bullets use `bullet-mark`, and short highlights use `chip`. Reuse them instead of adding tick icons.
 - Do not turn on `astro-compress` HTML minification. It rewrites the text markers React uses for hydration (see `docs/ARCHITECTURE.md`).
 - When a fix reveals a rule the codebase was missing, add that rule to this file (or to `.claude/rules/`) in the same change.

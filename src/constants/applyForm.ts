@@ -22,6 +22,7 @@ export const APPLY_FORM_COPY = {
     actions: {
         submit: "Send application",
         submitting: "Sending...",
+        submittingStatus: "Sending your application",
     },
     countryPicker: {
         title: "Choose your country code",

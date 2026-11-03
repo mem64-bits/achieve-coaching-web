@@ -81,6 +81,12 @@ index.html (prerendered, static)
 - The first build after changing image settings takes about two and a half minutes because AVIF encoding is slow. Astro caches the results in `node_modules/.astro`, so later builds take seconds.
 - The hero image is the only image with `fetchpriority="high"` and `loading="eager"`. Everything else is lazy.
 
+## Loading states
+
+- `BrandLoader` (`src/components/common/BrandLoader.tsx`) is the one loading indicator: the white A in a blue-outlined circle with a ring of dots. `state="loading"` spins a bright arc of dots and glows; `state="idle"` is the grey, still version.
+- Used for: the form while it sends, the photo viewer while Swiper or a photo loads, and in place of any photo that fails to load (grey logo over the blurred placeholder, so the card keeps its size).
+- Styles live in `src/styles/effects.css` (`.brand-loader*`). With reduced motion the ring gently pulses instead of spinning.
+
 ## Full-screen photo viewer
 
 - The strip on the page is plain CSS scroll snapping: the phone's own swipe, no JavaScript.
