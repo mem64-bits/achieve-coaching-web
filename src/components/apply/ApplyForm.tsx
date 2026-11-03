@@ -84,7 +84,7 @@ export default function ApplyForm() {
                 </div>
             )}
 
-            <AchieveBtn type="submit" size="lg" fullWidth disabled={isSubmitting} effect="shimmer">
+            <AchieveBtn type="submit" size="lg" fullWidth disabled={isSubmitting}>
                 {isSubmitting ? APPLY_FORM_COPY.actions.submitting : APPLY_FORM_COPY.actions.submit}
             </AchieveBtn>
         </form>

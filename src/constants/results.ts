@@ -13,6 +13,7 @@ export interface ResultsSectionCopy {
     titleAccent: string;
     hint: string;
     testimonialsTitle: string;
+    testimonialsId: string;
 }
 
 export const RESULTS_SECTION: ResultsSectionCopy = {
@@ -20,8 +21,9 @@ export const RESULTS_SECTION: ResultsSectionCopy = {
     eyebrow: "Client results",
     titleStart: "Real clients.",
     titleAccent: "Real results.",
-    hint: "Swipe through, or tap any photo to see it fullscreen.",
+    hint: "Tap any photo to see it fullscreen.",
     testimonialsTitle: "In their words",
+    testimonialsId: SECTION_IDS.reviews,
 };
 
 export const GALLERY_LABELS = {

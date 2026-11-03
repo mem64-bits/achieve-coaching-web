@@ -28,18 +28,18 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
             <ul
                 ref={trackRef}
                 style={{"--first-ar": photos[0]?.aspectRatio ?? 1, "--last-ar": photos.at(-1)?.aspectRatio ?? 1} as CSSProperties}
-                className="snap-row -mx-gutter pb-2 [--thumb-h:min(58svh,26rem)] ps-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--first-ar)/2))] pe-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--last-ar)/2))] md:[--thumb-h:30rem] lg:mx-0 lg:block lg:columns-3 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
+                className="snap-row -mx-gutter pb-2 [--thumb-h:min(58svh,26rem)] ps-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--first-ar)/2))] pe-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--last-ar)/2))] md:[--thumb-h:30rem] lg:mx-0 lg:flex-wrap lg:justify-center lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0 lg:[--thumb-h:20rem]"
             >
                 {photos.map((photo, index) => (
-                    <li key={photo.id} className="shrink-0 lg:mb-4 lg:break-inside-avoid">
+                    <li key={photo.id} className="shrink-0">
                         <button
                             type="button"
                             onClick={() => setOpenIndex(index)}
-                            className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-card transition-[border-color,box-shadow] duration-300 hover:border-achieve-blue/60 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] lg:w-full"
+                            className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-card transition-[border-color,box-shadow] duration-300 hover:border-achieve-blue/60 hover:shadow-[0_0_30px_var(--achieve-blue-glow)]"
                         >
                             <ResponsivePicture
                                 image={photo.thumb}
-                                className="block h-(--thumb-h) w-auto max-w-none object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none lg:h-auto lg:w-full lg:max-w-full"
+                                className="block h-(--thumb-h) w-auto max-w-none object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none"
                             />
                             <span className="sr-only">{GALLERY_LABELS.openPhoto(index + 1, photos.length)}</span>
                             {photo.kind === "transformation" && (
