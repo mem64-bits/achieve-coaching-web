@@ -54,9 +54,9 @@ export const TESTIMONIALS: Testimonial[] = [
         name: "Y.Rey",
         age: 43,
     },
-    {
-        quote: "Since we started working together I’m seeing, and feeling, a difference in all my limbs, so I’m very motivated to do better! Very happy.",
-        name: "Client",
-        age: 30,
-    },
+    // {
+    //     quote: "Since we started working together I’m seeing, and feeling, a difference in all my limbs, so I’m very motivated to do better! Very happy.",
+    //     name: "Client",
+    //     age: 30,
+    // },
 ];

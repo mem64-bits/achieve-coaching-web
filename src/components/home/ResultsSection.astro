@@ -75,10 +75,10 @@ const photos: GalleryPhoto[] = await Promise.all(
             <ul
                 tabindex="0"
                 aria-label={`${copy.testimonialsTitle} ${copy.testimonialsAccent}`}
-                class="snap-row -mx-gutter items-start px-gutter pb-2 lg:mx-auto lg:grid lg:max-w-[56rem] lg:grid-cols-2 lg:items-stretch lg:gap-5 lg:overflow-visible lg:px-0"
+                class="snap-row -mx-gutter items-start px-gutter pb-2 lg:mx-auto lg:max-w-[72rem] lg:items-stretch lg:gap-5 lg:overflow-visible lg:px-0"
             >
                 {testimonials.map((testimonial) => (
-                    <li class="w-[85%] max-w-[22rem] shrink-0 lg:w-auto lg:max-w-none">
+                    <li class="w-[85%] max-w-[22rem] shrink-0 lg:w-auto lg:max-w-none lg:flex-1">
                         <QuoteCard {...testimonial}/>
                     </li>
                 ))}
