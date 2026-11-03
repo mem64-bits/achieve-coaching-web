@@ -50,7 +50,8 @@ index.html (prerendered, static)
 | Testimonials ("In their words") and gallery wording | `src/constants/results.ts` (`TESTIMONIALS`, `RESULTS_SECTION`) |
 | Country search behaviour in the phone field | `src/lib/apply/countrySearch.ts` (tested in `__tests__/countrySearch.test.ts`) |
 | Favicon or Google/WhatsApp preview | `public/favicon.*`, `public/icon-*.png`, and the `<head>` plus structured data in `src/layouts/BaseLayout.astro` |
-| Logo sheen and glow, header depth, scroll progress line | `src/components/layout/BrandLogoDefs.astro` and `src/styles/effects.css` |
+| Logo sheen and glow, header depth, scroll progress line | `src/components/layout/BrandLogoDefs.astro` (metal gradient) and `src/styles/effects.css` (raised edge, shine sweep) |
+| Header section links and the lamp over the current one | `HEADER_LINKS` in `src/constants/site.ts`; lamp styles under "Tubelight nav" in `src/styles/effects.css`; tracking in `src/lib/navigation/SectionSpy.ts` |
 | Form wording | `src/constants/applyForm.ts` |
 | What counts as a valid name, phone, email or social handle | `src/lib/apply/schema.ts` (and its tests in `src/lib/apply/__tests__/`) |
 | The email the coach receives | `src/lib/apply/notificationEmail.ts` |
@@ -147,6 +148,8 @@ Visual extras use modern CSS when the browser supports it and fall back to a pla
 | Native `<dialog>` for the photo viewer | `Lightbox.tsx` | Baseline in all current browsers. Tapping the dark space around a photo closes it on every browser, including Safari, which lacks `closedby`. |
 | Scroll containment under the open viewer | `effects.css` | The page is still inert behind the dialog; it can just scroll a little on some browsers. |
 | Shimmer and shine effects | `components/effects/` | Static button and border under `prefers-reduced-motion`. |
+| Current-section lamp in the header (`scroll-target-group`, `:target-current`) | `effects.css`, `SectionSpy.ts` | Chrome and Edge track sections natively; elsewhere `SectionSpy` uses an `IntersectionObserver` and adds the `target-current` class. Both paths set `aria-current`. A hidden `#top` link in each nav keeps the lamp off while the hero is showing. |
+| Logo shine sweep and header button border beam | `effects.css` (`.brand-logo__shine`, `.border-beam`) | Each runs once (the beam three laps) after load, then rests. Off for reduced motion. |
 
 ## Checks
 

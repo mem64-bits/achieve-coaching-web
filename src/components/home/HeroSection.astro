@@ -1,4 +1,5 @@
 ---
+import {SECTION_IDS} from "@constants/site";
 import {Picture} from "astro:assets";
 import {ArrowDown} from "lucide-react";
 import {AchieveBtn} from "@components/common/AchieveBtn";
@@ -6,7 +7,7 @@ import {SectionContainer} from "@components/common/SectionContainer";
 import {HERO_CONTENT} from "@constants/homeData";
 ---
 
-<section class="relative isolate overflow-hidden" aria-labelledby="hero-title">
+<section id={SECTION_IDS.top} class="relative isolate overflow-hidden" aria-labelledby="hero-title">
     <div aria-hidden="true" class="glow-backdrop absolute inset-0 -z-10"></div>
     <div aria-hidden="true" class="grid-backdrop absolute inset-0 -z-10"></div>
 

@@ -37,7 +37,7 @@ type ButtonVariantProps = VariantProps<typeof achieveButtonVariants>;
 interface SharedProps extends ButtonVariantProps {
     children: ReactNode;
     className?: string;
-    effect?: "none" | "shimmer";
+    effect?: "none" | "shimmer" | "beam";
 }
 
 interface LinkButtonProps extends SharedProps {
@@ -65,10 +65,12 @@ export function AchieveBtn({
     fullWidth,
     ...rest
 }: AchieveBtnProps) {
-    const classes = cn(achieveButtonVariants({variant, size, fullWidth}), effect === "shimmer" && "overflow-hidden", className);
+    const classes = cn(achieveButtonVariants({variant, size, fullWidth}), effect !== "none" && "overflow-hidden", className);
     const content = (
         <>
             {effect === "shimmer" && <ShimmerLayers/>}
+            {/* A short run of light around the edge; styles in effects.css. */}
+            {effect === "beam" && <span aria-hidden="true" className="border-beam"/>}
             {children}
         </>
     );

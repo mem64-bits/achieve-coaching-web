@@ -1,12 +1,22 @@
 ---
 import {Icon} from "astro-icon/components";
 import {SITE} from "@constants/site";
+import logoShapeUrl from "../../icons/achieve-coaching-logo.svg?url";
 
 interface Props {
     class?: string;
+    // Sweeps a single streak of light across the logo on load and on hover.
+    shine?: boolean;
 }
 
-const {class: className} = Astro.props;
+const {class: className, shine = false} = Astro.props;
 ---
 
-<Icon name="achieve-coaching-logo" title={SITE.name} class:list={["brand-logo block h-auto w-full", className]}/>
+{shine ? (
+    <span class:list={["brand-logo-frame relative block", className]} style={`--brand-logo-shape: url("${logoShapeUrl}")`}>
+        <Icon name="achieve-coaching-logo" title={SITE.name} class="brand-logo block h-auto w-full"/>
+        <span aria-hidden="true" class="brand-logo__shine"></span>
+    </span>
+) : (
+    <Icon name="achieve-coaching-logo" title={SITE.name} class:list={["brand-logo block h-auto w-full", className]}/>
+)}
