@@ -49,8 +49,8 @@ export function Lightbox({photos, openIndex, onClose}: LightboxProps) {
         >
             {isOpen && (
                 <div className="flex h-full flex-col animate-in fade-in-0 duration-200 motion-reduce:animate-none">
-                    <div className="flex items-center justify-between gap-4 px-gutter pt-[max(1rem,env(safe-area-inset-top))]">
-                        <p className="font-display text-sm font-bold tracking-[0.2em] text-subtle" aria-live="polite">
+                    <div className="flex items-center justify-end gap-4 px-gutter pt-[max(1rem,env(safe-area-inset-top))]">
+                        <p className="sr-only" aria-live="polite">
                             {GALLERY_LABELS.counter(activeIndex + 1, photos.length)}
                         </p>
                         <button type="button" autoFocus onClick={close} aria-label={GALLERY_LABELS.close} className={iconButton}>
@@ -83,9 +83,6 @@ export function Lightbox({photos, openIndex, onClose}: LightboxProps) {
                         >
                             <ChevronLeft aria-hidden="true" className="size-6"/>
                         </button>
-                        <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                            {GALLERY_LABELS.zoomHint}
-                        </span>
                         <button
                             type="button"
                             onClick={() => swiperRef.current?.slideNext()}
