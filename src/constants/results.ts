@@ -35,7 +35,6 @@ export const GALLERY_LABELS = {
     close: "Close photo viewer",
     dialogLabel: "Client results photo viewer",
     counter: (position: number, total: number) => `${position} / ${total}`,
-    zoomHint: "Pinch or double-tap to zoom",
 };
 
 export const TESTIMONIALS: Testimonial[] = [
