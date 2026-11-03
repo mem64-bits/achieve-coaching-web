@@ -4,7 +4,6 @@ import {parseSocialProfile} from "../social";
 import {applicationSchema, VALIDATION_MESSAGES} from "../schema";
 
 const validApplication = {
-    goal: "lose-fat",
     name: "Alex Murphy",
     social: "@alex.murphy",
     phone: "+353 87 123 4567",
@@ -85,9 +84,8 @@ describe("applicationSchema", () => {
     });
 
     it("returns a friendly message for each invalid field", () => {
-        const result = applicationSchema.safeParse({goal: "nope", name: "", social: "!!", phone: "12", email: "x@y"});
+        const result = applicationSchema.safeParse({name: "", social: "!!", phone: "12", email: "x@y"});
         const messages = result.error?.issues.map((issue) => issue.message) ?? [];
-        expect(messages).toContain(VALIDATION_MESSAGES.goal);
         expect(messages).toContain(VALIDATION_MESSAGES.nameRequired);
         expect(messages).toContain(VALIDATION_MESSAGES.social);
         expect(messages).toContain(VALIDATION_MESSAGES.phone);

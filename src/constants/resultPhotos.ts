@@ -31,13 +31,13 @@ export interface ResultPhoto {
 }
 
 export const RESULT_PHOTOS: ResultPhoto[] = [
+    {image: image20, kind: "transformation", alt: "Client before and after coaching, front view"},
+    {image: image9, kind: "transformation", alt: "Client progress in three mirror photos"},
     {image: image3, kind: "transformation", alt: "Client before and after coaching, front view"},
     {image: image16, kind: "transformation", alt: "Client before and after coaching, front view in the gym"},
     {image: image4, kind: "transformation", alt: "Client before and after coaching, showing major fat loss"},
-    {image: image20, kind: "transformation", alt: "Client before and after coaching, front view"},
     {image: image22, kind: "transformation", alt: "Client before and after coaching, back view"},
     {image: image11, kind: "transformation", alt: "Client before and after coaching, front view"},
-    {image: image9, kind: "transformation", alt: "Client progress in three mirror photos"},
     {image: image19, kind: "transformation", alt: "Client before and after coaching, mirror photo"},
     {image: image23, kind: "transformation", alt: "Client before and after coaching, side view"},
     {image: image8, kind: "transformation", alt: "Client before and after coaching, front view"},

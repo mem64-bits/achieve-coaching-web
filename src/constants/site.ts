@@ -12,6 +12,7 @@ export const SITE = {
 
 export const SECTION_IDS = {
     results: "results",
+    reviews: "reviews",
     transformations: "transformations",
     qualification: "for-you",
     process: "process",
@@ -20,8 +21,8 @@ export const SECTION_IDS = {
 } as const;
 
 export const HEADER_LINKS = [
-    {label: "Transformations", shortLabel: "Results", href: `#${SECTION_IDS.transformations}`},
-    {label: "How it works", shortLabel: "How it works", href: `#${SECTION_IDS.process}`},
+    {label: "Transformations", shortLabel: "Results", href: `#${SECTION_IDS.results}`},
+    {label: "Reviews", shortLabel: "Reviews", href: `#${SECTION_IDS.reviews}`},
     {label: "Contact us", shortLabel: "Contact", href: `#${SECTION_IDS.contact}`},
 ] as const;
 

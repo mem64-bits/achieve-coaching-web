@@ -34,3 +34,5 @@ repomix-output.xml
 .claude/.cache/
 .claude/worktrees/
 CLAUDE.local.md
+
+.playwright-mcp/

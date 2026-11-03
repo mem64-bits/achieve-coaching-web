@@ -5,6 +5,7 @@ export type ResultKind = "transformation" | "moment";
 export interface GalleryPhoto {
     id: string;
     kind: ResultKind;
+    aspectRatio: number;
     thumb: ResponsiveImage;
     full: ResponsiveImage;
 }
