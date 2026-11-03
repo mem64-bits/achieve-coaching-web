@@ -1,12 +1,9 @@
 import {SECTION_IDS} from "./site";
 
-export type ResultsPlacement = "featured" | "more";
-
 export interface Testimonial {
     quote: string;
     name: string;
     age?: number;
-    placement: ResultsPlacement;
 }
 
 export interface ResultsSectionCopy {
@@ -15,27 +12,16 @@ export interface ResultsSectionCopy {
     titleStart: string;
     titleAccent: string;
     hint: string;
-    testimonialsTitle?: string;
+    testimonialsTitle: string;
 }
 
-export const FEATURED_RESULTS_COUNT = 3;
-
-export const RESULTS_SECTIONS: Record<ResultsPlacement, ResultsSectionCopy> = {
-    featured: {
-        id: SECTION_IDS.results,
-        eyebrow: "Client results",
-        titleStart: "Real clients.",
-        titleAccent: "Real results.",
-        hint: "Tap any photo to see it fullscreen.",
-    },
-    more: {
-        id: SECTION_IDS.transformations,
-        eyebrow: "More results",
-        titleStart: "More client",
-        titleAccent: "results.",
-        hint: "Swipe or tap through the rest of the results.",
-        testimonialsTitle: "In their words",
-    },
+export const RESULTS_SECTION: ResultsSectionCopy = {
+    id: SECTION_IDS.results,
+    eyebrow: "Client results",
+    titleStart: "Real clients.",
+    titleAccent: "Real results.",
+    hint: "Swipe through, or tap any photo to see it fullscreen.",
+    testimonialsTitle: "In their words",
 };
 
 export const GALLERY_LABELS = {
@@ -54,18 +40,20 @@ export const TESTIMONIALS: Testimonial[] = [
         quote: "I’ve seen more progress in these 4 months than I did over the last ten years on my own.",
         name: "Maneesh",
         age: 36,
-        placement: "featured",
     },
     {
         quote: "I could clearly feel I was stronger, more energetic and fitter overall. Highly recommend if you want to fall in love with the gym 🙂",
         name: "Sofya T.",
         age: 29,
-        placement: "more",
     },
     {
         quote: "After not seeing much progress for a while, Bobby helped me see improvements again. He created a new training program and diet tailored to my schedule. he’s always great at motivating me to push harder. Over the 3 months , I significantly reduced my body fat and increased muscle.",
         name: "Y.Rey",
         age: 43,
-        placement: "more",
+    },
+    {
+        quote: "Thanks Bobby! Honestly, since we started working together I’m seeing, and feeling, a difference in all my limbs, so I’m very motivated to do better! My abs have appeared too. I’m motivated to keep adding muscle mass everywhere, including legs and glutes. Very happy.",
+        name: "Client",
+        age: 30,
     },
 ];

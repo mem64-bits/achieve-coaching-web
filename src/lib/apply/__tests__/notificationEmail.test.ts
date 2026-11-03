@@ -4,7 +4,6 @@ import {buildNotificationEmail} from "../notificationEmail";
 import type {Application} from "../schema";
 
 const application: Application = {
-    goal: "recomposition",
     name: "Seán O'Brien",
     social: "linkedin.com/in/sean-obrien",
     phone: "+353 87 123 4567",
@@ -21,12 +20,11 @@ describe("buildNotificationEmail", () => {
     it("includes every detail in both the HTML and plain-text versions", () => {
         const email = buildNotificationEmail(application);
 
-        expect(email.subject).toBe("New Achieve Coaching client: Seán O'Brien (Both)");
-        expect(email.html).toContain("wants to <span style=\"color: #3D7BFF;\">lose fat and build muscle.</span>");
+        expect(email.subject).toBe("New Achieve Coaching client: Seán O'Brien");
+        expect(email.html).toContain("wants to <span style=\"color: #3D7BFF;\">start coaching.</span>");
         expect(email.html).toContain("Seán O&#39;Brien");
         expect(email.html).toContain("https://wa.me/353871234567");
         expect(email.html).toContain("https://www.linkedin.com/in/sean-obrien");
-        expect(email.text).toContain("Goal: Both (Lose fat and build muscle together)");
         expect(email.text).toContain("LinkedIn: https://www.linkedin.com/in/sean-obrien");
         expect(email.text).toContain("WhatsApp: +353 87 123 4567");
     });
@@ -38,13 +36,11 @@ describe("buildNotificationEmail", () => {
         expect(email.html).toContain("&quot;onmouseover=&quot;");
     });
 
-    it("lists every goal and marks the one the client picked", () => {
+    it("no longer mentions goals, which the form stopped asking for", () => {
         const email = buildNotificationEmail(application);
 
-        for (const label of ["Get lean", "Build muscle", "Both", "Feel fitter"]) {
-            expect(email.html).toContain(label);
-        }
-        expect(email.html.match(/Their goal/g)).toHaveLength(1);
+        expect(email.html).not.toMatch(/goal/i);
+        expect(email.text).not.toMatch(/goal/i);
     });
 
     it("stamps the time the application arrived in Irish time", () => {

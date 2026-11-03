@@ -20,8 +20,7 @@ export const SECTION_IDS = {
 } as const;
 
 export const HEADER_LINKS = [
-    {label: "Transformations", shortLabel: "Results", href: `#${SECTION_IDS.transformations}`},
-    {label: "How it works", shortLabel: "How it works", href: `#${SECTION_IDS.process}`},
+    {label: "Transformations", shortLabel: "Results", href: `#${SECTION_IDS.results}`},
     {label: "Contact us", shortLabel: "Contact", href: `#${SECTION_IDS.contact}`},
 ] as const;
 

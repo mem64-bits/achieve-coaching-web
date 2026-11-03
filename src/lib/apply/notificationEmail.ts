@@ -1,4 +1,3 @@
-import {GOAL_IDS, GOAL_OPTIONS, type GoalId} from "@/constants/applyForm";
 import {SITE} from "@/constants/site";
 import {escapeHtml} from "@/lib/html";
 import {normalizePhone, whatsAppLink} from "./phone";
@@ -74,42 +73,6 @@ function buildRows(application: Application, receivedAt: string): DetailRow[] {
     ];
 }
 
-function goalText(goal: GoalId): string {
-    const option = GOAL_OPTIONS[goal];
-    return `${option.label} (${option.description})`;
-}
-
-function renderGoalList(selected: GoalId): string {
-    return GOAL_IDS.map((goalId) => {
-        const option = GOAL_OPTIONS[goalId];
-        const isSelected = goalId === selected;
-        const border = isSelected ? EMAIL.accent : EMAIL.border;
-        const background = isSelected ? "#0E1A38" : EMAIL.panel;
-        const marker = isSelected
-            ? `<span style="display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: ${EMAIL.accent};"></span>`
-            : `<span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; border: 1px solid ${EMAIL.muted};"></span>`;
-        const tag = isSelected
-            ? `<span style="float: right; font-size: 11px; font-weight: bold; letter-spacing: 0.12em; text-transform: uppercase; color: ${EMAIL.accent};">Their goal</span>`
-            : "";
-
-        return `
-            <tr>
-                <td style="padding: 0 0 8px 0;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid ${border}; border-radius: 10px; background: ${background};">
-                        <tr>
-                            <td width="28" valign="top" style="padding: 14px 0 14px 16px;">${marker}</td>
-                            <td style="padding: 12px 16px 12px 8px; font-family: ${EMAIL.fontBody};">
-                                ${tag}
-                                <div style="font-size: 15px; font-weight: bold; color: ${isSelected ? EMAIL.text : EMAIL.muted};">${escapeHtml(option.label)}</div>
-                                <div style="font-size: 13px; color: ${EMAIL.muted}; padding-top: 2px;">${escapeHtml(option.description)}</div>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>`;
-    }).join("");
-}
-
 function renderDetailRows(rows: DetailRow[]): string {
     return rows
         .map(
@@ -136,7 +99,6 @@ function button(href: string, label: string, background: string): string {
 function renderHtml(application: Application, rows: DetailRow[], whatsAppUrl: string | null, preheader: string): string {
     const firstName = application.name.split(" ")[0];
     const logoUrl = new URL(EMAIL.logoPath, SITE.url).href;
-    const goal = GOAL_OPTIONS[application.goal];
     const buttons = [
         whatsAppUrl ? button(whatsAppUrl, `Message ${firstName} on WhatsApp →`, EMAIL.button) : "",
         button(`mailto:${application.email}`, "Reply by email", EMAIL.panel),
@@ -164,23 +126,12 @@ function renderHtml(application: Application, rows: DetailRow[], whatsAppUrl: st
                     </tr>
                     <tr>
                         <td style="padding: 28px 32px 8px 32px; font-family: ${EMAIL.fontDisplay}; font-size: 30px; line-height: 1.15; font-weight: 900; color: ${EMAIL.text};">
-                            ${escapeHtml(firstName)} wants to <span style="color: ${EMAIL.accent};">${escapeHtml(goal.aim)}.</span>
+                            ${escapeHtml(firstName)} wants to <span style="color: ${EMAIL.accent};">start coaching.</span>
                         </td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 32px 24px 32px; font-family: ${EMAIL.fontBody}; font-size: 16px; line-height: 1.6; color: #D5D9E0;">
                             A new application just came in through the website. Here's what they told you.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 0 32px 8px 32px; font-family: ${EMAIL.fontBody}; font-size: 12px; font-weight: bold; letter-spacing: 0.16em; text-transform: uppercase; color: ${EMAIL.accent};">
-                            Goals
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 4px 32px 16px 32px;">
-                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${renderGoalList(application.goal)}
-                            </table>
                         </td>
                     </tr>
                     <tr>
@@ -217,11 +168,10 @@ function renderHtml(application: Application, rows: DetailRow[], whatsAppUrl: st
 </html>`;
 }
 
-function renderText(application: Application, rows: DetailRow[], whatsAppUrl: string | null): string {
+function renderText(rows: DetailRow[], whatsAppUrl: string | null): string {
     const lines = [
         `New ${SITE.name} application`,
         "",
-        `Goal: ${goalText(application.goal)}`,
         ...rows.map((row) => `${row.label}: ${row.text}`),
     ];
     if (whatsAppUrl) {
@@ -235,12 +185,11 @@ export function buildNotificationEmail(application: Application, options: Notifi
     const rows = buildRows(application, receivedAt);
     const phone = normalizePhone(application.phone);
     const whatsAppUrl = phone ? whatsAppLink(phone) : null;
-    const goal = GOAL_OPTIONS[application.goal];
-    const preheader = `${goal.label} · ${phone?.display ?? application.phone}`;
+    const preheader = `${phone?.display ?? application.phone} · ${application.email}`;
 
     return {
-        subject: `New ${SITE.name} client: ${application.name} (${goal.label})`,
+        subject: `New ${SITE.name} client: ${application.name}`,
         html: renderHtml(application, rows, whatsAppUrl, preheader),
-        text: renderText(application, rows, whatsAppUrl),
+        text: renderText(rows, whatsAppUrl),
     };
 }

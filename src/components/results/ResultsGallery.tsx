@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {useRef, useState, type CSSProperties} from "react";
 import {ChevronLeft, ChevronRight, Expand} from "lucide-react";
 import {GALLERY_LABELS} from "@constants/results";
 import type {GalleryPhoto} from "@/types/results";
@@ -27,7 +27,8 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
         <div>
             <ul
                 ref={trackRef}
-                className="snap-row -mx-gutter px-gutter pb-2 lg:mx-0 lg:block lg:columns-3 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
+                style={{"--first-ar": photos[0]?.aspectRatio ?? 1, "--last-ar": photos.at(-1)?.aspectRatio ?? 1} as CSSProperties}
+                className="snap-row -mx-gutter pb-2 [--thumb-h:min(58svh,26rem)] ps-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--first-ar)/2))] pe-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--last-ar)/2))] md:[--thumb-h:30rem] lg:mx-0 lg:block lg:columns-3 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
             >
                 {photos.map((photo, index) => (
                     <li key={photo.id} className="shrink-0 lg:mb-4 lg:break-inside-avoid">
@@ -38,7 +39,7 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
                         >
                             <ResponsivePicture
                                 image={photo.thumb}
-                                className="block h-[min(58svh,26rem)] w-auto max-w-none object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none md:h-[30rem] lg:h-auto lg:w-full lg:max-w-full"
+                                className="block h-(--thumb-h) w-auto max-w-none object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none lg:h-auto lg:w-full lg:max-w-full"
                             />
                             <span className="sr-only">{GALLERY_LABELS.openPhoto(index + 1, photos.length)}</span>
                             {photo.kind === "transformation" && (

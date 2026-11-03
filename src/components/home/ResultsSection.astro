@@ -4,33 +4,24 @@ import {SectionTitle} from "@components/common/SectionTitle";
 import ResultsGallery from "@components/results/ResultsGallery";
 import {QuoteCard} from "./QuoteCard";
 import {RESULT_PHOTOS} from "@constants/resultPhotos";
-import {FEATURED_RESULTS_COUNT, RESULTS_SECTIONS, TESTIMONIALS, type ResultsPlacement} from "@constants/results";
+import {RESULTS_SECTION as copy, TESTIMONIALS as testimonials} from "@constants/results";
 import {toResponsiveImage} from "@/lib/images";
 import type {GalleryPhoto} from "@/types/results";
 
-interface Props {
-    placement: ResultsPlacement;
-}
-
-const {placement} = Astro.props;
-const copy = RESULTS_SECTIONS[placement];
 const titleId = `${copy.id}-title`;
 
 const THUMB_HEIGHT = 480;
 const THUMB_WIDTHS = [320, 480, 720];
 const FULL_WIDTHS = [720, 1080, 1440];
 
-const sectionPhotos =
-    placement === "featured" ? RESULT_PHOTOS.slice(0, FEATURED_RESULTS_COUNT) : RESULT_PHOTOS.slice(FEATURED_RESULTS_COUNT);
-const testimonials = TESTIMONIALS.filter((testimonial) => testimonial.placement === placement);
-
 const photos: GalleryPhoto[] = await Promise.all(
-    sectionPhotos.map(async (photo, index) => {
+    RESULT_PHOTOS.map(async (photo, index) => {
         const aspectRatio = photo.image.width / photo.image.height;
         const mobileWidth = Math.round(THUMB_HEIGHT * aspectRatio);
 
         return {
-            id: `${placement}-${index + 1}`,
+            id: `result-${index + 1}`,
+            aspectRatio,
             kind: photo.kind,
             thumb: await toResponsiveImage(photo.image, {
                 alt: photo.alt,
@@ -53,7 +44,6 @@ const photos: GalleryPhoto[] = await Promise.all(
     id={copy.id}
     maxWidth="wide"
     aria-labelledby={titleId}
-    deferRender={placement === "more"}
 >
     <SectionTitle
         id={titleId}

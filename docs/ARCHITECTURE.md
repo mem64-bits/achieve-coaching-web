@@ -4,7 +4,7 @@ How the Achieve Coaching site is put together, where to make common changes, and
 
 ## What the site does
 
-One landing page (`/`) that sells online coaching and collects applications. The order follows the client's brief: hero, three featured results with Maneesh's quote, the three-step application form, how it works, who it is for, then the rest of the transformations. The form posts JSON to `/api/apply`, a Vercel serverless function that validates it and emails the coach through Resend.
+One landing page (`/`) that sells online coaching and collects applications. The order follows the client's brief: hero, every client result with the "In their words" reviews, the one-page application form, then who it is for. The form posts JSON to `/api/apply`, a Vercel serverless function that validates it and emails the coach through Resend.
 
 ```
 Browser                                   Vercel
@@ -45,13 +45,13 @@ index.html (prerendered, static)
 | I want to change... | Edit |
 | --- | --- |
 | Hero headline, subtitle, button text, hero photo | `src/constants/homeData.ts` (`HERO_CONTENT`) |
-| "How it works" steps or "This is for you if" points | `src/constants/homeData.ts` (`HOW_IT_WORKS`, `QUALIFICATION`) |
-| Which result photos show, their order or alt text | `src/constants/resultPhotos.ts` (the first `FEATURED_RESULTS_COUNT` appear near the top, the rest at the bottom) |
-| How many results are featured, testimonials and which section each appears in, gallery wording | `src/constants/results.ts` (`FEATURED_RESULTS_COUNT`, `placement` on each testimonial, `RESULTS_SECTIONS`) |
+| "This is for you if" points | `src/constants/homeData.ts` (`QUALIFICATION`) |
+| Which result photos show, their order or alt text | `src/constants/resultPhotos.ts` (the gallery shows them in this order; the client wants image-20 first and image-9 second) |
+| Testimonials ("In their words") and gallery wording | `src/constants/results.ts` (`TESTIMONIALS`, `RESULTS_SECTION`) |
 | Country search behaviour in the phone field | `src/lib/apply/countrySearch.ts` (tested in `__tests__/countrySearch.test.ts`) |
 | Favicon or Google/WhatsApp preview | `public/favicon.*`, `public/icon-*.png`, and the `<head>` plus structured data in `src/layouts/BaseLayout.astro` |
 | Logo sheen and glow, header depth, scroll progress line | `src/components/layout/BrandLogoDefs.astro` and `src/styles/effects.css` |
-| Form wording, goal options, step titles | `src/constants/applyForm.ts` |
+| Form wording | `src/constants/applyForm.ts` |
 | What counts as a valid name, phone, email or social handle | `src/lib/apply/schema.ts` (and its tests in `src/lib/apply/__tests__/`) |
 | The email the coach receives | `src/lib/apply/notificationEmail.ts` |
 | Who receives the email, or the API key | Vercel environment variables `NOTIFICATION_EMAIL` and `RESEND_API_KEY` (declared in `astro.config.mjs` under `env.schema`) |
@@ -91,12 +91,11 @@ index.html (prerendered, static)
 
 **Client (`src/components/apply/`)**
 
-- Three steps: goal, about you, contact. Step order and copy come from `APPLY_STEP_IDS` and `APPLY_STEPS`; the fields in each step come from `APPLICATION_FIELDS_BY_STEP` in the schema file.
+- One page: name, WhatsApp number, email, then the optional Instagram or LinkedIn. Required fields come first. The client asked for no goal question and no steps, because most clients share the same goals.
 - `react-hook-form` with `zodResolver(applicationSchema)`. `mode: "onTouched"` means a field is checked when you leave it, then re-checked as you type, so errors clear as soon as the input is fixed.
-- "Continue" validates only the current step. Enter on a phone keyboard does the same, because every step lives inside one `<form>`.
-- Moving forward focuses the first field of the next step (keeps the phone keyboard open); moving back focuses the step title.
+- Submitting focuses the first invalid field (`shouldFocusError`).
 - Errors sit under each field, are linked with `aria-describedby` / `aria-errormessage`, and are announced politely. Their space is reserved so the layout does not jump.
-- If the server rejects a field, the form jumps back to the step that contains it and shows the server's message there.
+- If the server rejects a field, the form shows the server's message under it and focuses it.
 - The phone field uses `usePhoneInput` from react-international-phone for formatting, with our own `CountryPicker`. Typing digits matches dial codes by prefix (35 lists +350 to +359), letters match country names; arrow keys and Enter work. Flags come from `public/flags/`, not a CDN.
 
 **Server (`src/lib/apply/handleApplication.ts`)**
@@ -104,7 +103,7 @@ index.html (prerendered, static)
 1. Only `Content-Type: application/json` is accepted (415 otherwise). Browsers cannot send JSON cross-site without a CORS preflight, which this route never approves, so other websites cannot submit the form on a visitor's behalf.
 2. Bodies over 8 KB are refused (413).
 3. Broken JSON gets a 400.
-4. `submissionSchema` validates every field with length limits and patterns and drops unknown keys. Errors return as `{error, fieldErrors}` with a 400.
+4. `submissionSchema` validates every field with length limits and patterns and drops unknown keys (so a visitor on a cached older form that still sends `goal` is accepted). Errors return as `{error, fieldErrors}` with a 400.
 5. Bots are quietly given a success response without an email being sent: a filled hidden `botcheck` field, or a form completed in under 2.5 seconds.
 6. The email is built with every user value HTML-escaped, plus a plain-text version. Links are only built from parsed, validated handles.
 7. Provider errors are logged on the server and the visitor gets a generic message (502). A missing API key gives a 503.
@@ -114,7 +113,7 @@ The handler receives its email sender as an `ApplicationNotifier` interface, so 
 ### Adding a field to the form
 
 1. Add the rule to `applicationSchema` and its message to `VALIDATION_MESSAGES` (`src/lib/apply/schema.ts`).
-2. Add it to the right step in `APPLICATION_FIELDS_BY_STEP` and a default in `DEFAULT_VALUES` (`useApplyForm.ts`).
+2. Add a default in `DEFAULT_VALUES` (`useApplyForm.ts`).
 3. Add its label and hint to `APPLY_FORM_COPY.fields` (`src/constants/applyForm.ts`).
 4. Render a `TextField` (or a new field component) in `ApplyForm.tsx`.
 5. Show it in the email (`buildRows` in `notificationEmail.ts`).
