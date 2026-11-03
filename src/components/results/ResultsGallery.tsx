@@ -57,9 +57,6 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
                 <button type="button" onClick={() => step(-1)} disabled={activeIndex === 0} aria-label={GALLERY_LABELS.previous} className={stepButton}>
                     <ChevronLeft aria-hidden="true" className="size-5"/>
                 </button>
-                <p className="font-display text-sm font-bold tracking-[0.2em] text-muted-foreground">
-                    {GALLERY_LABELS.counter(activeIndex + 1, photos.length)}
-                </p>
                 <button
                     type="button"
                     onClick={() => step(1)}
