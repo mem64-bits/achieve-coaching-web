@@ -1,5 +1,4 @@
 import {z} from "zod";
-import {GOAL_IDS, type ApplyStepId} from "@/constants/applyForm";
 import {normalizePhone} from "./phone";
 import {parseSocialProfile} from "./social";
 
@@ -12,7 +11,6 @@ export const FIELD_LIMITS = {
 } as const;
 
 export const VALIDATION_MESSAGES = {
-    goal: "Choose the goal that fits you best.",
     nameRequired: "Please enter your name.",
     nameTooLong: `Keep your name under ${FIELD_LIMITS.name} characters.`,
     nameCharacters: "Use letters, spaces, apostrophes, full stops or hyphens.",
@@ -24,7 +22,6 @@ export const VALIDATION_MESSAGES = {
 const NAME_PATTERN = /^\p{L}[\p{L}\p{M}' .-]*$/u;
 
 export const applicationSchema = z.object({
-    goal: z.enum(GOAL_IDS, {error: VALIDATION_MESSAGES.goal}),
     name: z
         .string()
         .trim()
@@ -57,9 +54,3 @@ export type ApplicationField = keyof z.input<typeof applicationSchema>;
 export type ApplicationInput = z.input<typeof applicationSchema>;
 export type Application = z.output<typeof applicationSchema>;
 export type ApplicationSubmission = z.input<typeof submissionSchema>;
-
-export const APPLICATION_FIELDS_BY_STEP = {
-    goal: ["goal"],
-    about: ["name", "social"],
-    contact: ["phone", "email"],
-} as const satisfies Record<ApplyStepId, readonly ApplicationField[]>;

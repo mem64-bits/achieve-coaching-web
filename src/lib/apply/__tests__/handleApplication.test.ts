@@ -4,7 +4,6 @@ import type {ApplicationNotifier} from "../notifier";
 import type {NotificationEmail} from "../notificationEmail";
 
 const validBody = {
-    goal: "build-muscle",
     name: "Alex Murphy",
     social: "@alex",
     phone: "+353871234567",
@@ -43,6 +42,15 @@ describe("handleApplicationRequest", () => {
         expect(sent).toHaveLength(1);
         expect(sent[0].replyTo).toBe("alex@example.com");
         expect(sent[0].email.subject).toContain("Alex Murphy");
+    });
+
+    it("still accepts an application from a cached older form that sends a goal", async () => {
+        const {notifier, sent} = recordingNotifier();
+        const response = await handleApplicationRequest(makeRequest({...validBody, goal: "lose-fat"}), {notifier, logError: silentLog});
+
+        expect(response.status).toBe(200);
+        expect(sent).toHaveLength(1);
+        expect(sent[0].email.text).not.toMatch(/goal/i);
     });
 
     it("refuses requests that are not JSON, which also blocks cross-site form posts", async () => {
