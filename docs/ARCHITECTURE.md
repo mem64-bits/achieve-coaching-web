@@ -78,7 +78,7 @@ index.html (prerendered, static)
 - Gallery thumbnails carry a 16px blurred placeholder (a few hundred bytes, made with sharp at build time) shown as the image background until the real photo arrives.
 - Islands never import image modules or `src/constants/resultPhotos.ts`. That file is server-only.
 - Width lists live where they are used (`ResultsSection.astro`). Thumbnails stop at 720px wide; the full-screen viewer goes up to 1440px and only loads when opened, one photo either side of the current one.
-- Sections far down the page use `deferRender` on `SectionContainer` (`content-visibility: auto`), so the browser skips laying them out until they are near the screen.
+- Sections far down the page use `deferRender` on `SectionContainer` (`content-visibility: auto`), so the browser skips laying them out until they are near the screen. Their placeholder heights are estimates, so `InPageJumps` (`src/lib/navigation/InPageJumps.ts`, started in `BaseLayout`) renders them for the moment of a `#section` jump; without it a header link could land hundreds of pixels past the section it names.
 - The first build after changing image settings takes about two and a half minutes because AVIF encoding is slow. Astro caches the results in `node_modules/.astro`, so later builds take seconds.
 - The hero image is the only image with `fetchpriority="high"` and `loading="eager"`. Everything else is lazy.
 

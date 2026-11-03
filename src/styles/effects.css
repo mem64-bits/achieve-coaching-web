@@ -32,6 +32,12 @@
     contain-intrinsic-size: auto none auto var(--intrinsic-height, 900px);
 }
 
+/* Set for a moment during an in-page jump (see InPageJumps.ts) so the
+   destination is measured from real section heights, not estimates. */
+.render-deferred .defer-render {
+    content-visibility: visible;
+}
+
 [data-icon="achieve-coaching-logo"] symbol > g {
     fill: url(#brand-logo-sheen);
 }

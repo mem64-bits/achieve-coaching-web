@@ -73,6 +73,7 @@ Astro 7, Tailwind 4, React 19, shadcn base-nova and Resend all changed recently,
 - Check hydration on a production build (`npm run build`, then serve `.vercel/output/static`), not only in `astro dev`: some mismatches only appear after the build.
 - Heavy client libraries load on demand with `React.lazy` or `import()` (Swiper only loads when the photo viewer opens). Do not add one to an island's main bundle without measuring the gzipped size first.
 - Section links in the header must live inside a `[data-section-nav]` nav and use the `section-link` class, so `SectionSpy` and the lamp styles pick them up. Style the current link with `:is(:target-current, .target-current)` (never two separate selectors: an unknown pseudo-class drops the whole rule).
+- Don't remove `InPageJumps` while `deferRender` is in use: `#section` links rely on it to land on the right spot.
 - Looping decorative motion runs a few times and then rests; nothing should animate forever in the header.
 - Loading and broken-image states use `BrandLoader` (`state="loading"` or `"idle"`); do not add other spinners.
 - Section sub-headings use the `eyebrow-pill` class, list bullets use `bullet-mark`, and short highlights use `chip`. Reuse them instead of adding tick icons.
