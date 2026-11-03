@@ -35,18 +35,13 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
                         <button
                             type="button"
                             onClick={() => setOpenIndex(index)}
-                            className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-card transition-[border-color,box-shadow] duration-300 hover:border-achieve-blue/60 hover:shadow-[0_0_30px_var(--achieve-blue-glow)]"
+                            className="group relative block transform-gpu overflow-hidden rounded-2xl bg-card transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60"
                         >
                             <ResponsivePicture
                                 image={photo.thumb}
                                 className="block h-(--thumb-h) w-auto max-w-none object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none"
                             />
                             <span className="sr-only">{GALLERY_LABELS.openPhoto(index + 1, photos.length)}</span>
-                            {photo.kind === "transformation" && (
-                                <span className="absolute top-3 left-3 rounded-full bg-black/70 px-3 py-1 font-display text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
-                                    {GALLERY_LABELS.transformationBadge}
-                                </span>
-                            )}
                             <span
                                 aria-hidden="true"
                                 className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-black/60 text-white opacity-90 backdrop-blur transition-opacity lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100"

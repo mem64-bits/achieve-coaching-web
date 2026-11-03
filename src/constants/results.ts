@@ -13,21 +13,22 @@ export interface ResultsSectionCopy {
     titleAccent: string;
     hint: string;
     testimonialsTitle: string;
+    testimonialsAccent: string;
     testimonialsId: string;
 }
 
 export const RESULTS_SECTION: ResultsSectionCopy = {
     id: SECTION_IDS.results,
-    eyebrow: "Client results",
-    titleStart: "Real clients.",
-    titleAccent: "Real results.",
-    hint: "Tap any photo to see it fullscreen.",
-    testimonialsTitle: "In their words",
+    eyebrow: "Client Results",
+    titleStart: "Real Clients.",
+    titleAccent: "Real Results.",
+    hint: "",
+    testimonialsTitle: "In",
+    testimonialsAccent: "their words",
     testimonialsId: SECTION_IDS.reviews,
 };
 
 export const GALLERY_LABELS = {
-    transformationBadge: "Before / After",
     openPhoto: (position: number, total: number) => `Open fullscreen, photo ${position} of ${total}`,
     previous: "Previous photo",
     next: "Next photo",
@@ -44,7 +45,7 @@ export const TESTIMONIALS: Testimonial[] = [
         age: 36,
     },
     {
-        quote: "I could clearly feel I was stronger, more energetic and fitter overall. Highly recommend if you want to fall in love with the gym 🙂",
+        quote: "I could clearly feel I was stronger, more energetic and fitter overall. Highly recommend if you want to fall in love with the gym.",
         name: "Sofya T.",
         age: 29,
     },
@@ -54,7 +55,7 @@ export const TESTIMONIALS: Testimonial[] = [
         age: 43,
     },
     {
-        quote: "Thanks Bobby! Honestly, since we started working together I’m seeing, and feeling, a difference in all my limbs, so I’m very motivated to do better! My abs have appeared too. I’m motivated to keep adding muscle mass everywhere, including legs and glutes. Very happy.",
+        quote: "Since we started working together I’m seeing, and feeling, a difference in all my limbs, so I’m very motivated to do better! Very happy.",
         name: "Client",
         age: 30,
     },

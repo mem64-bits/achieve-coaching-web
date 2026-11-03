@@ -69,12 +69,12 @@ const photos: GalleryPhoto[] = await Promise.all(
         <>
             {copy.testimonialsTitle && (
                 <h3 id={copy.testimonialsId} class="mt-14 mb-6 text-center font-display text-subtitle font-bold uppercase text-foreground sm:mt-20">
-                    {copy.testimonialsTitle}
+                    {copy.testimonialsTitle} <span class="text-achieve-blue">{copy.testimonialsAccent}</span>
                 </h3>
             )}
             <ul
                 tabindex="0"
-                aria-label={copy.testimonialsTitle ?? "Testimonials"}
+                aria-label={`${copy.testimonialsTitle} ${copy.testimonialsAccent}`}
                 class="snap-row -mx-gutter items-start px-gutter pb-2 lg:mx-auto lg:grid lg:max-w-[56rem] lg:grid-cols-2 lg:items-stretch lg:gap-5 lg:overflow-visible lg:px-0"
             >
                 {testimonials.map((testimonial) => (
