@@ -1,0 +1,53 @@
+---
+import {Picture} from "astro:assets";
+import {ArrowDown} from "lucide-react";
+import {AchieveBtn} from "@components/common/AchieveBtn";
+import {SectionContainer} from "@components/common/SectionContainer";
+import {HERO_CONTENT} from "@constants/homeData";
+---
+
+<section class="relative isolate overflow-hidden" aria-labelledby="hero-title">
+    <div aria-hidden="true" class="glow-backdrop absolute inset-0 -z-10"></div>
+    <div aria-hidden="true" class="grid-backdrop absolute inset-0 -z-10"></div>
+
+    <SectionContainer
+        as="div"
+        maxWidth="wide"
+        paddingTop="compact"
+        spacing="normal"
+        className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16"
+    >
+        <div class="flex flex-col items-start gap-5 sm:gap-6">
+            <p class="eyebrow-pill">{HERO_CONTENT.eyebrow}</p>
+            <h1 id="hero-title" class="font-display text-display font-extrabold uppercase text-foreground">
+                <span class="block">{HERO_CONTENT.titlePrefix}</span>
+                <span class="block text-achieve-blue">{HERO_CONTENT.titleHighlight}</span>
+                <span class="block">{HERO_CONTENT.titleSuffix}</span>
+            </h1>
+            <p class="max-w-[34rem] text-lead text-muted-foreground">{HERO_CONTENT.subtitle}</p>
+            <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
+                <AchieveBtn href={HERO_CONTENT.ctaHref} size="lg" className="w-full sm:w-auto">
+                    {HERO_CONTENT.ctaLabel}
+                </AchieveBtn>
+                <AchieveBtn href={HERO_CONTENT.secondaryHref} variant="ghost" size="md" className="w-full sm:w-auto">
+                    {HERO_CONTENT.secondaryLabel}
+                    <ArrowDown aria-hidden="true" className="size-4"/>
+                </AchieveBtn>
+            </div>
+        </div>
+
+        <div class="relative mx-auto w-full max-w-[26rem] lg:max-w-none">
+            <div aria-hidden="true" class="absolute -inset-6 -z-10 rounded-[2rem] bg-achieve-blue/20 blur-3xl"></div>
+            <Picture
+                src={HERO_CONTENT.image}
+                alt={HERO_CONTENT.imageAlt}
+                formats={["avif", "webp"]}
+                widths={[360, 540, 720, 900]}
+                sizes="(min-width: 1280px) 520px, (min-width: 1024px) 40vw, min(26rem, calc(100vw - 2rem))"
+                loading="eager"
+                fetchpriority="high"
+                class="aspect-[4/5] w-full rounded-3xl border border-white/10 object-cover shadow-2xl"
+            />
+        </div>
+    </SectionContainer>
+</section>

@@ -1,0 +1,24 @@
+---
+import {SectionContainer} from "@components/common/SectionContainer";
+import {SectionTitle} from "@components/common/SectionTitle";
+import {StepRow} from "./StepRow";
+import {HOW_IT_WORKS} from "@constants/homeData";
+import {SECTION_IDS} from "@constants/site";
+---
+
+<SectionContainer id={SECTION_IDS.process} maxWidth="narrow" deferRender aria-labelledby="process-title">
+    <SectionTitle id="process-title" titleStart={HOW_IT_WORKS.titleStart} titleAccent={HOW_IT_WORKS.titleAccent}/>
+    <div class="relative mt-10">
+        <span
+            aria-hidden="true"
+            class="absolute top-6 bottom-6 left-6 w-px -translate-x-1/2 bg-linear-to-b from-achieve-blue via-achieve-blue/40 to-transparent sm:left-7"
+        ></span>
+        <ol class="flex flex-col gap-8 sm:gap-10">
+            {HOW_IT_WORKS.steps.map((step) => (
+                <li class="reveal-rise">
+                    <StepRow {...step}/>
+                </li>
+            ))}
+        </ol>
+    </div>
+</SectionContainer>

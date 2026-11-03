@@ -1,0 +1,125 @@
+@media (prefers-reduced-motion: no-preference) {
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+        @keyframes reveal-fade {
+            from {
+                opacity: 0;
+            }
+        }
+
+        @keyframes reveal-rise {
+            from {
+                opacity: 0;
+                translate: 0 2rem;
+            }
+        }
+
+        .reveal-fade {
+            animation: reveal-fade auto linear backwards;
+            animation-timeline: view();
+            animation-range: entry 0% entry 80%;
+        }
+
+        .reveal-rise {
+            animation: reveal-rise auto linear backwards;
+            animation-timeline: view();
+            animation-range: entry 0% entry 80%;
+        }
+    }
+}
+
+.defer-render {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto var(--intrinsic-height, 900px);
+}
+
+[data-icon="achieve-coaching-logo"] symbol > g {
+    fill: url(#brand-logo-sheen);
+}
+
+.brand-logo {
+    filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.65)) drop-shadow(0 0 10px rgba(61, 123, 255, 0.3));
+}
+
+.site-header {
+    container-type: scroll-state;
+    container-name: site-header;
+}
+
+.site-header__bar {
+    background:
+        linear-gradient(180deg, var(--surface-sheen), transparent 70%),
+        radial-gradient(60% 120% at 50% 0%, rgba(61, 123, 255, 0.08), transparent 70%),
+        rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0 1px 0 var(--surface-sheen);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.site-header__rim {
+    background: linear-gradient(90deg, transparent, var(--hairline-light-strong) 25%, var(--achieve-blue) 50%, var(--hairline-light-strong) 75%, transparent);
+    box-shadow: 0 0 14px var(--achieve-blue-glow);
+}
+
+.scroll-progress {
+    position: absolute;
+    inset: 0;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--achieve-blue), #ffffff);
+    box-shadow: 0 0 10px var(--achieve-blue);
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+        @keyframes grow-progress {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        .scroll-progress {
+            opacity: 0.9;
+            animation: grow-progress auto linear;
+            animation-timeline: scroll(root block);
+        }
+    }
+}
+
+@container site-header scroll-state(stuck: top) {
+    .site-header__bar {
+        background:
+            linear-gradient(180deg, var(--surface-sheen), transparent 70%),
+            radial-gradient(60% 120% at 50% 0%, rgba(61, 123, 255, 0.12), transparent 70%),
+            rgba(5, 5, 5, 0.88);
+        box-shadow: inset 0 1px 0 var(--surface-sheen), 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+}
+
+dialog.country-picker:modal {
+    overscroll-behavior: contain;
+}
+
+dialog.country-picker::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
+    background-color: rgba(0, 0, 0, 0.7);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+dialog.lightbox:modal {
+    overscroll-behavior: contain;
+}
+
+dialog.lightbox::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
+    background-color: rgba(0, 0, 0, 0.92);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}

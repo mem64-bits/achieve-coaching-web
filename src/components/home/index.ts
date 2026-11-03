@@ -1,13 +1,8 @@
-export {AchieveBtn} from "./AchieveBtn";
-export type {AchieveBtnProps} from "./AchieveBtn";
-export {AchieveImage} from "./AchieveImage";
-export type {AchieveImageProps} from "./AchieveImage";
-export {HowItWorksSection} from "./HowItWorksSection";
-export {HeroSection} from "./HeroSection";
-export {QualificationSection} from "./QualificationSection";
+export {default as HeroSection} from "./HeroSection.astro";
+export {default as ResultsSection} from "./ResultsSection.astro";
+export {default as QualificationSection} from "./QualificationSection.astro";
+export {default as HowItWorksSection} from "./HowItWorksSection.astro";
+export {default as ApplySection} from "./ApplySection.astro";
 export {QuoteCard} from "./QuoteCard";
 export type {QuoteCardProps} from "./QuoteCard";
-export {ResultsMosaicSection} from "./ResultsMosaicSection";
-export {SectionTitle} from "./SectionTitle";
-export type {SectionTitleProps} from "./SectionTitle";
 export {StepRow} from "./StepRow";

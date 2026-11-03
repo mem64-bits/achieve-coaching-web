@@ -1,21 +1,31 @@
-/* src/styles/global.css */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
-@import "@fontsource/montserrat/400.css";
-@import "@fontsource/montserrat/600.css";
 @import "@fontsource/montserrat/700.css";
 @import "@fontsource/montserrat/800.css";
-@import "@fontsource/montserrat/900.css";
 @import "./theme.css";
+@import "./effects.css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* --- 4. GLOBAL BASE STYLES --- */
+@media (min-width: 64rem) {
+    :root {
+        --header-subnav: 0px;
+    }
+}
+
 @layer base {
     html {
-        scroll-behavior: smooth;
+        color-scheme: dark;
+        scroll-padding-top: calc(var(--header-height) + var(--header-subnav) + 1rem);
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+        html {
+            scroll-behavior: smooth;
+        }
     }
 
     body {
@@ -26,150 +36,88 @@
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    .main-frame {
-        @apply border border-border rounded-2xl;
+    :focus-visible {
+        outline: 2px solid var(--achieve-blue);
+        outline-offset: 3px;
     }
 
-    .site-footer {
-        @apply text-muted-foreground text-[10px] tracking-[0.3em] uppercase py-8;
-    }
-
-    .logo-container, .site-header {
-        @apply overflow-visible;
-    }
-}
-
-/* Shared home component classes. Keep component-specific layout in each component file. */
-@layer components {
-    .w {
-        @apply max-w-[1100px] mx-auto px-6 w-full;
-    }
-
-    .sec {
-        @apply pb-[72px];
-    }
-
-    /* Update these two classes inside @layer components in src/styles/global.css */
-    .a {
-        color: var(--achieve-blue);
-    }
-
-    /* Matches: .lab { font-weight: 700; font-size: 14px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px } */
-    .lab {
-        font-family: var(--font-primary);
-        @apply font-bold text-[14px] tracking-[0.1em] uppercase text-achieve-blue mb-4;
-    }
-
-    /* Matches: h1 { margin: 0; font-weight: 800; text-transform: uppercase; font-size: clamp(32px, 7vw, 84px); line-height: .98 } */
-    .achieve-h1 {
-        font-family: var(--font-primary);
-        @apply m-0 font-extrabold uppercase text-foreground text-[clamp(32px,7vw,84px)] leading-[0.98] tracking-normal;
-    }
-
-    /* Matches: h2 { margin: 0; font-weight: 800; text-transform: uppercase; line-height: 1; font-size: clamp(28px, 5vw, 54px) } */
-    .achieve-h2 {
-        font-family: var(--font-primary);
-        @apply m-0 font-extrabold uppercase text-foreground text-[clamp(28px,5vw,54px)] leading-none tracking-normal;
-    }
-
-    /* Matches: .btn { font-weight: 800; font-size: 17px; padding: 16px 28px; border-radius: 6px; text-transform: uppercase; letter-spacing: .03em } */
-    .btn {
-        font-family: var(--font-primary);
-        @apply inline-block text-white font-extrabold text-[15px] sm:text-[17px] px-[20px] sm:px-[28px] py-[12px] sm:py-[16px] rounded-[6px] no-underline uppercase tracking-[0.03em] border-0 cursor-pointer text-center leading-[1.5] transition-all duration-200 hover:shadow-[0_0_20px_var(--achieve-blue-glow)];
+    ::selection {
         background-color: var(--achieve-blue);
+        color: #ffffff;
     }
 
-    .hero {
-        @apply flex flex-wrap gap-8 sm:gap-12 items-center pt-4 sm:pt-8 pb-12 sm:pb-16;
-    }
-
-    .mosaic {
-        @apply flex flex-wrap gap-3 items-start;
-    }
-
-    .mc {
-        @apply flex-1 basis-[280px] flex flex-col gap-3;
-    }
-
-    /* Matches: .quote { border: 1px solid #373A3F; border-radius: 8px; padding: 28px; background: #1A1B1D } */
-    .quote {
-        font-family: var(--font-primary);
-        @apply border border-border rounded-[8px] p-5 sm:p-7 flex flex-col justify-center bg-card;
-    }
-
-    .quote p {
-        @apply m-0 text-[18px] sm:text-[22px] font-bold leading-[1.3];
-    }
-
-    .quote.long p:first-child {
-        @apply text-[15px] sm:text-[17px] font-semibold;
-    }
-
-    .step {
-        font-family: var(--font-primary);
-        @apply flex gap-4 sm:gap-6 py-5 sm:py-6 border-t border-border last:border-b;
-    }
-
-    .step b {
-        @apply flex-[0_0_64px] sm:flex-[0_0_100px] text-[36px] sm:text-[56px] leading-none text-achieve-blue font-extrabold;
-    }
-
-    .step h3 {
-        @apply m-0 mb-1 text-[19px] sm:text-[22px] font-bold leading-[1.5] text-foreground;
-    }
-
-    .step p {
-        @apply m-0 text-muted-foreground text-[15px] sm:text-[16px] leading-[1.5];
-    }
-
-    .two {
-        font-family: var(--font-primary);
-        @apply flex flex-wrap gap-10;
-    }
-
-    .two h2 {
-        @apply text-[34px] mb-[14px];
-    }
-
-    .two p {
-        @apply m-0 mb-2 text-muted-foreground text-[16px];
-    }
-
-    .apply {
-        font-family: var(--font-primary);
-        @apply bg-card py-10 sm:py-[72px] px-4 sm:px-6 border-t border-border rounded-2xl w-full;
-    }
-
-    .half {
-        @apply flex flex-wrap gap-4;
-    }
-
-    .half > div {
-        @apply flex-1 basis-[280px];
-    }
-
-    /* Matches: label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px } */
-    .achieve-label {
-        font-family: var(--font-primary);
-        @apply block font-bold text-[14px] leading-[1.5] text-foreground mb-[6px];
-    }
-
-    /* Matches: input, select, textarea { min-height: 48px; padding: 12px 14px; border-radius: 6px; font: inherit } */
-    .achieve-field {
-        font: inherit;
-        @apply w-full min-h-[48px] px-[14px] py-[12px] border border-border rounded-[6px] bg-background text-foreground transition-colors duration-200 focus:outline-none focus:border-achieve-blue;
+    img {
+        max-width: 100%;
     }
 }
 
-[data-radix-collection-item] > button {
-    top: 1.5rem !important;
-    right: 1.5rem !important;
-    opacity: 0.5;
+@layer components {
+    .eyebrow {
+        @apply font-display text-eyebrow font-bold uppercase text-achieve-blue;
+    }
+
+    .eyebrow-pill {
+        @apply inline-flex w-fit items-center gap-2 rounded-full border border-achieve-blue/35 bg-achieve-blue/10 px-3.5 py-1.5 font-display text-eyebrow font-bold uppercase text-achieve-blue;
+        box-shadow: inset 0 1px 0 var(--surface-sheen), 0 0 24px -8px var(--achieve-blue-glow);
+    }
+
+    .card-outline {
+        @apply border border-achieve-blue/25 shadow-[0_14px_32px_-22px_var(--achieve-blue-glow)];
+    }
+
+    .chip {
+        @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs font-semibold text-subtle;
+    }
+
+    .chip::before {
+        content: "";
+        @apply size-1 shrink-0 rounded-full bg-achieve-blue;
+        box-shadow: 0 0 6px var(--achieve-blue);
+    }
+
+    .bullet-mark {
+        @apply relative block size-2.5 shrink-0 rounded-[3px] bg-achieve-blue;
+        box-shadow: 0 0 0 4px var(--achieve-blue-soft), 0 0 14px var(--achieve-blue-glow);
+    }
+
+    .surface {
+        @apply rounded-2xl border border-border bg-card;
+    }
+
+    .glow-backdrop {
+        background:
+            radial-gradient(60% 50% at 50% 0%, var(--achieve-blue-soft), transparent 70%),
+            radial-gradient(40% 35% at 85% 20%, rgba(59, 67, 193, 0.12), transparent 70%);
+    }
+
+    .grid-backdrop {
+        background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+    }
+
+    .snap-row {
+        @apply flex gap-3 overflow-x-auto overscroll-x-contain;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: var(--page-gutter);
+        scrollbar-width: none;
+    }
+
+    .snap-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .snap-row > * {
+        scroll-snap-align: center;
+        scroll-snap-stop: always;
+    }
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -187,67 +135,4 @@
 ::-webkit-scrollbar-thumb:hover {
     background: var(--achieve-blue);
     box-shadow: 0 0 10px var(--achieve-blue-glow);
-}
-
-/* ========================================================
-   REACT-INTERNATIONAL-PHONE (Dark Theme Alignment)
-   ======================================================== */
-.react-international-phone-input-container {
-    width: 100% !important;
-}
-
-.react-international-phone-country-selector-button {
-    background-color: var(--card) !important;
-    border-color: var(--border) !important;
-    min-height: 48px !important;
-    border-radius: 6px 0 0 6px !important;
-    padding: 0 12px !important;
-    cursor: pointer;
-}
-
-.react-international-phone-input {
-    background-color: var(--background) !important;
-    color: var(--foreground) !important;
-    border-color: var(--border) !important;
-    min-height: 48px !important;
-    width: 100% !important;
-    border-radius: 0 6px 6px 0 !important;
-    font-size: 15px !important;
-}
-
-.react-international-phone-input:focus {
-    border-color: var(--achieve-blue) !important;
-    outline: none !important;
-    box-shadow: 0 0 0 1px var(--achieve-blue) !important;
-}
-
-/* Dropdown popover list */
-.react-international-phone-country-selector-dropdown {
-    background-color: var(--card) !important;
-    color: var(--foreground) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
-    z-index: 50 !important;
-    max-height: 280px !important;
-}
-
-.react-international-phone-country-selector-dropdown__list-item {
-    color: var(--foreground) !important;
-    padding: 10px 14px !important;
-    cursor: pointer;
-}
-
-.react-international-phone-country-selector-dropdown__list-item:hover,
-.react-international-phone-country-selector-dropdown__list-item--focused {
-    background-color: var(--achieve-blue) !important;
-    color: #FFFFFF !important;
-}
-
-.react-international-phone-country-selector-dropdown__list-item-country-name {
-    color: var(--text-muted) !important;
-}
-
-.react-international-phone-country-selector-dropdown__list-item:hover .react-international-phone-country-selector-dropdown__list-item-country-name {
-    color: #FFFFFF !important;
 }

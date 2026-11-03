@@ -28,3 +28,11 @@ pnpm-debug.log*
 .obsidian/*
 
 repomix-output.xml
+
+# claude code (personal settings, worktrees and hook cache stay local)
+.claude/settings.local.json
+.claude/.cache/
+.claude/worktrees/
+CLAUDE.local.md
+
+.playwright-mcp/
