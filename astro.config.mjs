@@ -8,7 +8,7 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-    site: 'https://www.achieve-coaching.net',
+    site: 'https://www.achievecoaching.net',
 
     integrations: [react(), icon(), compress({
         CSS: false,

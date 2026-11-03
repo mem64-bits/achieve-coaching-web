@@ -13,7 +13,7 @@ const validBody = {
 };
 
 function makeRequest(body: unknown, contentType = "application/json"): Request {
-    return new Request("https://www.achieve-coaching.net/api/apply", {
+    return new Request("https://www.achievecoaching.net/api/apply", {
         method: "POST",
         headers: {"Content-Type": contentType},
         body: typeof body === "string" ? body : JSON.stringify(body),
