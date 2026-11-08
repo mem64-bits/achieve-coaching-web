@@ -31,30 +31,39 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
         // fill it; squares (before/after pairs) and tall shots
         // are shown whole, with their blurred placeholder filling the gaps,
         // so nobody gets cropped out of a comparison.
+        // The card itself isn't a button, so on a computer clicking or
+        // dragging the photo only moves the carousel. The full-size viewer
+        // opens from the button in the corner. On touch screens that same
+        // button stretches over the whole card, because a tap and a swipe
+        // are easy to tell apart there.
         content: (
-            <button
-                type="button"
-                onClick={() => setOpenIndex(index)}
-                // Position in RESULT_PHOTOS, for the browser tests.
-                data-photo-index={index}
-                className="group relative block w-full transform-gpu overflow-hidden rounded-2xl bg-card transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60"
-            >
+            <div className="group relative w-full transform-gpu overflow-hidden rounded-2xl bg-card transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60">
                 <ResponsivePicture
                     image={photo.thumb}
                     loading={preload.has(index) ? "eager" : "lazy"}
+                    draggable={false}
                     className={cn(
                         "block aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none",
                         Math.abs(photo.aspectRatio - CARD_RATIO) > CROP_TOLERANCE && "object-contain",
                     )}
                 />
-                <span className="sr-only">{GALLERY_LABELS.openPhoto(index + 1, photos.length)}</span>
-                <span
-                    aria-hidden="true"
-                    className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-black/60 text-white opacity-90 backdrop-blur"
+                <button
+                    type="button"
+                    onClick={() => setOpenIndex(index)}
+                    aria-label={GALLERY_LABELS.openPhoto(index + 1, photos.length)}
+                    title={GALLERY_LABELS.viewFullSize}
+                    // Position in RESULT_PHOTOS, for the browser tests.
+                    data-photo-index={index}
+                    className="group/open absolute right-3 bottom-3 z-10 grid size-11 place-items-center rounded-full outline-offset-2 focus-visible:outline-2 focus-visible:outline-achieve-blue pointer-coarse:inset-0 pointer-coarse:size-auto pointer-coarse:place-items-end pointer-coarse:rounded-[inherit] pointer-coarse:p-3 pointer-coarse:outline-offset-[-3px]"
                 >
-                    <Expand className="size-4"/>
-                </span>
-            </button>
+                    <span
+                        aria-hidden="true"
+                        className="grid size-11 place-items-center rounded-full border border-white/15 bg-black/60 text-white backdrop-blur transition-colors group-hover/open:border-achieve-blue group-hover/open:bg-achieve-blue pointer-coarse:size-9"
+                    >
+                        <Expand className="size-4"/>
+                    </span>
+                </button>
+            </div>
         ),
     }));
 

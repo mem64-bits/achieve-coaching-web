@@ -37,7 +37,7 @@ test("has one slide per photo and no blank fillers", async ({page}) => {
 test("every slide shows the photo listed at its position in RESULT_PHOTOS", async ({page}) => {
     const slides = await photoCarousel(page).evaluate((el) =>
         [...el.querySelectorAll<HTMLElement>("[data-photo-index]")].map((button) => {
-            const img = button.querySelector("img");
+            const img = button.closest(".swiper-slide")?.querySelector("img");
             return {index: Number(button.dataset.photoIndex), src: decodeURIComponent(img?.getAttribute("src") ?? "")};
         }),
     );
@@ -197,7 +197,7 @@ test("the photos either side are loaded before they're needed, even on a slow co
         carousel.evaluate(
             (el, wanted) =>
                 wanted.every((index) => {
-                    const img = el.querySelector<HTMLImageElement>(`[data-photo-index="${index}"] img`);
+                    const img = el.querySelector<HTMLImageElement>(`.swiper-slide:has([data-photo-index="${index}"]) img`);
                     return Boolean(img?.complete && img.naturalWidth > 0);
                 }),
             indexes,
@@ -295,3 +295,74 @@ test("resizing between phone and desktop keeps the order and the place", async (
     await settle(carousel);
     expect(await shownIndexes(carousel)).toEqual([4, 5, 6]);
 });
+
+// Browsing on a computer: the photo itself is for dragging, only the
+// View full size button opens the viewer. On touch screens a tap anywhere on
+// the photo still opens it.
+const usesFinePointer = (page: import("@playwright/test").Page) =>
+    page.evaluate(() => matchMedia("(pointer: fine)").matches);
+
+test("on a computer, clicking a photo doesn't open the viewer; View full size does", async ({page}) => {
+    test.skip(!(await usesFinePointer(page)), "touch screens open the viewer with a tap");
+    const carousel = photoCarousel(page);
+    const viewer = page.locator("dialog.lightbox[open]");
+    const [first] = await shownPhotos(carousel);
+    const photo = carousel.locator(".swiper-slide-active img");
+
+    // Middle of the photo, then near its top-left corner.
+    await photo.click();
+    await photo.click({position: {x: 20, y: 20}});
+    await page.waitForTimeout(400);
+    await expect(viewer).toHaveCount(0);
+
+    await carousel.locator(`[data-photo-index="${first.index}"]`).click();
+    await expect(viewer).toHaveCount(1);
+});
+
+test("on a computer, repeated drags step through the photos in order and never open the viewer", async ({page}) => {
+    test.skip(!(await usesFinePointer(page)), "covered by the swipe test on touch screens");
+    const carousel = photoCarousel(page);
+    const perView = await cardsAcross(carousel);
+
+    for (let drag = 1; drag <= 6; drag += 1) {
+        await swipeLeft(page, carousel, false);
+        await settle(carousel);
+        expect(await shownIndexes(carousel), `after drag ${drag}`).toEqual(visibleWindow(drag, perView, total));
+        await expect(page.locator("dialog.lightbox[open]")).toHaveCount(0);
+    }
+});
+
+test("on a touch screen, tapping anywhere on the photo opens the viewer", async ({page}) => {
+    test.skip(await usesFinePointer(page), "computers use the View full size button");
+    const carousel = photoCarousel(page);
+    const [first] = await shownPhotos(carousel);
+
+    // On touch screens the View full size button covers the whole card, so
+    // tapping it near the photo's top-left corner is tapping the photo.
+    await carousel.locator(`[data-photo-index="${first.index}"]`).tap({position: {x: 30, y: 30}});
+    const viewer = page.locator("dialog.lightbox[open]");
+    await expect(viewer).toHaveCount(1);
+    await expect
+        .poll(() => viewer.evaluate((el) => (el.querySelector(".swiper") as HTMLElement & {swiper?: {activeIndex: number}})?.swiper?.activeIndex))
+        .toBe(first.index);
+});
+
+test("the arrows sit beside the photos on wide screens and under them on smaller ones", async ({page}) => {
+    const carousel = photoCarousel(page);
+    const strip = (await carousel.boundingBox())!;
+    const next = (await page.getByRole("button", {name: "Next photo"}).boundingBox())!;
+    const previous = (await page.getByRole("button", {name: "Previous photo"}).boundingBox())!;
+    const wide = (page.viewportSize()?.width ?? 0) >= 1024;
+
+    if (wide) {
+        const middle = strip.y + strip.height / 2;
+        for (const arrow of [next, previous]) {
+            expect(Math.abs(arrow.y + arrow.height / 2 - middle)).toBeLessThan(20);
+        }
+        expect(previous.x).toBeLessThan(strip.x + 80);
+        expect(next.x + next.width).toBeGreaterThan(strip.x + strip.width - 80);
+    } else {
+        expect(next.y).toBeGreaterThanOrEqual(strip.y + strip.height - 2);
+    }
+});
+

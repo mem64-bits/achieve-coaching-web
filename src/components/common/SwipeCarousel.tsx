@@ -63,8 +63,10 @@ const BATCH_SPEED = 700;
 // opens the viewer) from being swiped at all.
 const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 
+// Under the strip on phones and tablets; from 1024px the arrows sit on its
+// left and right edges, level with the photos, where a mouse already is.
 const stepButton =
-    "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30";
+    "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30 lg:pointer-events-auto lg:size-12 lg:border-white/20 lg:bg-black/65 lg:backdrop-blur lg:hover:bg-achieve-blue";
 
 export function SwipeCarousel({items, label, onPositionChange, controls, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
     const loop = items.length >= LOOP_FROM;
@@ -126,7 +128,7 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
     }, [swiper]);
 
     return (
-        <div>
+        <div className="relative">
             <Swiper
                 modules={[A11y, Mousewheel]}
                 tabIndex={0}
@@ -173,7 +175,15 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
             </Swiper>
 
             {controls && (
-                <div className={cn("mt-4 flex items-center justify-between gap-4", controlsClassName)}>
+                <div
+                    className={cn(
+                        "mt-4 flex items-center justify-between gap-4",
+                        // Wide screens: laid over the strip, letting clicks
+                        // through everywhere but the buttons themselves.
+                        "lg:pointer-events-none lg:absolute lg:inset-x-0 lg:top-1/2 lg:z-20 lg:mt-0 lg:-translate-y-1/2 lg:px-3",
+                        controlsClassName,
+                    )}
+                >
                     <button
                         type="button"
                         onClick={() => step(-1)}
