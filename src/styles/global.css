@@ -10,14 +10,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@media (min-width: 64rem) {
+    :root {
+        --header-subnav: 0px;
+    }
+}
+
 @layer base {
     html {
         color-scheme: dark;
-        /* 16px on a 390px phone, easing up to 18px once the page column is at
-           full width, so buttons, fields and body text grow with the layout
-           instead of looking shrunken next to the headings. Written in % so
-           a reader's own larger text setting still applies on top. */
-        font-size: clamp(100%, 76.8% + 0.952vw, 112.5%);
         scroll-padding-top: calc(var(--header-height) + var(--header-subnav) + 1rem);
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;

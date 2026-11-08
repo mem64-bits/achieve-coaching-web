@@ -15,15 +15,17 @@ export default function ReviewsCarousel({testimonials, label}: ReviewsCarouselPr
         content: <QuoteCard {...testimonial}/>,
     }));
 
-    // Each card is 85% of the strip so the next one peeks in, as on a phone.
-    // Cards keep their own height rather than stretching to the tallest.
+    // Phones: each card is 85% of the strip so the next one peeks in, and
+    // cards keep their own height. Desktop: three cards fill one row at equal
+    // height; Swiper sees nothing to scroll and stays still, and a fourth
+    // review would make the row swipeable without any change here.
     return (
         <SwipeCarousel
             items={items}
             label={label}
             align="start"
-            className="[&>.swiper-wrapper]:items-start"
-            slideClassName="h-auto w-[85%]"
+            className="[&>.swiper-wrapper]:items-start lg:mx-auto lg:max-w-[72rem] lg:px-0 lg:[&>.swiper-wrapper]:items-stretch"
+            slideClassName="h-auto w-[85%] max-w-[22rem] lg:w-[calc((100%-24px)/3)] lg:max-w-none"
         />
     );
 }

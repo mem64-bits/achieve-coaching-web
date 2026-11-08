@@ -115,6 +115,11 @@
     scroll-target-group: auto;
 }
 
+.section-nav__track {
+    border: 1px solid var(--hairline-light);
+    background: rgba(255, 255, 255, 0.02);
+}
+
 .section-link {
     position: relative;
     isolation: isolate;
@@ -364,20 +369,5 @@ dialog.lightbox::backdrop {
 
     .brand-loader--loading .brand-loader__ring {
         animation: brand-loader-pulse 2s ease-in-out infinite;
-    }
-}
-
-/* On a phone a carousel runs off the screen edge. Wider screens end it at
-   the page column instead, so fade the edges rather than cut the next
-   photo off in mid-air. */
-@media (min-width: 37.5rem) {
-    .swipe-carousel {
-        mask-image: linear-gradient(
-            to right,
-            transparent,
-            #000 var(--page-gutter),
-            #000 calc(100% - var(--page-gutter)),
-            transparent
-        );
     }
 }

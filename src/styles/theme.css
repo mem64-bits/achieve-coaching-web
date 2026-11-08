@@ -47,19 +47,8 @@
 
     --header-height: 4rem;
     --header-subnav: 2.3rem;
-
-    /* The whole site is the phone layout. On a phone the page column is the
-       screen; on anything wider it stops at this width and sits centred. */
-    --page-column: 37.5rem;
-    /* 1% of the page column. Sizes written as multiples of it keep the exact
-       proportions they have on a phone and grow with the column, stopping
-       when the column does. (1vw is 1% of a phone's width.) */
-    --col: min(1vw, calc(var(--page-column) / 100));
-
-    --page-gutter: max(1rem, calc(var(--col) * 4.25));
-    --section-space: max(4rem, calc(var(--col) * 16.8));
-    /* Inner padding of the big cards (apply form, "This is for you"). */
-    --card-pad: max(1.25rem, calc(var(--col) * 5.1));
+    --page-gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
+    --section-space: clamp(4rem, 2.75rem + 5.5vw, 8rem);
 }
 
 @theme inline {
@@ -88,26 +77,19 @@
     --spacing-header: var(--header-height);
     --spacing-gutter: var(--page-gutter);
     --spacing-section: var(--section-space);
-    --spacing-card: var(--card-pad);
-    --container-column: var(--page-column);
 }
 
 @theme {
-    /* Headings scale with the page column, so a desktop shows the phone's
-       headings with the same line breaks, just larger. The multipliers are
-       each size on a 390px phone divided by 3.9px (1% of that screen). */
-    --text-display: max(2.5rem, calc(var(--col) * 11.16));
+    --text-display: clamp(2.5rem, 1.6rem + 4.6vw, 5.25rem);
     --text-display--line-height: 0.95;
     --text-display--letter-spacing: -0.01em;
-    --text-title: max(1.875rem, calc(var(--col) * 8.14));
+    --text-title: clamp(1.875rem, 1.35rem + 2.6vw, 3.375rem);
     --text-title--line-height: 1.02;
-    --text-subtitle: max(1.25rem, calc(var(--col) * 5.21));
+    --text-subtitle: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
     --text-subtitle--line-height: 1.25;
-    /* Reading text grows a little, not in proportion: 26px intro copy
-       would be too large to read comfortably. */
-    --text-lead: clamp(1.0625rem, calc(var(--col) * 4.45), 1.25rem);
+    --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
     --text-lead--line-height: 1.55;
-    --text-eyebrow: clamp(0.8125rem, calc(var(--col) * 3.33), 0.9375rem);
+    --text-eyebrow: 0.8125rem;
     --text-eyebrow--line-height: 1.2;
     --text-eyebrow--letter-spacing: 0.18em;
 

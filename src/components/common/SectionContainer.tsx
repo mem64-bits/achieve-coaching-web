@@ -1,7 +1,7 @@
 import React, {forwardRef} from "react";
 import {cn} from "@/lib/utils";
 
-export type ContainerMaxWidthPreset = "column" | "default" | "narrow" | "wide" | "full";
+export type ContainerMaxWidthPreset = "default" | "narrow" | "wide" | "full";
 export type ContainerSpacingPreset = "normal" | "relaxed" | "compact" | "none";
 export type ContainerAnimation = "none" | "fade" | "slide";
 
@@ -26,8 +26,6 @@ export type SectionContainerProps<E extends React.ElementType = "section"> =
 } & Omit<React.ComponentPropsWithRef<E>, keyof SectionContainerBaseProps | "as">;
 
 const maxWidthMap: Record<ContainerMaxWidthPreset, string> = {
-    // The phone-shaped page column every section uses (see --page-column).
-    column: "max-w-column",
     default: "max-w-[1100px]",
     narrow: "max-w-[720px]",
     wide: "max-w-[1280px]",
@@ -68,7 +66,7 @@ export const SectionContainer = forwardRef(function SectionContainer<
     {
         id,
         className,
-        maxWidth = "column",
+        maxWidth = "default",
         spacing = "normal",
         paddingTop,
         animationVariant = "none",

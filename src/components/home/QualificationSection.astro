@@ -6,8 +6,8 @@ import {QUALIFICATION} from "@constants/homeData";
 import {SECTION_IDS} from "@constants/site";
 ---
 
-<SectionContainer id={SECTION_IDS.qualification} animationVariant="slide" deferRender aria-labelledby="for-you-title">
-    <div class="surface relative isolate overflow-hidden p-[max(1.5rem,calc(var(--col)*6.15))]">
+<SectionContainer id={SECTION_IDS.qualification} maxWidth="narrow" animationVariant="slide" deferRender aria-labelledby="for-you-title">
+    <div class="surface relative isolate overflow-hidden p-6 sm:p-10">
         <div aria-hidden="true" class="glow-backdrop absolute inset-0 -z-10"></div>
         <SectionTitle id="for-you-title" titleStart={QUALIFICATION.titleStart} titleAccent={QUALIFICATION.titleAccent}/>
         <ul class="mt-8 flex flex-col gap-4">
@@ -18,7 +18,7 @@ import {SECTION_IDS} from "@constants/site";
                 </li>
             ))}
         </ul>
-        <AchieveBtn href={QUALIFICATION.ctaHref} variant="outline" size="lg" className="mt-9 w-full">
+        <AchieveBtn href={QUALIFICATION.ctaHref} variant="outline" size="lg" className="mt-9 w-full sm:w-auto">
             {QUALIFICATION.ctaLabel}
         </AchieveBtn>
     </div>

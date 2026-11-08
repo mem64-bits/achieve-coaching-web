@@ -11,10 +11,11 @@ import type {GalleryPhoto} from "@/types/results";
 
 const titleId = `${copy.id}-title`;
 
-// Tallest a strip photo gets: 26rem on phones, growing with the page
-// column to about 640px on wider screens (see --thumb-h in ResultsGallery).
+// Strip photo heights used to pick image sizes: phones show them at 26rem
+// (480 rounds up a little), tablets and up at 30rem (see --thumb-h in
+// ResultsGallery).
 const THUMB_HEIGHT = 480;
-const WIDE_THUMB_HEIGHT = 640;
+const WIDE_THUMB_HEIGHT = 480;
 const THUMB_WIDTHS = [320, 480, 720, 960];
 const FULL_WIDTHS = [720, 1080, 1440];
 
@@ -31,7 +32,7 @@ const photos: GalleryPhoto[] = await Promise.all(
             thumb: await toResponsiveImage(photo.image, {
                 alt: photo.alt,
                 widths: THUMB_WIDTHS,
-                sizes: `(min-width: 600px) ${wideWidth}px, ${mobileWidth}px`,
+                sizes: `(min-width: 768px) ${wideWidth}px, ${mobileWidth}px`,
                 quality: {avif: 50, webp: 68},
                 placeholder: true,
             }),
@@ -45,8 +46,11 @@ const photos: GalleryPhoto[] = await Promise.all(
 );
 ---
 
+<!-- Full width so the photo strip runs edge to edge on every screen.
+     The title and reviews keep their own widths. -->
 <SectionContainer
     id={copy.id}
+    maxWidth="full"
     aria-labelledby={titleId}
 >
     <SectionTitle
@@ -56,13 +60,13 @@ const photos: GalleryPhoto[] = await Promise.all(
         titleAccent={copy.titleAccent}
         description={copy.hint}
         align="center"
-        className="mb-8"
+        className="mb-8 sm:mb-10"
     />
 
     <ResultsGallery client:visible={{rootMargin: "600px"}} photos={photos}/>
 
     {testimonials.length === 1 && (
-        <div class="mt-10">
+        <div class="mx-auto mt-10 max-w-[44rem] sm:mt-14">
             <QuoteCard {...testimonials[0]}/>
         </div>
     )}
@@ -70,7 +74,7 @@ const photos: GalleryPhoto[] = await Promise.all(
     {testimonials.length > 1 && (
         <>
             {copy.testimonialsTitle && (
-                <h3 id={copy.testimonialsId} class="mt-14 mb-6 text-center font-display text-subtitle font-bold uppercase text-foreground">
+                <h3 id={copy.testimonialsId} class="mt-14 mb-6 text-center font-display text-subtitle font-bold uppercase text-foreground sm:mt-20">
                     {copy.testimonialsTitle} <span class="text-achieve-blue">{copy.testimonialsAccent}</span>
                 </h3>
             )}

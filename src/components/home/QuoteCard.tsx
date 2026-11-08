@@ -11,7 +11,7 @@ export function QuoteCard({quote, name, age, align = "center", className}: Quote
     return (
         <figure
             className={cn(
-                "relative flex h-full flex-col card-outline rounded-2xl bg-elevated p-6",
+                "relative flex h-full flex-col card-outline rounded-2xl bg-elevated p-6 sm:p-7",
                 align === "center" && "items-center text-center",
                 className,
             )}

@@ -42,10 +42,14 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
                 items={items}
                 label={GALLERY_LABELS.carousel}
                 controls={{previous: GALLERY_LABELS.previous, next: GALLERY_LABELS.next}}
-                // Photo height: 26rem on a phone, growing with the page column
-                // (about 640px on wider screens), never more than 58% of a
-                // short screen. Each photo is as wide as that height makes it.
-                className="[--thumb-h:min(58svh,max(26rem,calc(var(--col)*106.7)))]"
+                // Phones centre the first photo. Wider screens start the strip
+                // flush with the left edge so it fills the width straight away.
+                breakpoints={{768: {centeredSlidesBounds: true}}}
+                controlsClassName="mx-auto max-w-[1280px]"
+                // Photo height: 26rem on a phone, 30rem from tablets up, never
+                // more than 58% of a short screen. Each photo is as wide as
+                // that height makes it.
+                className="[--thumb-h:min(58svh,26rem)] md:[--thumb-h:min(58svh,30rem)]"
                 slideClassName="w-auto"
             />
 

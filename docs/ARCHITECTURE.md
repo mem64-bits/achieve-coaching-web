@@ -60,7 +60,6 @@ index.html (prerendered, static)
 | Section order on the homepage | `src/layouts/HomePageTemplate.astro` |
 | Header button text, anchor ids | `src/constants/site.ts` |
 | Colours, fonts, fluid type sizes, section spacing | `src/styles/theme.css` |
-| How wide the page column is on desktop, and how much everything scales | `--page-column` in `src/styles/theme.css` (also update the literal `sizes` on the hero photo), base font size on `html` in `src/styles/global.css` |
 | Social links in the footer | `src/constants/socials.ts` |
 | Site URL, page title, description | `src/constants/site.ts` and `site` in `astro.config.mjs` |
 
@@ -130,14 +129,13 @@ The handler receives its email sender as an `ApplicationNotifier` interface, so 
 ## Design system
 
 - Tokens are CSS variables in `src/styles/theme.css`, mapped to Tailwind utilities in `@theme inline`. Use `text-achieve-blue`, `bg-card`, `border-border-strong`, `text-muted-foreground` and so on; do not hard-code colours in components.
-- One layout everywhere. The client wanted desktop to be the phone layout, so the site is a single centred column: the full screen on a phone, `--page-column` (37.5rem) wide on anything bigger, with the header and footer bars still spanning the screen. Sections use `SectionContainer`'s default `column` width.
-- Scaling: `--col` is 1% of the column (`min(1vw, column / 100)`). Headings, gutters, section spacing, card padding, the header logo and carousel photo height are multiples of it, so a desktop shows the phone's proportions and line breaks about 1.5 times larger. Reading text grows less: the root font size eases from 16px on a 390px phone to 18px at full column width (written in `%`, so a reader's own text size setting still applies), which scales every `rem` by up to 12.5%.
-- Fluid sizes: `text-display` (hero), `text-title` (section headings), `text-subtitle`, `text-lead`, `text-eyebrow`.
-- Spacing: `px-gutter` for page side padding, `pt-section` / `pb-section` for section rhythm, `p-card` inside the big cards.
-- Carousels: the photo strip and the reviews both use `SwipeCarousel` (`src/components/common/`), built on Swiper so they behave the same everywhere: swipe on touch, drag with a mouse, side-scroll on a trackpad (vertical wheel still scrolls the page), arrow keys once focused. Swiper is about 27 KB gzipped, shared by both carousels and the viewer; the islands hydrate as you scroll near them, so it stays off the hero's critical path.
+- Layout: phones get one column; from `lg` (1024px) desktops get their own wider layout (side-by-side hero, one-row header with centred links, left/right footer). Sections use `SectionContainer` widths (`default` 1100px, `narrow` 720px, `wide` 1280px, `full`).
+- Fluid sizes: `text-display` (hero), `text-title` (section headings), `text-subtitle`, `text-lead`, `text-eyebrow`. Each is a `clamp()` of `rem` plus `vw`, so text scales smoothly from a 320px phone to a desktop without breakpoints.
+- Spacing: `px-gutter` for page side padding and `pt-section` / `pb-section` for section rhythm, both fluid.
+- Carousels: the client photo strip and the reviews both use `SwipeCarousel` (`src/components/common/`), built on Swiper so they behave the same everywhere: swipe on touch, drag with a mouse, side-scroll on a trackpad (vertical wheel still scrolls the page), arrow keys once focused. Swiper is about 27 KB gzipped, shared by both carousels and the viewer; the islands hydrate as you scroll near them, so it stays off the hero's critical path.
+- The photo strip runs edge to edge on every screen (the results section is `full` width). Phones centre the first photo; from 768px it starts flush left so the strip fills the screen. The reviews are a swipe carousel on phones and a row of three equal cards from `lg`; a fourth review would make that row swipeable with no code change.
 - Swiper's stylesheet is imported in `global.css` into Tailwind's `base` layer so classes on slides (`w-auto`, `w-[85%]`) beat Swiper's defaults. Don't import `swiper/css` anywhere else: an unlayered copy would override those classes again.
 - Swiper won't start a swipe on elements matching `noSwipingSelector`; its default includes `button`, which would make the photo strip (every photo is a button) unswipeable, so `SwipeCarousel` passes a list without it.
-- Carousels run off the screen edge on a phone; on wider screens they fade out at the column edge instead (`.swipe-carousel` in `effects.css`).
 - Headings use Montserrat 700/800 (`font-display`); body text uses the system Helvetica/Arial stack. Montserrat 800 is preloaded in `BaseLayout`.
 - `SectionContainer` presets (`maxWidth`, `spacing`, `paddingTop`, `animationVariant`) control width and vertical rhythm. Add a preset there instead of padding a section by hand.
 - `AchieveBtn` has `variant` (primary, outline, ghost), `size` (sm, md, lg), `fullWidth`, and `effect="shimmer"`. It renders a link when given `href` and a button otherwise.

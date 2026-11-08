@@ -2,6 +2,7 @@ import {useEffect, useState, type CSSProperties, type ReactNode} from "react";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {A11y, Mousewheel} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
+import type {SwiperOptions} from "swiper/types";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import {prefersReducedMotion} from "@/lib/motion";
 import {cn} from "@/lib/utils";
@@ -26,6 +27,9 @@ export interface SwipeCarouselProps {
     align?: "center" | "start";
     // Previous / next buttons under the carousel, with these spoken names.
     controls?: {previous: string; next: string};
+    // Swiper settings that change with screen width, keyed by min width in px.
+    breakpoints?: SwiperOptions["breakpoints"];
+    controlsClassName?: string;
     slideClassName?: string;
     className?: string;
     style?: CSSProperties;
@@ -39,7 +43,7 @@ const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 const stepButton =
     "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30";
 
-export function SwipeCarousel({items, label, align = "center", controls, slideClassName, className, style}: SwipeCarouselProps) {
+export function SwipeCarousel({items, label, align = "center", controls, breakpoints, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
     const [swiper, setSwiper] = useState<SwiperInstance | null>(null);
     const [edges, setEdges] = useState({atStart: true, atEnd: items.length <= 1});
 
@@ -71,6 +75,7 @@ export function SwipeCarousel({items, label, align = "center", controls, slideCl
                 spaceBetween={12}
                 centeredSlides
                 centeredSlidesBounds={align === "start"}
+                breakpoints={breakpoints}
                 speed={prefersReducedMotion() ? 0 : 400}
                 grabCursor
                 noSwipingSelector={NO_SWIPE_ON}
@@ -104,7 +109,7 @@ export function SwipeCarousel({items, label, align = "center", controls, slideCl
             </Swiper>
 
             {controls && (
-                <div className="mt-4 flex items-center justify-between gap-4">
+                <div className={cn("mt-4 flex items-center justify-between gap-4", controlsClassName)}>
                     <button
                         type="button"
                         onClick={() => swiper?.slidePrev()}
