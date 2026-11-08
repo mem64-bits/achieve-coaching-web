@@ -50,8 +50,8 @@ index.html (prerendered, static)
 | Testimonials ("In their words") and gallery wording | `src/constants/results.ts` (`TESTIMONIALS`, `RESULTS_SECTION`) |
 | Country search behaviour in the phone field | `src/lib/apply/countrySearch.ts` (tested in `__tests__/countrySearch.test.ts`) |
 | Favicon or Google/WhatsApp preview | `public/favicon.*`, `public/icon-*.png`, and the `<head>` plus structured data in `src/layouts/BaseLayout.astro` |
-| Logo sheen and glow, header depth, scroll progress line | `src/components/layout/BrandLogoDefs.astro` (metal gradient) and `src/styles/effects.css` (raised edge, shine sweep) |
-| Header section links and the blue highlight on the current one | `HEADER_LINKS` in `src/constants/site.ts`; highlight styles under "Header section links" in `src/styles/effects.css`; tracking in `src/lib/navigation/SectionSpy.ts` |
+| Logo sheen and glow, header depth, scroll progress line | `src/components/layout/BrandLogoDefs.astro` (sheen gradient) and `src/styles/effects.css`. The logo is kept flat: a soft glow only, no raised edge or shine. |
+| Header section links | `HEADER_LINKS` in `src/constants/site.ts` |
 | Form wording | `src/constants/applyForm.ts` |
 | What counts as a valid name, phone, email or social handle | `src/lib/apply/schema.ts` (and its tests in `src/lib/apply/__tests__/`) |
 | The email the coach receives | `src/lib/apply/notificationEmail.ts` |
@@ -133,7 +133,9 @@ The handler receives its email sender as an `ApplicationNotifier` interface, so 
 - Fluid sizes: `text-display` (hero), `text-title` (section headings), `text-subtitle`, `text-lead`, `text-eyebrow`. Each is a `clamp()` of `rem` plus `vw`, so text scales smoothly from a 320px phone to a desktop without breakpoints.
 - Spacing: `px-gutter` for page side padding and `pt-section` / `pb-section` for section rhythm, both fluid.
 - Carousels: the client photo strip and the reviews both use `SwipeCarousel` (`src/components/common/`), built on Swiper so they behave the same everywhere: swipe on touch, drag with a mouse, side-scroll on a trackpad (vertical wheel still scrolls the page), arrow keys once focused. Swiper is about 27 KB gzipped, shared by both carousels and the viewer; the islands hydrate as you scroll near them, so it stays off the hero's critical path.
-- The photo strip runs edge to edge on every screen (the results section is `full` width). Phones show one photo at its natural width, 26rem tall, with the next peeking in. From 768px both carousels follow `cardsPerView` in `SwipeCarousel.tsx`: 2 cards across, 3 from 1024px, 4 from 1440px, never more than there are items (so three reviews sit still in one row). Photos become equal 3:4 cards: ones close to that shape fill it, squares (before/after pairs) and tall shots are shown whole with their blurred placeholder filling the gaps (`CARD_RATIO` / `CROP_TOLERANCE` in `ResultsGallery.tsx`).
+- Carousel layout (`SwipeCarousel.tsx`): below 1024px exactly one card shows, so the next step is a swipe or an arrow. From 1024px three show in Swiper's coverflow: the middle card faces you, the two either side sit further back and turned in, and cards beyond them are hidden. The photos loop and are dimmed either side (`dimSides`); reviews don't loop (three is too few) and aren't dimmed, because half-strength text fails contrast, so they open on the middle review.
+- Photos are equal 3:4 cards, capped at 26rem wide when one shows and kept within 1100px when three do. Photos close to that shape fill the card; squares (before/after pairs) and tall shots are shown whole with their blurred placeholder filling the gaps (`CARD_RATIO` / `CROP_TOLERANCE` in `ResultsGallery.tsx`).
+- In the coverflow's 3D scene the middle card shares a plane with Swiper's wrapper and Chrome gives clicks to the wrapper, so `.swipe-carousel .swiper-wrapper` has `pointer-events: none` and the slides take them back (`effects.css`). Swipes still work: events from slides bubble up to the wrapper's listeners.
 - Swiper's stylesheet is imported in `global.css` into Tailwind's `base` layer so classes on slides (`w-auto`, `w-[85%]`) beat Swiper's defaults. Don't import `swiper/css` anywhere else: an unlayered copy would override those classes again.
 - Swiper won't start a swipe on elements matching `noSwipingSelector`; its default includes `button`, which would make the photo strip (every photo is a button) unswipeable, so `SwipeCarousel` passes a list without it.
 - Headings use Montserrat 700/800 (`font-display`); body text uses the system Helvetica/Arial stack. Montserrat 800 is preloaded in `BaseLayout`.
@@ -153,8 +155,6 @@ Visual extras use modern CSS when the browser supports it and fall back to a pla
 | Native `<dialog>` for the photo viewer | `Lightbox.tsx` | Baseline in all current browsers. Tapping the dark space around a photo closes it on every browser, including Safari, which lacks `closedby`. |
 | Scroll containment under the open viewer | `effects.css` | The page is still inert behind the dialog; it can just scroll a little on some browsers. |
 | Shimmer and shine effects | `components/effects/` | Static button and border under `prefers-reduced-motion`. |
-| Current-section highlight in the header (`scroll-target-group`, `:target-current`) | `effects.css`, `SectionSpy.ts` | Chrome and Edge track sections natively; elsewhere `SectionSpy` uses an `IntersectionObserver` and adds the `target-current` class. Both paths set `aria-current`. A hidden `#top` link in each nav keeps the lamp off while the hero is showing. |
-| Logo shine sweep and header button border beam | `effects.css` (`.brand-logo__shine`, `.border-beam`) | Each runs once (the beam three laps) after load, then rests. Off for reduced motion. |
 
 ## Checks
 

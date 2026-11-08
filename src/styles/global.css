@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 /* In the base layer so Tailwind classes on slides (widths, heights) win. */
 @import "swiper/css" layer(base);
+@import "swiper/css/effect-coverflow" layer(base);
 @import "@fontsource/montserrat/700.css";
 @import "@fontsource/montserrat/800.css";
 @import "./theme.css";

@@ -1,16 +1,23 @@
 import {useEffect, useState, type CSSProperties, type ReactNode} from "react";
 import {Swiper, SwiperSlide} from "swiper/react";
-import {A11y, Mousewheel} from "swiper/modules";
+import {A11y, EffectCoverflow, Mousewheel} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
-import type {SwiperOptions} from "swiper/types";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import {prefersReducedMotion} from "@/lib/motion";
 import {cn} from "@/lib/utils";
 
 // The one carousel the site uses, built on Swiper so it behaves the same
 // everywhere: swipe on a phone, drag with a mouse, side-scroll on a
-// trackpad, arrow keys once it has focus. Swiper's stylesheet is imported
-// into the base layer in global.css, so Tailwind classes here win over it.
+// trackpad, arrow keys once it has focus.
+//
+// Layout: phones and tablets show exactly one card, so the only way on is
+// to swipe (or tap an arrow). From 1024px it shows three in a coverflow:
+// the middle card faces you and the two either side sit further back,
+// turned slightly (and dimmed, for photos), so it's obvious which one is
+// in focus.
+//
+// Swiper's stylesheets are imported into the base layer in global.css, so
+// Tailwind classes here win over them.
 
 export interface SwipeCarouselItem {
     key: string;
@@ -21,47 +28,50 @@ export interface SwipeCarouselProps {
     items: SwipeCarouselItem[];
     // What the carousel holds, read out by screen readers ("Client results").
     label: string;
-    // "center" keeps the current slide in the middle (the photo strip).
-    // "start" lines the first card up with the page edge and the last with
-    // the far edge, centring the ones between (the reviews).
-    align?: "center" | "start";
+    // Wrap round from the last card to the first. Swiper needs a few more
+    // cards than are on screen to do this, so short lists can't loop.
+    loop?: boolean;
+    // Dim the cards either side of the one in focus. Turn it off for cards
+    // with text: at half strength their text fails contrast (reviews).
+    dimSides?: boolean;
     // Previous / next buttons under the carousel, with these spoken names.
     controls?: {previous: string; next: string};
-    // Swiper settings that change with screen width, keyed by min width in px.
-    breakpoints?: SwiperOptions["breakpoints"];
     controlsClassName?: string;
     slideClassName?: string;
     className?: string;
     style?: CSSProperties;
 }
 
+// Three cards in view from this width up (odd, so one is always in the
+// middle). Below it there's only one, so tablets get a single card rather
+// than three squeezed ones.
+const WIDE_FROM = 1024;
+const WIDE_CARDS = 3;
+
 // Swiper won't start a swipe on anything in this list. Its default includes
 // `button`, which would stop the photo strip (every photo is a button that
 // opens the viewer) from being swiped at all.
 const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 
-// How many cards sit side by side from each screen width up: two on
-// tablets, three on laptops, four on big screens. Never more than there are
-// items, so three reviews don't leave an empty fourth slot. Below 768px the
-// carousel keeps its phone layout (slide widths set by CSS, next card peeking).
-export function cardsPerView(itemCount: number): SwiperOptions["breakpoints"] {
-    const fit = (cards: number) => ({
-        slidesPerView: Math.min(cards, itemCount),
-        spaceBetween: 16,
-        centeredSlides: false,
-    });
-    return {768: fit(2), 1024: fit(3), 1440: fit(4)};
-}
-
 const stepButton =
     "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30";
 
-export function SwipeCarousel({items, label, align = "center", controls, breakpoints, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
+export function SwipeCarousel({items, label, loop = false, dimSides = true, controls, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
     const [swiper, setSwiper] = useState<SwiperInstance | null>(null);
-    const [edges, setEdges] = useState({atStart: true, atEnd: items.length <= 1});
+    const [edges, setEdges] = useState({atStart: !loop, atEnd: !loop && items.length <= 1});
 
     const syncEdges = (instance: SwiperInstance) =>
-        setEdges({atStart: instance.isBeginning, atEnd: instance.isEnd});
+        setEdges({atStart: !loop && instance.isBeginning, atEnd: !loop && instance.isEnd});
+
+    // Without a loop, three cards in view would open on the first card with
+    // an empty space to its left. Start one card in so all three show.
+    const fillTheRow = (instance: SwiperInstance) => {
+        if (loop) return;
+        const perView = instance.params.slidesPerView;
+        if (typeof perView === "number" && perView > 1 && instance.activeIndex === 0) {
+            instance.slideTo(Math.min(Math.floor(perView / 2), items.length - 1), 0);
+        }
+    };
 
     // Arrow keys move this carousel only while it has focus, so two carousels
     // on screen don't both move (Swiper's Keyboard module listens page-wide).
@@ -82,14 +92,24 @@ export function SwipeCarousel({items, label, align = "center", controls, breakpo
     return (
         <div>
             <Swiper
-                modules={[A11y, Mousewheel]}
+                modules={[A11y, EffectCoverflow, Mousewheel]}
                 tabIndex={0}
-                slidesPerView="auto"
-                spaceBetween={12}
+                effect="coverflow"
+                coverflowEffect={{
+                    // Side cards turn in a little and sit further back.
+                    rotate: 12,
+                    depth: 180,
+                    stretch: 0,
+                    scale: 0.92,
+                    modifier: 1,
+                    slideShadows: false,
+                }}
+                slidesPerView={1}
+                spaceBetween={16}
                 centeredSlides
-                centeredSlidesBounds={align === "start"}
-                breakpoints={breakpoints}
-                speed={prefersReducedMotion() ? 0 : 400}
+                loop={loop}
+                breakpoints={{[WIDE_FROM]: {slidesPerView: WIDE_CARDS, spaceBetween: 24}}}
+                speed={prefersReducedMotion() ? 0 : 450}
                 grabCursor
                 noSwipingSelector={NO_SWIPE_ON}
                 // Trackpads scroll sideways with the wheel event. Vertical
@@ -103,15 +123,19 @@ export function SwipeCarousel({items, label, align = "center", controls, breakpo
                 }}
                 onSwiper={(instance) => {
                     setSwiper(instance);
+                    fillTheRow(instance);
                     syncEdges(instance);
+                }}
+                onBreakpoint={(instance) => {
+                    // Breakpoint params apply after this event fires.
+                    requestAnimationFrame(() => {
+                        fillTheRow(instance);
+                        syncEdges(instance);
+                    });
                 }}
                 onSlideChange={syncEdges}
                 onResize={syncEdges}
-                // The carousel bleeds into the page gutters like it does on a
-                // phone. Swiper measures slides inside its padding, so the
-                // gutter padding keeps the centring right while the slides
-                // stay visible as they pass through it.
-                className={cn("swipe-carousel -mx-gutter px-gutter pb-2", className)}
+                className={cn("swipe-carousel pb-2", dimSides && "swipe-carousel--dim", className)}
                 style={style}
             >
                 {items.map((item) => (

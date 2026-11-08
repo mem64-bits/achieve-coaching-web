@@ -11,17 +11,15 @@ import type {GalleryPhoto} from "@/types/results";
 
 const titleId = `${copy.id}-title`;
 
-// Phones show strip photos 26rem tall (480 rounds up a little) at their
-// natural width. From tablets up they're equal cards: 2, 3 or 4 across the
-// screen (cardsPerView in SwipeCarousel), so their width is a share of it.
-const THUMB_HEIGHT = 480;
+// Strip photos are 3:4 cards: one at a time below 1024px (the screen minus
+// its margins, never over 26rem), then the middle of three in a carousel
+// capped at 1100px wide, so about a third of that.
 const THUMB_WIDTHS = [320, 480, 720, 960];
 const FULL_WIDTHS = [720, 1080, 1440];
 
 const photos: GalleryPhoto[] = await Promise.all(
     RESULT_PHOTOS.map(async (photo, index) => {
         const aspectRatio = photo.image.width / photo.image.height;
-        const mobileWidth = Math.round(THUMB_HEIGHT * aspectRatio);
 
         return {
             id: `result-${index + 1}`,
@@ -30,7 +28,7 @@ const photos: GalleryPhoto[] = await Promise.all(
             thumb: await toResponsiveImage(photo.image, {
                 alt: photo.alt,
                 widths: THUMB_WIDTHS,
-                sizes: `(min-width: 1440px) 25vw, (min-width: 1024px) 34vw, (min-width: 768px) 50vw, ${mobileWidth}px`,
+                sizes: "(min-width: 1024px) min(34vw, 370px), min(calc(100vw - 2rem), 416px)",
                 quality: {avif: 50, webp: 68},
                 placeholder: true,
             }),

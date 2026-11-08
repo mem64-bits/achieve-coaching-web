@@ -11,7 +11,6 @@ export const SITE = {
 } as const;
 
 export const SECTION_IDS = {
-    top: "top",
     results: "results",
     reviews: "reviews",
     transformations: "transformations",

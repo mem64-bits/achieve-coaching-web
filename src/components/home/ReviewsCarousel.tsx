@@ -1,5 +1,5 @@
 import type {Testimonial} from "@constants/results";
-import {SwipeCarousel, cardsPerView} from "@/components/common/SwipeCarousel";
+import {SwipeCarousel} from "@/components/common/SwipeCarousel";
 import {QuoteCard} from "./QuoteCard";
 
 interface ReviewsCarouselProps {
@@ -15,18 +15,18 @@ export default function ReviewsCarousel({testimonials, label}: ReviewsCarouselPr
         content: <QuoteCard {...testimonial}/>,
     }));
 
-    // Phones: each card is 85% of the strip so the next one peeks in, and
-    // cards keep their own height. From tablets up: the same cards-in-view
-    // rule as the photos (2, 3, then 4, never more than there are reviews),
-    // all at equal height. With three reviews the row just sits still.
+    // One card at a time on phones and tablets (capped at 32rem), three in a
+    // coverflow from 1024px
+    // (see SwipeCarousel). Three reviews are too few to loop, so the row
+    // opens on the middle one with the other two either side. Cards stretch
+    // to the tallest so the row lines up.
     return (
         <SwipeCarousel
             items={items}
             label={label}
-            align="start"
-            breakpoints={cardsPerView(testimonials.length)}
-            className="[&>.swiper-wrapper]:items-start md:[&>.swiper-wrapper]:items-stretch lg:mx-auto lg:max-w-[72rem] lg:px-0"
-            slideClassName="h-auto w-[85%] max-w-[22rem] md:max-w-none"
+            dimSides={false}
+            className="mx-auto max-w-[32rem] lg:max-w-[72rem] [&>.swiper-wrapper]:items-stretch"
+            slideClassName="h-auto"
         />
     );
 }

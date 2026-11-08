@@ -1,12 +1,10 @@
 ---
 import BrandLogo from "./BrandLogo.astro";
 import {AchieveBtn} from "@components/common/AchieveBtn";
-import {HEADER_LINKS, PRIMARY_CTA, SECTION_IDS, SITE} from "@constants/site";
+import {HEADER_LINKS, PRIMARY_CTA, SITE} from "@constants/site";
 
-// `section-link` turns Achieve blue for the section you're on (see
-// effects.css), so both navs highlight the same way.
 const linkClass =
-    "section-link inline-flex items-center whitespace-nowrap font-display font-bold uppercase text-subtle transition-colors hover:text-white";
+    "inline-flex min-h-11 items-center whitespace-nowrap font-display font-bold uppercase text-subtle transition-colors hover:text-achieve-blue";
 ---
 
 <header class="site-header sticky top-0 z-50 pt-[env(safe-area-inset-top)]">
@@ -17,16 +15,13 @@ const linkClass =
                 aria-label={`${SITE.name} home`}
                 class="block min-w-0 shrink grow-0 basis-[clamp(10rem,48vw,17rem)] transition-opacity hover:opacity-85 lg:w-[clamp(13rem,18vw,17rem)]"
             >
-                <BrandLogo shine/>
+                <BrandLogo/>
             </a>
 
-            <nav aria-label="Main" data-section-nav class="section-nav hidden lg:block">
-                <!-- Not shown or announced. It gives the scroll tracking a target for
-                     the hero, so no section link is highlighted while you're at the top. -->
-                <a href={`#${SECTION_IDS.top}`} tabindex="-1" aria-hidden="true" class="sr-only">Top</a>
-                <ul class="section-nav__track flex items-center gap-1 rounded-full px-1.5">
+            <nav aria-label="Main" class="hidden lg:block">
+                <ul class="flex items-center gap-8 xl:gap-10">
                     {HEADER_LINKS.map((link) => (
-                        <li><a href={link.href} class:list={[linkClass, "min-h-10 rounded-full px-4 text-sm tracking-[0.12em] xl:px-5"]}>{link.label}</a></li>
+                        <li><a href={link.href} class:list={[linkClass, "text-sm tracking-[0.12em]"]}>{link.label}</a></li>
                     ))}
                 </ul>
             </nav>
@@ -34,24 +29,19 @@ const linkClass =
             <AchieveBtn
                 href={PRIMARY_CTA.href}
                 size="sm"
-                variant="outline"
-                effect="beam"
-                className="shrink-0 border-achieve-blue/45 bg-achieve-blue/10 text-white hover:bg-achieve-blue/20 justify-self-end max-[400px]:px-3 max-[400px]:text-[0.75rem] max-[400px]:tracking-[0.02em]"
+                className="shrink-0 justify-self-end max-[400px]:px-3 max-[400px]:text-[0.75rem] max-[400px]:tracking-[0.02em]"
             >
                 {PRIMARY_CTA.headerLabel}
             </AchieveBtn>
         </div>
 
-        <nav aria-label="Main" data-section-nav class="section-nav border-t border-white/5 lg:hidden">
-            <a href={`#${SECTION_IDS.top}`} tabindex="-1" aria-hidden="true" class="sr-only">Top</a>
+        <nav aria-label="Main" class="border-t border-white/5 lg:hidden">
             <ul class="snap-row mx-auto max-w-[90rem] justify-center-safe gap-6 px-gutter sm:gap-8">
                 {HEADER_LINKS.map((link) => (
                     <li>
-                        <a href={link.href} class:list={[linkClass, "min-h-11 px-1 text-[0.6875rem] tracking-[0.1em] sm:text-xs sm:tracking-[0.12em]"]}>
-                            {/* Only one label is displayed at a time, so the link's spoken name always
-                                matches the words on screen (voice control users say what they see). */}
-                            <span class="sm:hidden">{link.shortLabel}</span>
-                            <span class="hidden sm:inline">{link.label}</span>
+                        <a href={link.href} aria-label={link.label} class:list={[linkClass, "min-h-9 text-[0.6875rem] tracking-[0.1em] sm:text-xs sm:tracking-[0.12em]"]}>
+                            <span class="sm:hidden" aria-hidden="true">{link.shortLabel}</span>
+                            <span class="hidden sm:inline" aria-hidden="true">{link.label}</span>
                         </a>
                     </li>
                 ))}
@@ -62,9 +52,3 @@ const linkClass =
         <div class="scroll-progress"></div>
     </div>
 </header>
-
-<script>
-    import {SectionSpy} from "@/lib/navigation/SectionSpy";
-
-    new SectionSpy().start();
-</script>
