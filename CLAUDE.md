@@ -73,7 +73,8 @@ Astro 7, Tailwind 4, React 19, shadcn base-nova and Resend all changed recently,
 - For UI effects, look at Magic UI (MIT, shadcn-compatible) first and prefer CSS-only components; record anything adapted in `THIRD_PARTY_NOTICES.md` and `src/components/effects/README.md`.
 - For UI changes, run the dev server and check the page with the Playwright MCP tools (desktop and a 390px mobile viewport) before saying it looks right. Also check that `document.documentElement.scrollWidth` equals the viewport width at 360px.
 - Check hydration on a production build (`npm run build`, then serve `.vercel/output/static`), not only in `astro dev`: some mismatches only appear after the build.
-- Heavy client libraries load on demand with `React.lazy` or `import()` (Swiper only loads when the photo viewer opens). Do not add one to an island's main bundle without measuring the gzipped size first.
+- Heavy client libraries load on demand with `React.lazy` or `import()`, or in an island that hydrates on `client:visible`. Swiper (about 27 KB gzipped) loads with the carousel islands, and the viewer's Zoom code only when it opens. Do not add a library to an island's main bundle without measuring the gzipped size first.
+- Every carousel uses `SwipeCarousel`. Don't build another scroll strip, and don't import `swiper/css` outside `global.css`.
 - Section links in the header must live inside a `[data-section-nav]` nav and use the `section-link` class, so `SectionSpy` and the lamp styles pick them up. Style the current link with `:is(:target-current, .target-current)` (never two separate selectors: an unknown pseudo-class drops the whole rule).
 - Don't remove `InPageJumps` while `deferRender` is in use: `#section` links rely on it to land on the right spot.
 - Looping decorative motion runs a few times and then rests; nothing should animate forever in the header.

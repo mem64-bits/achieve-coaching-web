@@ -371,7 +371,7 @@ dialog.lightbox::backdrop {
    the page column instead, so fade the edges rather than cut the next
    photo off in mid-air. */
 @media (min-width: 37.5rem) {
-    .snap-row {
+    .swipe-carousel {
         mask-image: linear-gradient(
             to right,
             transparent,

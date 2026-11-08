@@ -4,7 +4,7 @@ import {ChevronLeft, ChevronRight, X} from "lucide-react";
 import {GALLERY_LABELS} from "@constants/results";
 import type {GalleryPhoto} from "@/types/results";
 import {BrandLoader} from "@/components/common/BrandLoader";
-import {prefersReducedMotion} from "./useSnapIndex";
+import {prefersReducedMotion} from "@/lib/motion";
 
 const LightboxSwiper = lazy(() => import("./LightboxSwiper"));
 

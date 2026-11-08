@@ -3,6 +3,7 @@ import {SectionContainer} from "@components/common/SectionContainer";
 import {SectionTitle} from "@components/common/SectionTitle";
 import ResultsGallery from "@components/results/ResultsGallery";
 import {QuoteCard} from "./QuoteCard";
+import ReviewsCarousel from "./ReviewsCarousel";
 import {RESULT_PHOTOS} from "@constants/resultPhotos";
 import {RESULTS_SECTION as copy, TESTIMONIALS as testimonials} from "@constants/results";
 import {toResponsiveImage} from "@/lib/images";
@@ -73,17 +74,11 @@ const photos: GalleryPhoto[] = await Promise.all(
                     {copy.testimonialsTitle} <span class="text-achieve-blue">{copy.testimonialsAccent}</span>
                 </h3>
             )}
-            <ul
-                tabindex="0"
-                aria-label={`${copy.testimonialsTitle} ${copy.testimonialsAccent}`}
-                class="snap-row -mx-gutter items-start px-gutter pb-2"
-            >
-                {testimonials.map((testimonial) => (
-                    <li class="w-[85%] shrink-0">
-                        <QuoteCard {...testimonial}/>
-                    </li>
-                ))}
-            </ul>
+            <ReviewsCarousel
+                client:visible={{rootMargin: "600px"}}
+                testimonials={testimonials}
+                label={`${copy.testimonialsTitle} ${copy.testimonialsAccent}`}
+            />
         </>
     )}
 </SectionContainer>

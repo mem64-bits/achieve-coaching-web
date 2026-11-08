@@ -1,7 +1,7 @@
 import {Swiper, SwiperSlide} from "swiper/react";
 import {A11y, Keyboard, Zoom} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
-import "swiper/css";
+// Swiper's core stylesheet is imported once, layered, in global.css.
 import "swiper/css/zoom";
 import {BrandLoader} from "@/components/common/BrandLoader";
 import {ResponsivePicture} from "@/components/common/ResponsivePicture";

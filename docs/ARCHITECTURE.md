@@ -27,7 +27,7 @@ index.html (prerendered, static)
 | `src/layouts/` | Page shells. `BaseLayout.astro` owns `<head>` (SEO and social preview tags), the header, footer and skip link. |
 | `src/components/layout/` | Site chrome shared by every page: `SiteHeader`, `SiteFooter`, `BrandLogo`, `SocialLinks`. |
 | `src/components/home/` | One file per homepage section (`*Section.astro`) plus the small pieces only they use (`QuoteCard`, `StepRow`). |
-| `src/components/results/` | The results gallery island: swipeable strip with arrows on every screen size, and the full-screen `Lightbox`. `LightboxSwiper.tsx` (Swiper with pinch zoom) is loaded only when the viewer opens. |
+| `src/components/results/` | The results gallery island: the photo carousel (`SwipeCarousel` with arrows) and the full-screen `Lightbox`. `LightboxSwiper.tsx` (Swiper with pinch zoom) is loaded only when the viewer opens. |
 | `src/components/apply/` | The application form island. `useApplyForm.ts` holds the logic; the other files are views. `CountryPicker.tsx` is the searchable country code list. |
 | `src/components/common/` | Building blocks used across features: `AchieveBtn`, `SectionContainer`, `SectionTitle`. |
 | `src/components/effects/` | Decorative effects adapted from Magic UI. See the README in that folder. |
@@ -92,7 +92,7 @@ index.html (prerendered, static)
 ## Full-screen photo viewer
 
 - The strip on the page is plain CSS scroll snapping: the phone's own swipe, no JavaScript.
-- Tapping a photo opens a native `<dialog>`. Inside it, Swiper (`LightboxSwiper.tsx`, with the Zoom, Keyboard and A11y modules) handles swiping, pinch and double-tap zoom and arrow keys. It is a separate 30 KB (gzipped) chunk that downloads the first time someone opens a photo.
+- Tapping a photo opens a native `<dialog>`. Inside it, Swiper (`LightboxSwiper.tsx`, with the Zoom, Keyboard and A11y modules) handles swiping, pinch and double-tap zoom and arrow keys. Swiper itself already arrived with the carousels, so opening the viewer only downloads its own 4 KB (gzipped) chunk plus the Zoom module.
 - Escape, the back gesture, the close button and tapping the empty space around a photo all close it.
 
 ## The application form
@@ -134,7 +134,10 @@ The handler receives its email sender as an `ApplicationNotifier` interface, so 
 - Scaling: `--col` is 1% of the column (`min(1vw, column / 100)`). Headings, gutters, section spacing, card padding, the header logo and carousel photo height are multiples of it, so a desktop shows the phone's proportions and line breaks about 1.5 times larger. Reading text grows less: the root font size eases from 16px on a 390px phone to 18px at full column width (written in `%`, so a reader's own text size setting still applies), which scales every `rem` by up to 12.5%.
 - Fluid sizes: `text-display` (hero), `text-title` (section headings), `text-subtitle`, `text-lead`, `text-eyebrow`.
 - Spacing: `px-gutter` for page side padding, `pt-section` / `pb-section` for section rhythm, `p-card` inside the big cards.
-- Carousels (`.snap-row`) run off the screen edge on a phone; on wider screens they fade out at the column edge instead (`effects.css`).
+- Carousels: the photo strip and the reviews both use `SwipeCarousel` (`src/components/common/`), built on Swiper so they behave the same everywhere: swipe on touch, drag with a mouse, side-scroll on a trackpad (vertical wheel still scrolls the page), arrow keys once focused. Swiper is about 27 KB gzipped, shared by both carousels and the viewer; the islands hydrate as you scroll near them, so it stays off the hero's critical path.
+- Swiper's stylesheet is imported in `global.css` into Tailwind's `base` layer so classes on slides (`w-auto`, `w-[85%]`) beat Swiper's defaults. Don't import `swiper/css` anywhere else: an unlayered copy would override those classes again.
+- Swiper won't start a swipe on elements matching `noSwipingSelector`; its default includes `button`, which would make the photo strip (every photo is a button) unswipeable, so `SwipeCarousel` passes a list without it.
+- Carousels run off the screen edge on a phone; on wider screens they fade out at the column edge instead (`.swipe-carousel` in `effects.css`).
 - Headings use Montserrat 700/800 (`font-display`); body text uses the system Helvetica/Arial stack. Montserrat 800 is preloaded in `BaseLayout`.
 - `SectionContainer` presets (`maxWidth`, `spacing`, `paddingTop`, `animationVariant`) control width and vertical rhythm. Add a preset there instead of padding a section by hand.
 - `AchieveBtn` has `variant` (primary, outline, ghost), `size` (sm, md, lg), `fullWidth`, and `effect="shimmer"`. It renders a link when given `href` and a button otherwise.
@@ -167,7 +170,7 @@ Visual extras use modern CSS when the browser supports it and fall back to a pla
 ## Decisions and gotchas
 
 - **No third-party HTML minifier.** `astro-compress` runs with `HTML: false`. Its minifier moved whitespace around the `<!-- -->` markers React puts between text nodes, which broke hydration of the form (React error 418). Astro already compresses its own HTML.
-- **Swiper is pre-bundled in dev** (`optimizeDeps.include` in `astro.config.mjs`). It is only reached through the viewer's lazy import, so Vite found it late and the open page asked for a stale copy (504, viewer would not open). Production builds were never affected. Astro 7 runs `astro dev` in the background: restart it with `npx astro dev stop` first.
+- **Swiper is pre-bundled in dev** (`optimizeDeps.include` in `astro.config.mjs`). When it was only reached through the viewer's lazy import, Vite found it late and the open page asked for a stale copy (504, viewer would not open). The carousels import it directly now, but pre-bundling keeps the Zoom module and the viewer safe. Production builds were never affected. Astro 7 runs `astro dev` in the background: restart it with `npx astro dev stop` first.
 - **No `vite.esbuild` options.** Astro 7 uses Vite 8, which ignores them (it uses Oxc). Server `console.error` calls are kept on purpose so failures show in Vercel logs.
 - **Flags are self-hosted** in `public/flags/` (218 SVGs from country-flag-icons, MIT). The phone library's default flags came from a third-party CDN.
 - **Search previews.** `BaseLayout.astro` sets the title, description, canonical URL, Open Graph image, a square favicon set, a web manifest and `WebSite` / `Organization` structured data. Google picks these up only after the production site is recrawled.
