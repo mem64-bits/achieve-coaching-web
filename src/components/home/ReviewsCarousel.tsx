@@ -15,16 +15,13 @@ export default function ReviewsCarousel({testimonials, label}: ReviewsCarouselPr
         content: <QuoteCard {...testimonial}/>,
     }));
 
-    // One card at a time on phones and tablets (capped at 32rem), three in a
-    // coverflow from 1024px
-    // (see SwipeCarousel). Three reviews are too few to loop, so the row
-    // opens on the middle one with the other two either side. Cards stretch
-    // to the tallest so the row lines up.
+    // One card at a time on phones and tablets (capped at 32rem), three side
+    // by side from 1024px, in the order TESTIMONIALS lists them. Cards
+    // stretch to the tallest so the row lines up.
     return (
         <SwipeCarousel
             items={items}
             label={label}
-            dimSides={false}
             className="mx-auto max-w-[32rem] lg:max-w-[72rem] [&>.swiper-wrapper]:items-stretch"
             slideClassName="h-auto"
         />

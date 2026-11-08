@@ -51,14 +51,14 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
 
     return (
         <div>
+            {/* Slides follow RESULT_PHOTOS order exactly; see __tests__/galleryOrder.test.ts. */}
             <SwipeCarousel
                 items={items}
                 label={GALLERY_LABELS.carousel}
-                loop
                 controls={{previous: GALLERY_LABELS.previous, next: GALLERY_LABELS.next}}
                 // One card is never wider than 26rem (tablets would otherwise
                 // get a 960px-tall photo); three across are kept to 1100px so
-                // the middle one stays about 366 by 488 on wide screens.
+                // each is about 350 by 467 on wide screens.
                 className="mx-auto max-w-[26rem] lg:max-w-[1100px]"
                 controlsClassName="mx-auto max-w-[26rem] lg:max-w-[1100px]"
             />

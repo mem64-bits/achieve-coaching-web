@@ -1,6 +1,6 @@
 import {useEffect, useState, type CSSProperties, type ReactNode} from "react";
 import {Swiper, SwiperSlide} from "swiper/react";
-import {A11y, EffectCoverflow, Mousewheel} from "swiper/modules";
+import {A11y, Mousewheel} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import {prefersReducedMotion} from "@/lib/motion";
@@ -10,14 +10,12 @@ import {cn} from "@/lib/utils";
 // everywhere: swipe on a phone, drag with a mouse, side-scroll on a
 // trackpad, arrow keys once it has focus.
 //
-// Layout: phones and tablets show exactly one card, so the only way on is
-// to swipe (or tap an arrow). From 1024px it shows three in a coverflow:
-// the middle card faces you and the two either side sit further back,
-// turned slightly (and dimmed, for photos), so it's obvious which one is
-// in focus.
+// Layout: flat cards, always in the order they're given, starting with the
+// first. Phones and tablets show exactly one card, so the only way on is to
+// swipe (or tap an arrow). From 1024px three sit side by side.
 //
-// Swiper's stylesheets are imported into the base layer in global.css, so
-// Tailwind classes here win over them.
+// Swiper's stylesheet is imported into the base layer in global.css, so
+// Tailwind classes here win over it.
 
 export interface SwipeCarouselItem {
     key: string;
@@ -28,12 +26,6 @@ export interface SwipeCarouselProps {
     items: SwipeCarouselItem[];
     // What the carousel holds, read out by screen readers ("Client results").
     label: string;
-    // Wrap round from the last card to the first. Swiper needs a few more
-    // cards than are on screen to do this, so short lists can't loop.
-    loop?: boolean;
-    // Dim the cards either side of the one in focus. Turn it off for cards
-    // with text: at half strength their text fails contrast (reviews).
-    dimSides?: boolean;
     // Previous / next buttons under the carousel, with these spoken names.
     controls?: {previous: string; next: string};
     controlsClassName?: string;
@@ -42,9 +34,8 @@ export interface SwipeCarouselProps {
     style?: CSSProperties;
 }
 
-// Three cards in view from this width up (odd, so one is always in the
-// middle). Below it there's only one, so tablets get a single card rather
-// than three squeezed ones.
+// Three cards side by side from this width up. Below it there's only one,
+// so tablets get a single card rather than three squeezed ones.
 const WIDE_FROM = 1024;
 const WIDE_CARDS = 3;
 
@@ -56,22 +47,12 @@ const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 const stepButton =
     "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30";
 
-export function SwipeCarousel({items, label, loop = false, dimSides = true, controls, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
+export function SwipeCarousel({items, label, controls, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
     const [swiper, setSwiper] = useState<SwiperInstance | null>(null);
-    const [edges, setEdges] = useState({atStart: !loop, atEnd: !loop && items.length <= 1});
+    const [edges, setEdges] = useState({atStart: true, atEnd: items.length <= 1});
 
     const syncEdges = (instance: SwiperInstance) =>
-        setEdges({atStart: !loop && instance.isBeginning, atEnd: !loop && instance.isEnd});
-
-    // Without a loop, three cards in view would open on the first card with
-    // an empty space to its left. Start one card in so all three show.
-    const fillTheRow = (instance: SwiperInstance) => {
-        if (loop) return;
-        const perView = instance.params.slidesPerView;
-        if (typeof perView === "number" && perView > 1 && instance.activeIndex === 0) {
-            instance.slideTo(Math.min(Math.floor(perView / 2), items.length - 1), 0);
-        }
-    };
+        setEdges({atStart: instance.isBeginning, atEnd: instance.isEnd});
 
     // Arrow keys move this carousel only while it has focus, so two carousels
     // on screen don't both move (Swiper's Keyboard module listens page-wide).
@@ -92,24 +73,12 @@ export function SwipeCarousel({items, label, loop = false, dimSides = true, cont
     return (
         <div>
             <Swiper
-                modules={[A11y, EffectCoverflow, Mousewheel]}
+                modules={[A11y, Mousewheel]}
                 tabIndex={0}
-                effect="coverflow"
-                coverflowEffect={{
-                    // Side cards turn in a little and sit further back.
-                    rotate: 12,
-                    depth: 180,
-                    stretch: 0,
-                    scale: 0.92,
-                    modifier: 1,
-                    slideShadows: false,
-                }}
                 slidesPerView={1}
                 spaceBetween={16}
-                centeredSlides
-                loop={loop}
                 breakpoints={{[WIDE_FROM]: {slidesPerView: WIDE_CARDS, spaceBetween: 24}}}
-                speed={prefersReducedMotion() ? 0 : 450}
+                speed={prefersReducedMotion() ? 0 : 400}
                 grabCursor
                 noSwipingSelector={NO_SWIPE_ON}
                 // Trackpads scroll sideways with the wheel event. Vertical
@@ -123,19 +92,12 @@ export function SwipeCarousel({items, label, loop = false, dimSides = true, cont
                 }}
                 onSwiper={(instance) => {
                     setSwiper(instance);
-                    fillTheRow(instance);
                     syncEdges(instance);
-                }}
-                onBreakpoint={(instance) => {
-                    // Breakpoint params apply after this event fires.
-                    requestAnimationFrame(() => {
-                        fillTheRow(instance);
-                        syncEdges(instance);
-                    });
                 }}
                 onSlideChange={syncEdges}
                 onResize={syncEdges}
-                className={cn("swipe-carousel pb-2", dimSides && "swipe-carousel--dim", className)}
+                onBreakpoint={(instance) => requestAnimationFrame(() => syncEdges(instance))}
+                className={cn("swipe-carousel pb-2", className)}
                 style={style}
             >
                 {items.map((item) => (

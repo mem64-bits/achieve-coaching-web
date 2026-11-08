@@ -12,8 +12,8 @@ import type {GalleryPhoto} from "@/types/results";
 const titleId = `${copy.id}-title`;
 
 // Strip photos are 3:4 cards: one at a time below 1024px (the screen minus
-// its margins, never over 26rem), then the middle of three in a carousel
-// capped at 1100px wide, so about a third of that.
+// its margins, never over 26rem), then three side by side in a carousel
+// capped at 1100px wide, so about a third of that each.
 const THUMB_WIDTHS = [320, 480, 720, 960];
 const FULL_WIDTHS = [720, 1080, 1440];
 
@@ -28,7 +28,7 @@ const photos: GalleryPhoto[] = await Promise.all(
             thumb: await toResponsiveImage(photo.image, {
                 alt: photo.alt,
                 widths: THUMB_WIDTHS,
-                sizes: "(min-width: 1024px) min(34vw, 370px), min(calc(100vw - 2rem), 416px)",
+                sizes: "(min-width: 1024px) min(32vw, 360px), min(calc(100vw - 2rem), 416px)",
                 quality: {avif: 50, webp: 68},
                 placeholder: true,
             }),

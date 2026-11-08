@@ -73,6 +73,7 @@ Astro 7, Tailwind 4, React 19, shadcn base-nova and Resend all changed recently,
 - Check hydration on a production build (`npm run build`, then serve `.vercel/output/static`), not only in `astro dev`: some mismatches only appear after the build.
 - Heavy client libraries load on demand with `React.lazy` or `import()`, or in an island that hydrates on `client:visible`. Swiper (about 27 KB gzipped) loads with the carousel islands, and the viewer's Zoom code only when it opens. Do not add a library to an island's main bundle without measuring the gzipped size first.
 - Every carousel uses `SwipeCarousel`. Don't build another scroll strip, and don't import `swiper/css` outside `global.css`.
+- Carousels show items in the order the constants list them, first item first: one card below 1024px, three from 1024px, flat. Don't turn on Swiper's `loop` or `centeredSlides` (both change which card shows first and the server-side order tests can't catch it).
 - Don't remove `InPageJumps` while `deferRender` is in use: `#section` links rely on it to land on the right spot.
 - Looping decorative motion runs a few times and then rests; nothing should animate forever in the header.
 - Loading and broken-image states use `BrandLoader` (`state="loading"` or `"idle"`); do not add other spinners.

@@ -48,38 +48,6 @@
     filter: drop-shadow(0 0 10px rgba(61, 123, 255, 0.3));
 }
 
-/* Carousels: Swiper's coverflow pushes the cards either side back and turns
-   them in. Photo carousels also dim them (`--dim`); text cards don't, since
-   half-strength text fails contrast. Opacity changes ride on Swiper's own
-   slide transition, so cards fade as they move. */
-.swipe-carousel--dim .swiper-slide:not(.swiper-slide-active) {
-    opacity: 0.5;
-}
-
-/* Only the card in focus and its two neighbours show. Cards further out
-   would otherwise peek out behind the side cards in the coverflow. */
-.swipe-carousel .swiper-slide:not(.swiper-slide-active, .swiper-slide-prev, .swiper-slide-next) {
-    opacity: 0;
-}
-
-/* In the coverflow's 3D scene the middle card sits at zero depth, the same
-   plane as the wrapper behind it, and the browser hands clicks to the
-   wrapper instead of the card. Let clicks pass through the wrapper; drags
-   still reach Swiper because events from the cards bubble up to it. */
-.swipe-carousel .swiper-wrapper {
-    pointer-events: none;
-}
-
-.swipe-carousel .swiper-slide {
-    pointer-events: auto;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .swipe-carousel .swiper-slide {
-        transition-property: transform, opacity;
-    }
-}
-
 .site-header {
     container-type: scroll-state;
     container-name: site-header;
