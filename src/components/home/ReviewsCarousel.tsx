@@ -1,5 +1,5 @@
 import type {Testimonial} from "@constants/results";
-import {SwipeCarousel} from "@/components/common/SwipeCarousel";
+import {SwipeCarousel, cardsPerView} from "@/components/common/SwipeCarousel";
 import {QuoteCard} from "./QuoteCard";
 
 interface ReviewsCarouselProps {
@@ -16,16 +16,17 @@ export default function ReviewsCarousel({testimonials, label}: ReviewsCarouselPr
     }));
 
     // Phones: each card is 85% of the strip so the next one peeks in, and
-    // cards keep their own height. Desktop: three cards fill one row at equal
-    // height; Swiper sees nothing to scroll and stays still, and a fourth
-    // review would make the row swipeable without any change here.
+    // cards keep their own height. From tablets up: the same cards-in-view
+    // rule as the photos (2, 3, then 4, never more than there are reviews),
+    // all at equal height. With three reviews the row just sits still.
     return (
         <SwipeCarousel
             items={items}
             label={label}
             align="start"
-            className="[&>.swiper-wrapper]:items-start lg:mx-auto lg:max-w-[72rem] lg:px-0 lg:[&>.swiper-wrapper]:items-stretch"
-            slideClassName="h-auto w-[85%] max-w-[22rem] lg:w-[calc((100%-24px)/3)] lg:max-w-none"
+            breakpoints={cardsPerView(testimonials.length)}
+            className="[&>.swiper-wrapper]:items-start md:[&>.swiper-wrapper]:items-stretch lg:mx-auto lg:max-w-[72rem] lg:px-0"
+            slideClassName="h-auto w-[85%] max-w-[22rem] md:max-w-none"
         />
     );
 }

@@ -40,6 +40,19 @@ export interface SwipeCarouselProps {
 // opens the viewer) from being swiped at all.
 const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 
+// How many cards sit side by side from each screen width up: two on
+// tablets, three on laptops, four on big screens. Never more than there are
+// items, so three reviews don't leave an empty fourth slot. Below 768px the
+// carousel keeps its phone layout (slide widths set by CSS, next card peeking).
+export function cardsPerView(itemCount: number): SwiperOptions["breakpoints"] {
+    const fit = (cards: number) => ({
+        slidesPerView: Math.min(cards, itemCount),
+        spaceBetween: 16,
+        centeredSlides: false,
+    });
+    return {768: fit(2), 1024: fit(3), 1440: fit(4)};
+}
+
 const stepButton =
     "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30";
 

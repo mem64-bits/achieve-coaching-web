@@ -3,8 +3,8 @@ import BrandLogo from "./BrandLogo.astro";
 import {AchieveBtn} from "@components/common/AchieveBtn";
 import {HEADER_LINKS, PRIMARY_CTA, SECTION_IDS, SITE} from "@constants/site";
 
-// `section-link` carries the tubelight lamp (see effects.css); the colour
-// change for the current section lives there too so both navs match.
+// `section-link` turns Achieve blue for the section you're on (see
+// effects.css), so both navs highlight the same way.
 const linkClass =
     "section-link inline-flex items-center whitespace-nowrap font-display font-bold uppercase text-subtle transition-colors hover:text-white";
 ---
@@ -22,7 +22,7 @@ const linkClass =
 
             <nav aria-label="Main" data-section-nav class="section-nav hidden lg:block">
                 <!-- Not shown or announced. It gives the scroll tracking a target for
-                     the hero, so no section lamp is lit while you're at the top. -->
+                     the hero, so no section link is highlighted while you're at the top. -->
                 <a href={`#${SECTION_IDS.top}`} tabindex="-1" aria-hidden="true" class="sr-only">Top</a>
                 <ul class="section-nav__track flex items-center gap-1 rounded-full px-1.5">
                     {HEADER_LINKS.map((link) => (
