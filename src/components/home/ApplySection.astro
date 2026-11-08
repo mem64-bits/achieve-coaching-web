@@ -8,7 +8,7 @@ import {SOCIAL_LINKS} from "@constants/socials";
 const whatsApp = SOCIAL_LINKS.find((link) => link.label === "WhatsApp");
 ---
 
-<SectionContainer id={APPLY_FORM_COPY.sectionId} maxWidth="narrow" spacing="relaxed" aria-labelledby="apply-title">
+<SectionContainer id={APPLY_FORM_COPY.sectionId} spacing="relaxed" aria-labelledby="apply-title">
     <SectionTitle
         id="apply-title"
         eyebrow={APPLY_FORM_COPY.eyebrow}
@@ -24,7 +24,7 @@ const whatsApp = SOCIAL_LINKS.find((link) => link.label === "WhatsApp");
         ))}
     </ul>
 
-    <div class="card-outline relative mt-8 rounded-3xl bg-card p-5 sm:p-8">
+    <div class="card-outline relative mt-8 rounded-3xl bg-card p-card">
         <ApplyForm client:visible={{rootMargin: "400px"}}/>
         <noscript>
             <p class="mt-4 text-sm text-muted-foreground">

@@ -28,8 +28,10 @@ Ported from `GEMINI.md`, which stays as Gemini's copy. This section is the maint
 - Colours, spacing and radii are CSS custom properties in `src/styles/theme.css`.
 - `@theme inline` in `theme.css` maps those variables to Tailwind utilities. A new token means a variable plus its mapping, then the utility in components.
 - No raw hex or rgb values in components. The one exception is inline styles in email HTML, which email clients require.
-- Type and spacing are fluid tokens (`text-display`, `text-title`, `text-subtitle`, `text-lead`, `px-gutter`, `pt-section`, `pb-section`), built from `clamp()` with `rem` plus `vw`. Use them instead of stacking breakpoint font sizes.
-- Mobile first: design at 360px, then add `md:` and `lg:` changes. Every flex row that holds a logo or long text next to a button needs `min-w-0` on the text side and `shrink-0` on the button side.
+- Type and spacing are fluid tokens (`text-display`, `text-title`, `text-subtitle`, `text-lead`, `px-gutter`, `pt-section`, `pb-section`, `p-card`) built on `--col`, 1% of the page column. Use them instead of stacking breakpoint font sizes.
+- One layout for every screen (the client's call): desktop is the phone layout in a centred column (`max-w-column`, 37.5rem) that scales up. Do not add `md:`/`lg:` layout changes (side-by-side columns, grids, hiding the carousel arrows). `sm:` is only for small fits such as the header's long link labels; pop-ups like the country picker may still differ.
+- New sizes that should scale with the layout are written as `calc(var(--col) * N)`, where N is the size on a 390px phone divided by 3.9. A phone must look the same before and after any change; compare a 390px screenshot.
+- Every flex row that holds a logo or long text next to a button needs `min-w-0` on the text side and `shrink-0` on the button side.
 - Form inputs are at least 16px (`text-base`) so iOS Safari does not zoom, and tap targets are at least 44px tall (48px or more for form controls).
 - Motion runs only under `motion-safe:` or `@media (prefers-reduced-motion: no-preference)`. Newer CSS (scroll-driven animations, `scroll-state` queries) is a progressive enhancement: the page must look complete without it.
 

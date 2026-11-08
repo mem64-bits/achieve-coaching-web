@@ -34,7 +34,11 @@ export function scrollItemIntoCenter(track: HTMLElement | null, index: number, b
         return;
     }
 
-    const left = item.offsetLeft - (track.clientWidth - item.offsetWidth) / 2;
+    // Measure the photo against the track itself. offsetLeft counts from the
+    // nearest positioned ancestor, which only lines up with the track when
+    // the track starts at the screen edge (as it does on a phone).
+    const offsetInTrack = item.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+    const left = offsetInTrack - (track.clientWidth - item.offsetWidth) / 2;
     track.scrollTo({left, behavior});
 }
 

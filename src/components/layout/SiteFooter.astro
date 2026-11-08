@@ -7,8 +7,8 @@ import {SOCIAL_LINKS} from "@constants/socials";
 ---
 
 <footer class="mt-auto border-t border-white/5 bg-linear-to-t from-black via-card/40 to-transparent">
-    <div class="mx-auto flex max-w-[1100px] flex-col items-center gap-10 px-gutter pt-14 pb-[max(2rem,env(safe-area-inset-bottom))] md:flex-row md:items-end md:justify-between">
-        <div class="order-2 flex flex-col items-center gap-2.5 md:order-1 md:items-start">
+    <div class="mx-auto flex max-w-column flex-col items-center gap-10 px-gutter pt-14 pb-[max(2rem,env(safe-area-inset-bottom))]">
+        <div class="order-2 flex flex-col items-center gap-2.5">
             <a href="/" aria-label={`${SITE.name} home`} class="block w-32 opacity-90 transition-opacity hover:opacity-100">
                 <BrandLogo/>
             </a>
@@ -17,7 +17,7 @@ import {SOCIAL_LINKS} from "@constants/socials";
             </p>
         </div>
 
-        <div id={SECTION_IDS.contact} class="order-1 flex flex-col items-center gap-3 md:order-2">
+        <div id={SECTION_IDS.contact} class="order-1 flex flex-col items-center gap-3">
             <h2 class="eyebrow flex items-center gap-2 text-muted-foreground">
                 <Phone aria-hidden="true" className="size-4 text-achieve-blue"/>
                 Contact us

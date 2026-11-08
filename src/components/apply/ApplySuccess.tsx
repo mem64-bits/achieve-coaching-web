@@ -22,7 +22,7 @@ export function ApplySuccess({onStartOver}: ApplySuccessProps) {
             <h3 ref={headingRef} tabIndex={-1} className="mt-5 font-display text-subtitle font-extrabold uppercase text-foreground outline-none">
                 {copy.title}
             </h3>
-            <p className="mt-3 max-w-[28rem] text-base text-muted-foreground sm:text-lg">{copy.body}</p>
+            <p className="mt-3 max-w-[28rem] text-base text-muted-foreground">{copy.body}</p>
             <button
                 type="button"
                 onClick={onStartOver}

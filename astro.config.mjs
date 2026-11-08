@@ -34,6 +34,13 @@ export default defineConfig({
         build: {
             cssMinify: 'lightningcss',
         },
+        // Dev server only. Swiper is reached through the photo viewer's lazy
+        // import, so Vite would find it late, re-bundle it and leave the open
+        // page asking for a stale copy (a 504 and a viewer that won't open).
+        // Bundling it up front avoids that.
+        optimizeDeps: {
+            include: ['swiper/react', 'swiper/modules'],
+        },
     },
 
     adapter: vercel()

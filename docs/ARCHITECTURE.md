@@ -27,7 +27,7 @@ index.html (prerendered, static)
 | `src/layouts/` | Page shells. `BaseLayout.astro` owns `<head>` (SEO and social preview tags), the header, footer and skip link. |
 | `src/components/layout/` | Site chrome shared by every page: `SiteHeader`, `SiteFooter`, `BrandLogo`, `SocialLinks`. |
 | `src/components/home/` | One file per homepage section (`*Section.astro`) plus the small pieces only they use (`QuoteCard`, `StepRow`). |
-| `src/components/results/` | The results gallery island: swipeable strip, desktop grid and full-screen `Lightbox`. `LightboxSwiper.tsx` (Swiper with pinch zoom) is loaded only when the viewer opens. |
+| `src/components/results/` | The results gallery island: swipeable strip with arrows on every screen size, and the full-screen `Lightbox`. `LightboxSwiper.tsx` (Swiper with pinch zoom) is loaded only when the viewer opens. |
 | `src/components/apply/` | The application form island. `useApplyForm.ts` holds the logic; the other files are views. `CountryPicker.tsx` is the searchable country code list. |
 | `src/components/common/` | Building blocks used across features: `AchieveBtn`, `SectionContainer`, `SectionTitle`. |
 | `src/components/effects/` | Decorative effects adapted from Magic UI. See the README in that folder. |
@@ -60,6 +60,7 @@ index.html (prerendered, static)
 | Section order on the homepage | `src/layouts/HomePageTemplate.astro` |
 | Header button text, anchor ids | `src/constants/site.ts` |
 | Colours, fonts, fluid type sizes, section spacing | `src/styles/theme.css` |
+| How wide the page column is on desktop, and how much everything scales | `--page-column` in `src/styles/theme.css` (also update the literal `sizes` on the hero photo), base font size on `html` in `src/styles/global.css` |
 | Social links in the footer | `src/constants/socials.ts` |
 | Site URL, page title, description | `src/constants/site.ts` and `site` in `astro.config.mjs` |
 
@@ -129,8 +130,11 @@ The handler receives its email sender as an `ApplicationNotifier` interface, so 
 ## Design system
 
 - Tokens are CSS variables in `src/styles/theme.css`, mapped to Tailwind utilities in `@theme inline`. Use `text-achieve-blue`, `bg-card`, `border-border-strong`, `text-muted-foreground` and so on; do not hard-code colours in components.
-- Fluid sizes: `text-display` (hero), `text-title` (section headings), `text-subtitle`, `text-lead`, `text-eyebrow`. Each is a `clamp()` of `rem` plus `vw`, so text scales smoothly from a 320px phone to a desktop without breakpoints.
-- Spacing: `px-gutter` for page side padding and `pt-section` / `pb-section` for section rhythm, both fluid.
+- One layout everywhere. The client wanted desktop to be the phone layout, so the site is a single centred column: the full screen on a phone, `--page-column` (37.5rem) wide on anything bigger, with the header and footer bars still spanning the screen. Sections use `SectionContainer`'s default `column` width.
+- Scaling: `--col` is 1% of the column (`min(1vw, column / 100)`). Headings, gutters, section spacing, card padding, the header logo and carousel photo height are multiples of it, so a desktop shows the phone's proportions and line breaks about 1.5 times larger. Reading text grows less: the root font size eases from 16px on a 390px phone to 18px at full column width (written in `%`, so a reader's own text size setting still applies), which scales every `rem` by up to 12.5%.
+- Fluid sizes: `text-display` (hero), `text-title` (section headings), `text-subtitle`, `text-lead`, `text-eyebrow`.
+- Spacing: `px-gutter` for page side padding, `pt-section` / `pb-section` for section rhythm, `p-card` inside the big cards.
+- Carousels (`.snap-row`) run off the screen edge on a phone; on wider screens they fade out at the column edge instead (`effects.css`).
 - Headings use Montserrat 700/800 (`font-display`); body text uses the system Helvetica/Arial stack. Montserrat 800 is preloaded in `BaseLayout`.
 - `SectionContainer` presets (`maxWidth`, `spacing`, `paddingTop`, `animationVariant`) control width and vertical rhythm. Add a preset there instead of padding a section by hand.
 - `AchieveBtn` has `variant` (primary, outline, ghost), `size` (sm, md, lg), `fullWidth`, and `effect="shimmer"`. It renders a link when given `href` and a button otherwise.
@@ -163,6 +167,7 @@ Visual extras use modern CSS when the browser supports it and fall back to a pla
 ## Decisions and gotchas
 
 - **No third-party HTML minifier.** `astro-compress` runs with `HTML: false`. Its minifier moved whitespace around the `<!-- -->` markers React puts between text nodes, which broke hydration of the form (React error 418). Astro already compresses its own HTML.
+- **Swiper is pre-bundled in dev** (`optimizeDeps.include` in `astro.config.mjs`). It is only reached through the viewer's lazy import, so Vite found it late and the open page asked for a stale copy (504, viewer would not open). Production builds were never affected. Astro 7 runs `astro dev` in the background: restart it with `npx astro dev stop` first.
 - **No `vite.esbuild` options.** Astro 7 uses Vite 8, which ignores them (it uses Oxc). Server `console.error` calls are kept on purpose so failures show in Vercel logs.
 - **Flags are self-hosted** in `public/flags/` (218 SVGs from country-flag-icons, MIT). The phone library's default flags came from a third-party CDN.
 - **Search previews.** `BaseLayout.astro` sets the title, description, canonical URL, Open Graph image, a square favicon set, a web manifest and `WebSite` / `Organization` structured data. Google picks these up only after the production site is recrawled.

@@ -28,7 +28,7 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
             <ul
                 ref={trackRef}
                 style={{"--first-ar": photos[0]?.aspectRatio ?? 1, "--last-ar": photos.at(-1)?.aspectRatio ?? 1} as CSSProperties}
-                className="snap-row -mx-gutter pb-2 [--thumb-h:min(58svh,26rem)] ps-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--first-ar)/2))] pe-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--last-ar)/2))] md:[--thumb-h:30rem] lg:mx-0 lg:flex-wrap lg:justify-center lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0 lg:[--thumb-h:20rem]"
+                className="snap-row -mx-gutter pb-2 [--thumb-h:min(58svh,max(26rem,calc(var(--col)*106.7)))] ps-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--first-ar)/2))] pe-[max(var(--page-gutter),calc(50%+var(--page-gutter)-var(--thumb-h)*var(--last-ar)/2))]"
             >
                 {photos.map((photo, index) => (
                     <li key={photo.id} className="shrink-0">
@@ -44,7 +44,7 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
                             <span className="sr-only">{GALLERY_LABELS.openPhoto(index + 1, photos.length)}</span>
                             <span
                                 aria-hidden="true"
-                                className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-black/60 text-white opacity-90 backdrop-blur transition-opacity lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100"
+                                className="absolute right-3 bottom-3 grid size-9 place-items-center rounded-full bg-black/60 text-white opacity-90 backdrop-blur"
                             >
                                 <Expand className="size-4"/>
                             </span>
@@ -53,7 +53,7 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
                 ))}
             </ul>
 
-            <div className="mt-4 flex items-center justify-between gap-4 lg:hidden">
+            <div className="mt-4 flex items-center justify-between gap-4">
                 <button type="button" onClick={() => step(-1)} disabled={activeIndex === 0} aria-label={GALLERY_LABELS.previous} className={stepButton}>
                     <ChevronLeft aria-hidden="true" className="size-5"/>
                 </button>
