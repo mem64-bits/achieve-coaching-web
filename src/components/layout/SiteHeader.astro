@@ -36,7 +36,7 @@ const linkClass =
             <ul class="snap-row mx-auto max-w-column justify-center-safe gap-6 px-gutter sm:gap-8">
                 {HEADER_LINKS.map((link) => (
                     <li>
-                        <a href={link.href} class:list={[linkClass, "min-h-9 px-1 text-[0.6875rem] tracking-[0.1em] sm:text-xs sm:tracking-[0.12em]"]}>
+                        <a href={link.href} class:list={[linkClass, "min-h-11 px-1 text-[0.6875rem] tracking-[0.1em] sm:text-xs sm:tracking-[0.12em]"]}>
                             {/* Only one label is displayed at a time, so the link's spoken name always
                                 matches the words on screen (voice control users say what they see). */}
                             <span class="sm:hidden">{link.shortLabel}</span>
