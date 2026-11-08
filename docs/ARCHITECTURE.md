@@ -133,7 +133,9 @@ The handler receives its email sender as an `ApplicationNotifier` interface, so 
 - Fluid sizes: `text-display` (hero), `text-title` (section headings), `text-subtitle`, `text-lead`, `text-eyebrow`. Each is a `clamp()` of `rem` plus `vw`, so text scales smoothly from a 320px phone to a desktop without breakpoints.
 - Spacing: `px-gutter` for page side padding and `pt-section` / `pb-section` for section rhythm, both fluid.
 - Carousels: the client photo strip and the reviews both use `SwipeCarousel` (`src/components/common/`), built on Swiper so they behave the same everywhere: swipe on touch, drag with a mouse, side-scroll on a trackpad (vertical wheel still scrolls the page), arrow keys once focused. Swiper is about 27 KB gzipped, shared by both carousels and the viewer; the islands hydrate as you scroll near them, so it stays off the hero's critical path.
-- Carousel layout (`SwipeCarousel.tsx`): flat cards, in the order the constants list them, starting with the first (`RESULT_PHOTOS`, `TESTIMONIALS`). Below 1024px exactly one card shows, so the next step is a swipe or an arrow; from 1024px three sit side by side. No loop and no centring: both would change which card shows first. `__tests__/galleryOrder.test.ts` checks the rendered order; Swiper's own rearranging only happens in the browser, so that rule is in `CLAUDE.md` too.
+- Carousel layout (`SwipeCarousel.tsx`): flat cards, in the order the constants list them, starting with the first (`RESULT_PHOTOS`, `TESTIMONIALS`). Below 1024px exactly one card shows; from 1024px three sit side by side. No centring, which would change which card shows first.
+- Circular traversal: lists of six or more (the photos) loop like a circular linked list, so after photo 23 comes photo 1 and Previous from photo 1 goes to 23. The arrow buttons and arrow keys move a whole batch (3 on desktop, 1 on phones) in a 700ms ease-out glide; swipes, drags and trackpad gestures move one card. Presses that arrive mid-glide are queued, not dropped. Batches are moved by hand (`stepWith`: `loopFix` towards the move, then `slideTo` three on) because Swiper's `slidesPerGroup` would pad 23 photos with a blank card to make 24. The arithmetic (wrap, next batch, full cycle) lives in `src/lib/carousel/circular.ts`, which the browser tests use as the reference.
+- Preloading: the gallery loads the batch on screen plus one batch either side, wrapping round (`itemsToPreload`), by switching those images to `loading="eager"`. Lazy loading alone only fetches a photo once it's nearly visible, which on a slow connection showed blank cards as a batch slid in.
 - Photos are equal 3:4 cards, capped at 26rem wide when one shows and kept within 1100px when three do (about 350 by 467 each). Photos close to that shape fill the card; squares (before/after pairs) and tall shots are shown whole with their blurred placeholder filling the gaps (`CARD_RATIO` / `CROP_TOLERANCE` in `ResultsGallery.tsx`).
 - Swiper's stylesheet is imported in `global.css` into Tailwind's `base` layer so classes on slides (`w-auto`, `w-[85%]`) beat Swiper's defaults. Don't import `swiper/css` anywhere else: an unlayered copy would override those classes again.
 - Swiper won't start a swipe on elements matching `noSwipingSelector`; its default includes `button`, which would make the photo strip (every photo is a button) unswipeable, so `SwipeCarousel` passes a list without it.
@@ -161,6 +163,8 @@ Visual extras use modern CSS when the browser supports it and fall back to a pla
 | --- | --- |
 | `npm run check` | `astro check` (types in `.astro`, `.ts`, `.tsx`) |
 | `npm test` | Vitest unit tests (`src/**/__tests__/*.test.ts`) |
+| `npm run test:e2e` | Builds the site, then runs the Playwright browser tests in `tests/e2e/` at 1440, 1024, 768 and phone width against the built pages (`tests/e2e/static-server.mjs`) |
+| `npm run test:e2e:only` | The browser tests without rebuilding |
 | `npm run verify` | Both of the above plus a production build. CI runs this. |
 | `npm run test:hooks` | Tests for the Claude Code guard hooks |
 
@@ -173,3 +177,12 @@ Visual extras use modern CSS when the browser supports it and fall back to a pla
 - **Search previews.** `BaseLayout.astro` sets the title, description, canonical URL, Open Graph image, a square favicon set, a web manifest and `WebSite` / `Organization` structured data. Google picks these up only after the production site is recrawled.
 - **Images are not re-encoded in the repository.** The originals in `src/assets/images/` are large (one is 19.7 MB) but only resized copies are sent to visitors. Replacing the originals with 2400px versions would make builds and clones faster.
 - **Vitest uses Astro's Vite config** (`vitest.config.ts` with `getViteConfig`) so path aliases like `@/` work in tests. Code that imports `astro:assets` or `astro:env` cannot be unit-tested directly, which is why the API route is a thin wrapper around `handleApplicationRequest`.
+
+## Browser tests
+
+`tests/e2e/` holds the Playwright suite. It runs against the production build, served as plain files, so it sees the real image sizes and loading behaviour. Each test runs at four widths (projects in `playwright.config.ts`).
+
+- `carousel.spec.ts`: one slide per photo and no blank fillers; every slide shows the file listed at its position in `resultPhotos.ts`; opens on the first photos; Next goes through every photo in order, a batch at a time, twice round; Previous wraps to the end; forward and back returns to the same place; arrow keys; swipe or drag moves one card without opening the viewer; trackpad side-scroll moves the strip while vertical scroll still scrolls the page; a batch move passes through many in-between positions and never jumps back; neighbouring batches are loaded before they're needed, even on a throttled connection; every card on screen has painted a real photo at every step; the viewer opens on the photo tapped, also after wrapping; reduced motion makes steps instant; resizing between phone and desktop keeps the order and place.
+- `page.spec.ts`: reviews in `TESTIMONIALS` order, not looping, swipeable one at a time on phones and tablets; no sideways scrolling; header links land each section under the header; no console errors while using the carousels; an axe accessibility scan with both carousels running.
+- `helpers.ts`: reads the expected photo order from `resultPhotos.ts`, finds what's actually on screen (`shownPhotos`), and waits for the page and carousels to stop moving before aiming at them.
+

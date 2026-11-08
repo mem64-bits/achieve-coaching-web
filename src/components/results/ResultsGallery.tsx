@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {itemsToPreload} from "@/lib/carousel/circular";
 import {Expand} from "lucide-react";
 import {GALLERY_LABELS} from "@constants/results";
 import type {GalleryPhoto} from "@/types/results";
@@ -18,6 +19,11 @@ interface ResultsGalleryProps {
 
 export default function ResultsGallery({photos}: ResultsGalleryProps) {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
+    // Photos to fetch now rather than when they reach the screen: the batch
+    // in view and one batch either side, wrapping round the list. Lazy
+    // loading alone waits until a photo is nearly visible, which on a slow
+    // connection leaves the incoming batch blank as it slides in.
+    const [preload, setPreload] = useState(() => itemsToPreload(0, 1, photos.length));
 
     const items = photos.map((photo, index) => ({
         key: photo.id,
@@ -29,10 +35,13 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
             <button
                 type="button"
                 onClick={() => setOpenIndex(index)}
+                // Position in RESULT_PHOTOS, for the browser tests.
+                data-photo-index={index}
                 className="group relative block w-full transform-gpu overflow-hidden rounded-2xl bg-card transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60"
             >
                 <ResponsivePicture
                     image={photo.thumb}
+                    loading={preload.has(index) ? "eager" : "lazy"}
                     className={cn(
                         "block aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none",
                         Math.abs(photo.aspectRatio - CARD_RATIO) > CROP_TOLERANCE && "object-contain",
@@ -51,10 +60,11 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
 
     return (
         <div>
-            {/* Slides follow RESULT_PHOTOS order exactly; see __tests__/galleryOrder.test.ts. */}
+            {/* Slides follow RESULT_PHOTOS order, first photo first, then round again; see tests/e2e/carousel.spec.ts. */}
             <SwipeCarousel
                 items={items}
                 label={GALLERY_LABELS.carousel}
+                onPositionChange={(first, perView) => setPreload(itemsToPreload(first, perView, photos.length))}
                 controls={{previous: GALLERY_LABELS.previous, next: GALLERY_LABELS.next}}
                 // One card is never wider than 26rem (tablets would otherwise
                 // get a 960px-tall photo); three across are kept to 1100px so

@@ -1,4 +1,4 @@
-import {useEffect, useState, type CSSProperties, type ReactNode} from "react";
+import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from "react";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {A11y, Mousewheel} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
@@ -14,6 +14,12 @@ import {cn} from "@/lib/utils";
 // first. Phones and tablets show exactly one card, so the only way on is to
 // swipe (or tap an arrow). From 1024px three sit side by side.
 //
+// Movement: the list is circular when it's long enough. After the last card
+// comes the first again, in the same order. A swipe, drag or trackpad
+// gesture moves one card; the arrow buttons and arrow keys move a whole
+// batch (one on phones, three from 1024px) with a slower, smoother slide,
+// so the next set of photos glides in as a group.
+//
 // Swiper's stylesheet is imported into the base layer in global.css, so
 // Tailwind classes here win over it.
 
@@ -24,6 +30,9 @@ export interface SwipeCarouselItem {
 
 export interface SwipeCarouselProps {
     items: SwipeCarouselItem[];
+    // Told which item is leftmost and how many fit across, whenever either
+    // changes. The photo gallery uses it to load the photos about to arrive.
+    onPositionChange?: (first: number, perView: number) => void;
     // What the carousel holds, read out by screen readers ("Client results").
     label: string;
     // Previous / next buttons under the carousel, with these spoken names.
@@ -39,6 +48,16 @@ export interface SwipeCarouselProps {
 const WIDE_FROM = 1024;
 const WIDE_CARDS = 3;
 
+// Swiper loops by moving cards from one end to the other, so moving a whole
+// batch needs a spare batch on top of the one on screen. Shorter lists (the
+// three reviews) stop at each end instead.
+const LOOP_FROM = WIDE_CARDS * 2;
+
+// Gestures settle quickly; a batch step takes a little longer so the move
+// reads as one set of photos replacing another.
+const GESTURE_SPEED = 450;
+const BATCH_SPEED = 700;
+
 // Swiper won't start a swipe on anything in this list. Its default includes
 // `button`, which would stop the photo strip (every photo is a button that
 // opens the viewer) from being swiped at all.
@@ -47,12 +66,48 @@ const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 const stepButton =
     "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30";
 
-export function SwipeCarousel({items, label, controls, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
+export function SwipeCarousel({items, label, onPositionChange, controls, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
+    const loop = items.length >= LOOP_FROM;
+    const reduceMotion = prefersReducedMotion();
     const [swiper, setSwiper] = useState<SwiperInstance | null>(null);
-    const [edges, setEdges] = useState({atStart: true, atEnd: items.length <= 1});
+    const [edges, setEdges] = useState({atStart: !loop, atEnd: !loop && items.length <= 1});
 
-    const syncEdges = (instance: SwiperInstance) =>
-        setEdges({atStart: instance.isBeginning, atEnd: instance.isEnd});
+    // A looping list has no ends, so its arrows never switch off.
+    const sync = (instance: SwiperInstance) => {
+        setEdges({atStart: !loop && instance.isBeginning, atEnd: !loop && instance.isEnd});
+        onPositionChange?.(instance.realIndex, cardsAcross(instance));
+    };
+
+    // Move a whole batch. Swiper's own batch setting would pad the loop with
+    // blank cards when the count isn't a multiple of three (23 photos), so
+    // this moves by hand: in a loop, first ask Swiper to shuffle cards round
+    // so there's a full batch waiting on that side, then slide that far.
+    // A press that arrives while a batch is still gliding is kept and run as
+    // soon as that move ends, so quick taps or key presses all count.
+    const queued = useRef<1 | -1 | null>(null);
+
+    const stepWith = (instance: SwiperInstance, direction: 1 | -1) => {
+        if (instance.animating) {
+            queued.current = direction;
+            return;
+        }
+        const distance = cardsAcross(instance) * direction;
+        const speed = reduceMotion ? 0 : BATCH_SPEED;
+        if (loop) {
+            instance.loopFix({direction: direction > 0 ? "next" : "prev"});
+            // Reading layout here makes the browser apply the shuffle before
+            // the slide starts, so the move animates from where the cards are.
+            void instance.wrapperEl.clientLeft;
+            instance.slideTo(instance.activeIndex + distance, speed);
+        } else {
+            const last = instance.slides.length - 1;
+            instance.slideTo(Math.min(Math.max(instance.activeIndex + distance, 0), last), speed);
+        }
+    };
+
+    const step = (direction: 1 | -1) => {
+        if (swiper) stepWith(swiper, direction);
+    };
 
     // Arrow keys move this carousel only while it has focus, so two carousels
     // on screen don't both move (Swiper's Keyboard module listens page-wide).
@@ -61,8 +116,8 @@ export function SwipeCarousel({items, label, controls, controlsClassName, slideC
     useEffect(() => {
         if (!swiper) return;
         const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "ArrowRight") swiper.slideNext();
-            else if (event.key === "ArrowLeft") swiper.slidePrev();
+            if (event.key === "ArrowRight") step(1);
+            else if (event.key === "ArrowLeft") step(-1);
             else return;
             event.preventDefault();
         };
@@ -78,7 +133,11 @@ export function SwipeCarousel({items, label, controls, controlsClassName, slideC
                 slidesPerView={1}
                 spaceBetween={16}
                 breakpoints={{[WIDE_FROM]: {slidesPerView: WIDE_CARDS, spaceBetween: 24}}}
-                speed={prefersReducedMotion() ? 0 : 400}
+                loop={loop}
+                // A spare batch either side of the one on screen, so a batch
+                // step always has cards to move into.
+                loopAdditionalSlides={WIDE_CARDS}
+                speed={reduceMotion ? 0 : GESTURE_SPEED}
                 grabCursor
                 noSwipingSelector={NO_SWIPE_ON}
                 // Trackpads scroll sideways with the wheel event. Vertical
@@ -92,11 +151,17 @@ export function SwipeCarousel({items, label, controls, controlsClassName, slideC
                 }}
                 onSwiper={(instance) => {
                     setSwiper(instance);
-                    syncEdges(instance);
+                    sync(instance);
                 }}
-                onSlideChange={syncEdges}
-                onResize={syncEdges}
-                onBreakpoint={(instance) => requestAnimationFrame(() => syncEdges(instance))}
+                onSlideChange={sync}
+                onTransitionEnd={(instance) => {
+                    const direction = queued.current;
+                    queued.current = null;
+                    if (direction) requestAnimationFrame(() => stepWith(instance, direction));
+                }}
+                onResize={sync}
+                // Breakpoint params apply after this event fires.
+                onBreakpoint={(instance) => requestAnimationFrame(() => sync(instance))}
                 className={cn("swipe-carousel pb-2", className)}
                 style={style}
             >
@@ -111,7 +176,7 @@ export function SwipeCarousel({items, label, controls, controlsClassName, slideC
                 <div className={cn("mt-4 flex items-center justify-between gap-4", controlsClassName)}>
                     <button
                         type="button"
-                        onClick={() => swiper?.slidePrev()}
+                        onClick={() => step(-1)}
                         disabled={edges.atStart}
                         aria-label={controls.previous}
                         className={stepButton}
@@ -120,7 +185,7 @@ export function SwipeCarousel({items, label, controls, controlsClassName, slideC
                     </button>
                     <button
                         type="button"
-                        onClick={() => swiper?.slideNext()}
+                        onClick={() => step(1)}
                         disabled={edges.atEnd}
                         aria-label={controls.next}
                         className={stepButton}
@@ -131,4 +196,10 @@ export function SwipeCarousel({items, label, controls, controlsClassName, slideC
             )}
         </div>
     );
+}
+
+// How many cards fit across at the current screen width.
+function cardsAcross(instance: SwiperInstance): number {
+    const perView = instance.params.slidesPerView;
+    return typeof perView === "number" ? Math.max(1, Math.floor(perView)) : 1;
 }

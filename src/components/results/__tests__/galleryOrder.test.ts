@@ -11,9 +11,9 @@ import type {ResponsiveImage} from "@/types/images";
 // starting with the first. These render the islands to HTML (as Astro does
 // on the server) and read the order back out of the markup.
 //
-// They can't see what Swiper does once it starts in the browser: loop mode,
-// for one, rearranges slides only then. That's why SwipeCarousel doesn't
-// offer `loop` or `centeredSlides` (see CLAUDE.md).
+// They can't see what Swiper does once it starts in the browser (loop mode,
+// for one, rearranges slides only then); tests/e2e/carousel.spec.ts covers
+// that, including going round the end of the list.
 
 function fakeImage(src: string): ResponsiveImage {
     return {src, srcSet: `${src} 480w`, sizes: "100vw", width: 480, height: 640, alt: src, sources: []};

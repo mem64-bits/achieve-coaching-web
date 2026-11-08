@@ -48,6 +48,12 @@
     filter: drop-shadow(0 0 10px rgba(61, 123, 255, 0.3));
 }
 
+/* Carousels: a gentle ease-out so a batch of photos glides in and settles
+   rather than stopping hard. Swiper reads this variable for its slides. */
+.swipe-carousel {
+    --swiper-wrapper-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .site-header {
     container-type: scroll-state;
     container-name: site-header;
