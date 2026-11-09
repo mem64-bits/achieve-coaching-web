@@ -54,7 +54,18 @@ async function waitUntilStill(locator: Locator) {
 
 // Wait until the carousel has stopped moving.
 export async function settle(carousel: Locator) {
-    await expect.poll(() => carousel.evaluate((el) => (el as SwiperHost).swiper.animating)).toBe(false);
+    // Done means not moving and resting on a card. A trackpad scroll leaves
+    // the strip between cards for a moment before it eases onto one.
+    await expect
+        .poll(() =>
+            carousel.evaluate((el) => {
+                const swiper = (el as SwiperHost).swiper;
+                const offset = -swiper.translate;
+                const onCard = swiper.snapGrid.some((snap) => Math.abs(snap - offset) < 1);
+                return !swiper.animating && onCard;
+            }),
+        )
+        .toBe(true);
     // Swiper clears `animating` when the move ends; give the frame a moment.
     await carousel.page().waitForTimeout(80);
 }
@@ -156,12 +167,14 @@ export async function swipeLeft(page: Page, carousel: Locator, touch: boolean) {
     }
 }
 
-type SwiperHost = HTMLElement & {
+export type SwiperHost = HTMLElement & {
     swiper: {
         initialized: boolean;
         animating: boolean;
         activeIndex: number;
         realIndex: number;
+        translate: number;
+        snapGrid: number[];
         params: {slidesPerView: number | "auto"; loop: boolean};
         slides: HTMLElement[];
     };

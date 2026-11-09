@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from "react";
+import {planGlide, releaseVelocity, type PositionSample} from "@/lib/carousel/glide";
 import {Swiper, SwiperSlide} from "swiper/react";
-import {A11y, Mousewheel} from "swiper/modules";
+import {A11y, FreeMode, Mousewheel} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
 import {ChevronLeft, ChevronRight} from "lucide-react";
 import {prefersReducedMotion} from "@/lib/motion";
@@ -15,10 +16,12 @@ import {cn} from "@/lib/utils";
 // swipe (or tap an arrow). From 1024px three sit side by side.
 //
 // Movement: the list is circular when it's long enough. After the last card
-// comes the first again, in the same order. A swipe, drag or trackpad
-// gesture moves one card; the arrow buttons and arrow keys move a whole
-// batch (one on phones, three from 1024px) with a slower, smoother slide,
-// so the next set of photos glides in as a group.
+// comes the first again, in the same order. Swipes, drags and trackpad
+// gestures behave like a photo row on iOS or Android: the strip carries the
+// momentum of your finger, slows down on its own, then settles gently on
+// the nearest card. The arrow buttons and arrow keys move a whole batch
+// (one on phones, three from 1024px), easing in and out so the next set of
+// photos glides in as a group.
 //
 // Swiper's stylesheet is imported into the base layer in global.css, so
 // Tailwind classes here win over it.
@@ -56,7 +59,20 @@ const LOOP_FROM = WIDE_CARDS * 2;
 // Gestures settle quickly; a batch step takes a little longer so the move
 // reads as one set of photos replacing another.
 const GESTURE_SPEED = 450;
-const BATCH_SPEED = 700;
+const BATCH_SPEED = 800;
+
+// Free mode lets the strip follow the finger exactly while dragging. Swiper's
+// own momentum and snapping are off: its release picks a fixed duration
+// whatever your speed, so the strip lurched to about twice the finger's
+// speed when let go. The release is handled below with lib/carousel/glide.
+const FOLLOW_THE_FINGER = {enabled: true, momentum: false, sticky: false};
+
+// How far one flick may carry the strip, in cards. The loop keeps a spare
+// batch of cards either side, so this stays within what's laid out.
+const MAX_FLICK_CARDS = 3;
+// After a trackpad or mouse-wheel scroll stops (including the trackpad's own
+// inertia), settle onto the nearest card.
+const WHEEL_SETTLE_DELAY_MS = 160;
 
 // Swiper won't start a swipe on anything in this list. Its default includes
 // `button`, which would stop the photo strip (every photo is a button that
@@ -95,6 +111,10 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
         }
         const distance = cardsAcross(instance) * direction;
         const speed = reduceMotion ? 0 : BATCH_SPEED;
+        // Button moves start from rest, so they use the ease-in-out curve
+        // (see effects.css); gestures keep the decelerating one.
+        instance.el.dataset.move = "step";
+        clearGlideCurve(instance);
         if (loop) {
             instance.loopFix({direction: direction > 0 ? "next" : "prev"});
             // Reading layout here makes the browser apply the shuffle before
@@ -127,10 +147,80 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
         return () => swiper.el.removeEventListener("keydown", onKeyDown);
     }, [swiper]);
 
+    // Letting go: carry on at the finger's speed, slow down, and come to
+    // rest on a card (see lib/carousel/glide.ts for the maths).
+    useEffect(() => {
+        if (!swiper) return;
+        let samples: PositionSample[] = [];
+        let releasedAt = 0;
+        // Free mode runs its release code on touch start as well (to catch
+        // a moving strip), so only act when a drag has really just ended.
+        let releasing = false;
+        let wheelTimer: number | undefined;
+
+        const glide = (velocity: number) => {
+            if (loop && velocity !== 0) swiper.loopFix({direction: velocity < 0 ? "next" : "prev"});
+            const cardSize = (swiper.slidesSizesGrid[0] ?? 0) + Number(swiper.params.spaceBetween ?? 0);
+            const plan = planGlide({
+                position: swiper.translate,
+                velocity,
+                snaps: swiper.snapGrid.map((offset) => -offset),
+                maxTravel: cardSize * MAX_FLICK_CARDS,
+            });
+            // A capped glide brings its own easing so it still leaves at the
+            // finger's speed; the stylesheet's curve covers the rest.
+            if (plan.curve) swiper.wrapperEl.style.transitionTimingFunction = plan.curve;
+            else clearGlideCurve(swiper);
+            swiper.slideTo(plan.index, reduceMotion ? 0 : plan.duration);
+        };
+
+        const onTouchStart = () => {
+            releasing = false;
+            samples = [];
+            window.clearTimeout(wheelTimer);
+            delete swiper.el.dataset.move;
+            clearGlideCurve(swiper);
+        };
+        const onSliderMove = () => {
+            samples.push({time: performance.now(), position: swiper.translate});
+            if (samples.length > 12) samples.shift();
+        };
+        const onTouchEnd = () => {
+            releasing = samples.length > 0;
+            releasedAt = performance.now();
+        };
+        const onRelease = () => {
+            if (!releasing) return;
+            releasing = false;
+            glide(releaseVelocity(samples, releasedAt));
+            samples = [];
+        };
+        const onWheel = () => {
+            window.clearTimeout(wheelTimer);
+            wheelTimer = window.setTimeout(() => glide(0), WHEEL_SETTLE_DELAY_MS);
+        };
+
+        swiper.on("touchStart", onTouchStart);
+        swiper.on("sliderMove", onSliderMove);
+        swiper.on("touchEnd", onTouchEnd);
+        // Free mode's last word on a release, still in the same frame; acting
+        // here means Swiper doesn't overwrite the target straight after.
+        swiper.on("_freeModeStaticRelease", onRelease);
+        swiper.on("scroll", onWheel);
+        return () => {
+            window.clearTimeout(wheelTimer);
+            swiper.off("touchStart", onTouchStart);
+            swiper.off("sliderMove", onSliderMove);
+            swiper.off("touchEnd", onTouchEnd);
+            swiper.off("_freeModeStaticRelease", onRelease);
+            swiper.off("scroll", onWheel);
+        };
+    }, [swiper, loop, reduceMotion]);
+
     return (
         <div className="relative">
             <Swiper
-                modules={[A11y, Mousewheel]}
+                modules={[A11y, FreeMode, Mousewheel]}
                 tabIndex={0}
                 slidesPerView={1}
                 spaceBetween={16}
@@ -141,6 +231,7 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
                 loopAdditionalSlides={WIDE_CARDS}
                 speed={reduceMotion ? 0 : GESTURE_SPEED}
                 grabCursor
+                freeMode={FOLLOW_THE_FINGER}
                 noSwipingSelector={NO_SWIPE_ON}
                 // Trackpads scroll sideways with the wheel event. Vertical
                 // wheel movement is left alone so the page still scrolls.
@@ -157,6 +248,8 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
                 }}
                 onSlideChange={sync}
                 onTransitionEnd={(instance) => {
+                    delete instance.el.dataset.move;
+                    clearGlideCurve(instance);
                     const direction = queued.current;
                     queued.current = null;
                     if (direction) requestAnimationFrame(() => stepWith(instance, direction));
@@ -209,6 +302,11 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
 }
 
 // How many cards fit across at the current screen width.
+// Back to the stylesheet's easing (effects.css) once a custom glide is over.
+function clearGlideCurve(instance: SwiperInstance) {
+    instance.wrapperEl.style.removeProperty("transition-timing-function");
+}
+
 function cardsAcross(instance: SwiperInstance): number {
     const perView = instance.params.slidesPerView;
     return typeof perView === "number" ? Math.max(1, Math.floor(perView)) : 1;

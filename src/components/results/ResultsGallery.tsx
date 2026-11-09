@@ -73,7 +73,12 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
             <SwipeCarousel
                 items={items}
                 label={GALLERY_LABELS.carousel}
-                onPositionChange={(first, perView) => setPreload(itemsToPreload(first, perView, photos.length))}
+                onPositionChange={(first, perView) => {
+                    // This fires many times a second while dragging; only
+                    // re-render when the set of photos to load changes.
+                    const next = itemsToPreload(first, perView, photos.length);
+                    setPreload((current) => (sameItems(current, next) ? current : next));
+                }}
                 controls={{previous: GALLERY_LABELS.previous, next: GALLERY_LABELS.next}}
                 // One card is never wider than 26rem (tablets would otherwise
                 // get a 960px-tall photo); three across are kept to 1100px so
@@ -85,4 +90,8 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
             <Lightbox photos={photos} openIndex={openIndex} onClose={() => setOpenIndex(null)}/>
         </div>
     );
+}
+
+function sameItems(a: Set<number>, b: Set<number>): boolean {
+    return a.size === b.size && [...a].every((item) => b.has(item));
 }

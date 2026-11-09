@@ -187,6 +187,87 @@ test("a batch move glides: the strip passes through many in-between positions", 
     }
 });
 
+// Letting go of a drag should feel like iOS and Android: the strip carries
+// on at the speed the finger was moving, slows down, and stops on a card.
+// Before, Swiper's release jumped to about twice the drag speed.
+for (const pixelsPerFrame of [6, 15, 25]) {
+    test(`letting go of a ${pixelsPerFrame}px-a-frame drag carries on at that speed and stops on a card`, async ({page}) => {
+        const carousel = photoCarousel(page);
+        // Drive the drag from inside the page, one pointer move per frame, so
+        // the speed is exact, and note where the strip is on every frame.
+        const run = await carousel.evaluate(
+            (el, speed) =>
+                new Promise<{speeds: number[]; fingerSpeed: number; releasedAt: number}>((resolve) => {
+                    const wrapper = el.querySelector(".swiper-wrapper")!;
+                    const target = el.querySelector(".swiper-slide-active img") ?? wrapper;
+                    const box = el.getBoundingClientRect();
+                    const y = box.top + box.height * 0.4;
+                    let x = box.left + box.width * 0.6;
+                    const send = (type: string) =>
+                        target.dispatchEvent(
+                            new PointerEvent(type, {
+                                bubbles: true,
+                                cancelable: true,
+                                clientX: x,
+                                clientY: y,
+                                pointerId: 1,
+                                pointerType: "mouse",
+                                isPrimary: true,
+                                button: 0,
+                                buttons: type === "pointerup" ? 0 : 1,
+                            }),
+                        );
+                    const read = () => new DOMMatrixReadOnly(getComputedStyle(wrapper).transform).m41;
+                    // Position and time on each frame, so the speeds are per
+                    // millisecond and a slow frame on a busy machine doesn't
+                    // look like a lurch.
+                    const positions: number[] = [];
+                    const times: number[] = [];
+                    const dragFrames = 14;
+                    let releasedAt = -1;
+                    send("pointerdown");
+                    const frame = (time: number) => {
+                        positions.push(read());
+                        times.push(time);
+                        if (positions.length <= dragFrames) {
+                            x -= speed;
+                            send("pointermove");
+                        } else if (releasedAt < 0) {
+                            send("pointerup");
+                            releasedAt = positions.length;
+                        }
+                        if (positions.length < dragFrames + 80) requestAnimationFrame(frame);
+                        else {
+                            const speeds = positions.slice(1).map((p, i) => (p - positions[i]) / (times[i + 1] - times[i]));
+                            const fingerSpeed = (speed * dragFrames) / (times[dragFrames] - times[0]);
+                            resolve({speeds, fingerSpeed, releasedAt});
+                        }
+                    };
+                    requestAnimationFrame(frame);
+                }),
+            pixelsPerFrame,
+        );
+
+        // A short, slow drag eases back to the card it started on, like a
+        // phone does; anything else carries on. Either way the strip picks
+        // one direction and keeps it until it stops.
+        const glide = run.speeds.slice(run.releasedAt).filter((speed) => Math.abs(speed) > 0.015);
+        const direction = Math.sign(glide[0] ?? 0);
+        for (const speed of glide) expect(Math.sign(speed)).toBe(direction);
+        if (direction < 0) {
+            // Carrying on: no faster than the finger, give or take. Before
+            // the fix this came out at about twice the finger's speed.
+            for (const speed of glide.slice(0, 3)) {
+                expect(Math.abs(speed)).toBeLessThanOrEqual(run.fingerSpeed * 1.4 + 0.05);
+            }
+        }
+        // It only ever slows down: no lurch partway through.
+        const speeds = glide.map(Math.abs);
+        for (let i = 1; i < speeds.length; i += 1) expect(speeds[i]).toBeLessThanOrEqual(speeds[i - 1] * 1.2 + 0.05);
+        await settle(carousel);
+    });
+}
+
 test("the photos either side are loaded before they're needed, even on a slow connection", async ({page, browserName}) => {
     test.skip(browserName !== "chromium", "network throttling needs Chrome");
     const carousel = photoCarousel(page);
