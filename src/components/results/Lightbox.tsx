@@ -78,7 +78,8 @@ export function Lightbox({photos, openIndex, onClose}: LightboxProps) {
                         <button
                             type="button"
                             onClick={() => swiperRef.current?.slidePrev()}
-                            disabled={activeIndex === 0}
+                            // The viewer loops, so only a single photo has nowhere to go.
+                            disabled={photos.length < 2}
                             aria-label={GALLERY_LABELS.previous}
                             className={iconButton}
                         >
@@ -87,7 +88,7 @@ export function Lightbox({photos, openIndex, onClose}: LightboxProps) {
                         <button
                             type="button"
                             onClick={() => swiperRef.current?.slideNext()}
-                            disabled={activeIndex === photos.length - 1}
+                            disabled={photos.length < 2}
                             aria-label={GALLERY_LABELS.next}
                             className={iconButton}
                         >

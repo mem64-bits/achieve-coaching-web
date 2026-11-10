@@ -17,6 +17,27 @@ describe("releaseVelocity", () => {
         expect(releaseVelocity([...fast, ...slow], 202)).toBeCloseTo(-0.2);
     });
 
+    it("takes the speed at the end of a flick that was slowing down, not its average", () => {
+        // The screen recording: 134, 112, 58, 12 px a frame before letting go.
+        const perFrame = [-120, -134, -112, -58, -12];
+        let position = 0;
+        const samples = [{time: 0, position}];
+        perFrame.forEach((step, i) => {
+            position += step;
+            samples.push({time: (i + 1) * 16, position});
+        });
+        const velocity = releaseVelocity(samples, 82);
+        // The average over the window is about -4 px/ms; the hand ended
+        // near -0.75 px/ms (12 px a frame).
+        expect(velocity).toBeLessThan(0);
+        expect(Math.abs(velocity)).toBeLessThan(1.5);
+    });
+
+    it("doesn't overshoot the fastest stretch on uneven samples", () => {
+        const samples = [0, 16, 32, 48, 64, 80].map((time, i) => ({time, position: -time * 0.5 + (i % 2 ? 3 : -3)}));
+        expect(Math.abs(releaseVelocity(samples, 82))).toBeLessThanOrEqual(Math.max(...samples.slice(1).map((s, i) => Math.abs((s.position - samples[i].position) / 16))));
+    });
+
     it("is zero when the finger stopped before letting go", () => {
         const samples = [0, 16, 32].map((time) => ({time, position: -time}));
         expect(releaseVelocity(samples, 200)).toBe(0);

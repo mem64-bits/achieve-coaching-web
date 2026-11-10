@@ -214,3 +214,28 @@ dialog.lightbox::backdrop {
         animation: brand-loader-pulse 2s ease-in-out infinite;
     }
 }
+
+/* Photo cards, hover "reveal" (ResultsGallery, tried on /lab/photo-reveal).
+   The photo is laid out whole and scaled up by --fill until it covers the
+   card; hovering eases the scale back to 1, showing the whole photo on its
+   backdrop. Scale animates on the compositor, so it stays smooth while the
+   strip moves. Keyboard focus on the card's button does the same. */
+.photo-reveal {
+    scale: var(--fill, 1);
+    transition: scale 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.photo-lift {
+    transition: filter 300ms ease-out;
+}
+@media (hover: hover) {
+    .group:hover > picture > .photo-reveal { scale: 1; }
+    .group:hover > picture > .photo-lift { filter: brightness(1.08); }
+}
+.group:focus-within > picture > .photo-reveal { scale: 1; }
+/* Not while the strip is held or gliding: cards would flick in and out as
+   they pass under the pointer. */
+.swipe-carousel:is([data-dragging], [data-move]) .group > picture > .photo-reveal { scale: var(--fill, 1); }
+.swipe-carousel:is([data-dragging], [data-move]) .group > picture > .photo-lift { filter: none; }
+@media (prefers-reduced-motion: reduce) {
+    .photo-reveal, .photo-lift { transition: none; }
+}

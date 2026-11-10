@@ -15,20 +15,67 @@ export interface PositionSample {
 
 // Only the last stretch of the drag counts, so an early fast flick followed
 // by slowing down doesn't fling the strip.
-const VELOCITY_WINDOW_MS = 80;
+const VELOCITY_WINDOW_MS = 100;
 // If the finger stopped this long before lifting off, it was a placement,
 // not a flick: no momentum.
 const STOPPED_AFTER_MS = 60;
 
 // Speed at the moment of release, from the drag's recent positions.
+//
+// A flick usually slows down in its last few frames. An average over the
+// window then hands the glide a speed the hand had already left behind, and
+// the strip slowed with the hand and then lurched forward on release (seen
+// in a screen recording: 134, 112, 58, 12 px a frame, then 64). So, like
+// Android's VelocityTracker, this fits a curve (position = a + b*t + c*t^2,
+// least squares) through the window and takes its slope at the last sample:
+// the speed the hand actually had at the end.
 export function releaseVelocity(samples: PositionSample[], releasedAt: number): number {
     if (samples.length < 2) return 0;
     const last = samples[samples.length - 1];
     if (releasedAt - last.time > STOPPED_AFTER_MS) return 0;
     const recent = samples.filter((sample) => last.time - sample.time <= VELOCITY_WINDOW_MS);
+    if (recent.length < 2) return 0;
+
     const first = recent[0];
     const elapsed = last.time - first.time;
-    return elapsed > 0 ? (last.position - first.position) / elapsed : 0;
+    if (elapsed <= 0) return 0;
+    const average = (last.position - first.position) / elapsed;
+    if (recent.length < 3) return average;
+
+    const atEnd = slopeAtEnd(recent, last);
+    if (!Number.isFinite(atEnd)) return average;
+    // Fitted to be turning round: the hand was coming to a stop.
+    if (Math.sign(atEnd) !== Math.sign(average)) return 0;
+    // A curve can overshoot on uneven samples; never faster than the
+    // fastest stretch the hand actually moved at.
+    const fastest = Math.max(
+        ...recent.slice(1).map((sample, i) => Math.abs((sample.position - recent[i].position) / Math.max(1, sample.time - recent[i].time))),
+    );
+    return Math.sign(atEnd) * Math.min(Math.abs(atEnd), fastest);
+}
+
+// Least-squares fit of position = a + b*t + c*t^2, with t measured back from
+// the last sample (so t = 0 there); returns b, the slope at the last sample.
+function slopeAtEnd(samples: PositionSample[], last: PositionSample): number {
+    // Sums for the normal equations.
+    let n = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, y0 = 0, y1 = 0, y2 = 0;
+    for (const sample of samples) {
+        const t = sample.time - last.time;
+        const y = sample.position - last.position;
+        n += 1;
+        t1 += t;
+        t2 += t * t;
+        t3 += t * t * t;
+        t4 += t * t * t * t;
+        y0 += y;
+        y1 += t * y;
+        y2 += t * t * y;
+    }
+    // Solve [n t1 t2; t1 t2 t3; t2 t3 t4] [a b c] = [y0 y1 y2] for b (Cramer's rule).
+    const det = n * (t2 * t4 - t3 * t3) - t1 * (t1 * t4 - t3 * t2) + t2 * (t1 * t3 - t2 * t2);
+    if (Math.abs(det) < 1e-9) return NaN;
+    const detB = n * (y1 * t4 - t3 * y2) - y0 * (t1 * t4 - t3 * t2) + t2 * (t1 * y2 - y1 * t2);
+    return detB / det;
 }
 
 export interface GlideInput {

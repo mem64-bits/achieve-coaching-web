@@ -41,6 +41,10 @@ export interface SwipeCarouselProps {
     // Previous / next buttons under the carousel, with these spoken names.
     controls?: {previous: string; next: string};
     controlsClassName?: string;
+    // Also answer the left / right arrow keys from anywhere on the page
+    // while at least half the carousel is on screen, not only once it has
+    // focus. For one carousel per page (the photos): two would both move.
+    pageArrowKeys?: boolean;
     slideClassName?: string;
     className?: string;
     style?: CSSProperties;
@@ -84,7 +88,7 @@ const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 const stepButton =
     "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30 lg:pointer-events-auto lg:size-12 lg:border-white/20 lg:bg-black/65 lg:backdrop-blur lg:hover:bg-achieve-blue";
 
-export function SwipeCarousel({items, label, onPositionChange, controls, controlsClassName, slideClassName, className, style}: SwipeCarouselProps) {
+export function SwipeCarousel({items, label, onPositionChange, controls, controlsClassName, pageArrowKeys = false, slideClassName, className, style}: SwipeCarouselProps) {
     const loop = items.length >= LOOP_FROM;
     const reduceMotion = prefersReducedMotion();
     const [swiper, setSwiper] = useState<SwiperInstance | null>(null);
@@ -147,6 +151,37 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
         return () => swiper.el.removeEventListener("keydown", onKeyDown);
     }, [swiper]);
 
+    // Page-wide arrow keys (pageArrowKeys). Left alone when the key is meant
+    // for something else: typing in a field, a dialog such as the photo
+    // viewer, another carousel or this one (handled above), or a shortcut.
+    useEffect(() => {
+        if (!swiper || !pageArrowKeys) return;
+        let mostlyOnScreen = false;
+        const watcher = new IntersectionObserver(
+            ([entry]) => {
+                mostlyOnScreen = entry.intersectionRatio >= 0.5;
+            },
+            {threshold: [0, 0.5, 1]},
+        );
+        watcher.observe(swiper.el);
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+            if (!mostlyOnScreen || event.defaultPrevented) return;
+            if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+            if (document.querySelector("dialog[open]")) return;
+            const target = event.target as HTMLElement | null;
+            if (target?.closest("input, textarea, select, [contenteditable], .swipe-carousel")) return;
+            step(event.key === "ArrowRight" ? 1 : -1);
+            event.preventDefault();
+        };
+        window.addEventListener("keydown", onKeyDown);
+        return () => {
+            watcher.disconnect();
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, [swiper, pageArrowKeys]);
+
     // Letting go: carry on at the finger's speed, slow down, and come to
     // rest on a card (see lib/carousel/glide.ts for the maths).
     useEffect(() => {
@@ -176,10 +211,16 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
             // setting too. Made instant, the strip jumped onto the card the
             // moment the button came up. The arrows' three-card jump is the
             // automatic motion that setting is about, and stays instant.
+            // Marked as moving until the glide ends (onTransitionEnd), like
+            // a step, so hover effects don't fire on cards passing the pointer.
+            if (plan.duration > 0) swiper.el.dataset.move = "glide";
             swiper.slideTo(plan.index, plan.duration);
         };
 
+        // True while a finger or mouse button is down on the strip.
+        let held = false;
         const onTouchStart = () => {
+            held = true;
             releasing = false;
             samples = [];
             window.clearTimeout(wheelTimer);
@@ -187,10 +228,21 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
             clearGlideCurve(swiper);
         };
         const onSliderMove = () => {
+            // Lets card hover effects stand still while the strip is held.
+            swiper.el.dataset.dragging = "";
+        };
+        // Positions are taken when Swiper actually moves the strip. Its
+        // sliderMove event comes before the move, so sampling there ran one
+        // event behind and always lost the last, slowest bit of a flick:
+        // the glide then set off at the speed from a moment earlier.
+        const onSetTranslate = () => {
+            if (!held) return;
             samples.push({time: performance.now(), position: swiper.translate});
             if (samples.length > 12) samples.shift();
         };
         const onTouchEnd = () => {
+            held = false;
+            delete swiper.el.dataset.dragging;
             releasing = samples.length > 0;
             releasedAt = performance.now();
         };
@@ -207,6 +259,7 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
 
         swiper.on("touchStart", onTouchStart);
         swiper.on("sliderMove", onSliderMove);
+        swiper.on("setTranslate", onSetTranslate);
         swiper.on("touchEnd", onTouchEnd);
         // Free mode's last word on a release, still in the same frame; acting
         // here means Swiper doesn't overwrite the target straight after.
@@ -216,6 +269,7 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
             window.clearTimeout(wheelTimer);
             swiper.off("touchStart", onTouchStart);
             swiper.off("sliderMove", onSliderMove);
+            swiper.off("setTranslate", onSetTranslate);
             swiper.off("touchEnd", onTouchEnd);
             swiper.off("_freeModeStaticRelease", onRelease);
             swiper.off("scroll", onWheel);
@@ -223,7 +277,9 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
     }, [swiper, loop]);
 
     return (
-        <div className="relative">
+        // No text selection: clicking the arrows quickly counts as a
+        // double-click, which selected the photos and tinted them blue.
+        <div className="relative select-none">
             <Swiper
                 modules={[A11y, FreeMode, Mousewheel]}
                 tabIndex={0}

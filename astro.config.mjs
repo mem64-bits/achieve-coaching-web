@@ -16,7 +16,10 @@ export default defineConfig({
         HTML: false,
         SVG: true,
         Logger: 1,
-    }), sitemap()],
+    }), sitemap({
+        // Test pages under /lab are not part of the site.
+        filter: (page) => !page.includes('/lab/'),
+    })],
 
     env: {
         schema: {
