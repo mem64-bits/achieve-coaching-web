@@ -28,23 +28,29 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
     const items = photos.map((photo, index) => ({
         key: photo.id,
         // Every photo sits in an equal 3:4 card. Photos close to that shape
-        // fill it; squares (before/after pairs) and tall shots
-        // are shown whole, with their blurred placeholder filling the gaps,
-        // so nobody gets cropped out of a comparison.
+        // fill it; squares (before/after pairs) and tall shots are shown
+        // whole, so nobody gets cropped out of a comparison. The gaps that
+        // leaves get a soft, dark wash of the photo's own colours
+        // (PhotoBackdrop) rather than its 16px placeholder stretched to fit,
+        // which showed as smeared bands above and below the photo.
         // The card itself isn't a button, so on a computer clicking or
         // dragging the photo only moves the carousel. The full-size viewer
         // opens from the button in the corner. On touch screens that same
         // button stretches over the whole card, because a tap and a swipe
         // are easy to tell apart there.
         content: (
-            <div className="group relative w-full transform-gpu overflow-hidden rounded-2xl bg-card transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60">
+            <div className="group relative isolate w-full transform-gpu overflow-hidden rounded-2xl bg-card transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60">
+                {isLetterboxed(photo) && <PhotoBackdrop placeholder={photo.thumb.placeholder}/>}
                 <ResponsivePicture
                     image={photo.thumb}
+                    // A letterboxed photo's own background would be the
+                    // stretched placeholder again, so it's left clear.
+                    showPlaceholder={!isLetterboxed(photo)}
                     loading={preload.has(index) ? "eager" : "lazy"}
                     draggable={false}
                     className={cn(
-                        "block aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none",
-                        Math.abs(photo.aspectRatio - CARD_RATIO) > CROP_TOLERANCE && "object-contain",
+                        "relative block aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transition-none",
+                        isLetterboxed(photo) && "object-contain",
                     )}
                 />
                 <button
@@ -94,4 +100,23 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
 
 function sameItems(a: Set<number>, b: Set<number>): boolean {
     return a.size === b.size && [...a].every((item) => b.has(item));
+}
+
+// Shown whole inside the card rather than cropped to fill it.
+function isLetterboxed(photo: GalleryPhoto): boolean {
+    return Math.abs(photo.aspectRatio - CARD_RATIO) > CROP_TOLERANCE;
+}
+
+// Fills the space around a letterboxed photo. The 16px placeholder is a
+// rough average of the photo's colours; blurring it hard in the browser
+// turns its blocky pixels into a smooth wash, scaled up so the blur's soft
+// edge sits outside the card, and darkened so it reads as background.
+function PhotoBackdrop({placeholder}: {placeholder?: string}) {
+    return (
+        <span
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 scale-125 bg-cover bg-center blur-2xl brightness-[0.4] saturate-[0.8]"
+            style={placeholder ? {backgroundImage: `url("${placeholder}")`} : undefined}
+        />
+    );
 }
