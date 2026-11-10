@@ -23,6 +23,7 @@ function fakePhotos(count: number): GalleryPhoto[] {
     return Array.from({length: count}, (_, index) => ({
         id: `result-${index + 1}`,
         aspectRatio: 0.75,
+        showWhole: false,
         kind: "transformation",
         thumb: fakeImage(`/photo-${index + 1}.jpg`),
         full: fakeImage(`/photo-${index + 1}-full.jpg`),

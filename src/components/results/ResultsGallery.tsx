@@ -8,11 +8,6 @@ import {SwipeCarousel} from "@/components/common/SwipeCarousel";
 import {cn} from "@/lib/utils";
 import {Lightbox} from "./Lightbox";
 
-// Card shape (width / height), and how far a photo's own
-// shape can be from it before we stop cropping and show it whole instead.
-const CARD_RATIO = 3 / 4;
-const CROP_TOLERANCE = 0.06;
-
 interface ResultsGalleryProps {
     photos: GalleryPhoto[];
 }
@@ -27,12 +22,12 @@ export default function ResultsGallery({photos}: ResultsGalleryProps) {
 
     const items = photos.map((photo, index) => ({
         key: photo.id,
-        // Every photo sits in an equal 3:4 card. Photos close to that shape
-        // fill it; squares (before/after pairs) and tall shots are shown
-        // whole, so nobody gets cropped out of a comparison. The gaps that
-        // leaves get a soft, dark wash of the photo's own colours
-        // (PhotoBackdrop) rather than its 16px placeholder stretched to fit,
-        // which showed as smeared bands above and below the photo.
+        // Every photo is zoomed to fill an equal 3:4 card, so squarer and
+        // taller shots lose their edges here (the viewer shows them whole).
+        // A photo marked showWhole in RESULT_PHOTOS sits whole in its card
+        // instead, on a soft, dark wash of its own colours (PhotoBackdrop)
+        // rather than its 16px placeholder stretched to fit, which showed as
+        // smeared bands above and below the photo.
         // The card itself isn't a button, so on a computer clicking or
         // dragging the photo only moves the carousel. The full-size viewer
         // opens from the button in the corner. On touch screens that same
@@ -102,9 +97,9 @@ function sameItems(a: Set<number>, b: Set<number>): boolean {
     return a.size === b.size && [...a].every((item) => b.has(item));
 }
 
-// Shown whole inside the card rather than cropped to fill it.
+// Shown whole inside the card rather than zoomed to fill it.
 function isLetterboxed(photo: GalleryPhoto): boolean {
-    return Math.abs(photo.aspectRatio - CARD_RATIO) > CROP_TOLERANCE;
+    return photo.showWhole;
 }
 
 // Fills the space around a letterboxed photo. The 16px placeholder is a

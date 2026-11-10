@@ -24,6 +24,7 @@ const photos: GalleryPhoto[] = await Promise.all(
         return {
             id: `result-${index + 1}`,
             aspectRatio,
+            showWhole: photo.showWhole ?? false,
             kind: photo.kind,
             thumb: await toResponsiveImage(photo.image, {
                 alt: photo.alt,
