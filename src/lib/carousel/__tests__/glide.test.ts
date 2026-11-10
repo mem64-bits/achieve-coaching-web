@@ -33,9 +33,21 @@ describe("releaseVelocity", () => {
         expect(Math.abs(velocity)).toBeLessThan(1.5);
     });
 
-    it("doesn't overshoot the fastest stretch on uneven samples", () => {
-        const samples = [0, 16, 32, 48, 64, 80].map((time, i) => ({time, position: -time * 0.5 + (i % 2 ? 3 : -3)}));
-        expect(Math.abs(releaseVelocity(samples, 82))).toBeLessThanOrEqual(Math.max(...samples.slice(1).map((s, i) => Math.abs((s.position - samples[i].position) / 16))));
+    it("never hands over more than the hand's latest speed, even through a speed-up and slow-down", () => {
+        // Sped up then slowed inside the window: 40, 70, 90, 90, 60, 30, 12.
+        let position = 0;
+        const samples = [{time: 0, position}];
+        [40, 70, 90, 90, 60, 30, 12].forEach((step, i) => {
+            position -= step;
+            samples.push({time: (i + 1) * 16, position});
+        });
+        const velocity = releaseVelocity(samples, 114);
+        expect(Math.abs(velocity)).toBeLessThanOrEqual(12 / 16 + 1e-9);
+    });
+
+    it("keeps a steady drag's speed", () => {
+        const samples = [0, 16, 32, 48, 64, 80].map((time) => ({time, position: -time * 1.5}));
+        expect(releaseVelocity(samples, 82)).toBeCloseTo(-1.5);
     });
 
     it("is zero when the finger stopped before letting go", () => {

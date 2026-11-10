@@ -276,6 +276,52 @@ for (const pixelsPerFrame of [6, 15, 25]) {
     });
 }
 
+test("clicking the strip mid-glide stops it, then eases it onto a card instead of leaving it between two", async ({page}, testInfo) => {
+    test.skip(Boolean(testInfo.project.use.hasTouch), "mouse");
+    const carousel = photoCarousel(page);
+    // Flick, let go, and press again (without moving) while it's gliding.
+    await carousel.evaluate(
+        (el) =>
+            new Promise<void>((resolve) => {
+                const box = el.getBoundingClientRect();
+                const y = box.top + box.height * 0.4;
+                let x = box.left + box.width * 0.8;
+                const target = el.querySelector(".swiper-slide-active img") ?? el;
+                const send = (type: string) =>
+                    target.dispatchEvent(
+                        new PointerEvent(type, {
+                            bubbles: true,
+                            cancelable: true,
+                            clientX: x,
+                            clientY: y,
+                            pointerId: 1,
+                            pointerType: "mouse",
+                            isPrimary: true,
+                            button: 0,
+                            buttons: type === "pointerup" ? 0 : 1,
+                        }),
+                    );
+                const plan = [...Array(8).fill("move"), "up", "wait", "wait", "wait", "wait", "down", "wait", "wait", "up"];
+                let step = 0;
+                send("pointerdown");
+                const frame = () => {
+                    const action = plan[step++];
+                    if (action === "move") {
+                        x -= 30;
+                        send("pointermove");
+                    } else if (action === "up") send("pointerup");
+                    else if (action === "down") send("pointerdown");
+                    if (step < plan.length) requestAnimationFrame(frame);
+                    else resolve();
+                };
+                requestAnimationFrame(frame);
+            }),
+    );
+    // settle() waits for the strip to come to rest on a card. Before the
+    // fix it stayed between two cards until the next drag or key press.
+    await settle(carousel);
+});
+
 test("the photos either side are loaded before they're needed, even on a slow connection", async ({page, browserName}) => {
     test.skip(browserName !== "chromium", "network throttling needs Chrome");
     const carousel = photoCarousel(page);

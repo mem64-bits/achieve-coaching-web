@@ -228,14 +228,14 @@ dialog.lightbox::backdrop {
     transition: filter 300ms ease-out;
 }
 @media (hover: hover) {
-    .group:hover > picture > .photo-reveal { scale: 1; }
-    .group:hover > picture > .photo-lift { filter: brightness(1.08); }
+    .group:hover .photo-reveal { scale: 1; }
+    .group:hover .photo-lift { filter: brightness(1.08); }
 }
-.group:focus-within > picture > .photo-reveal { scale: 1; }
+.group:focus-within .photo-reveal { scale: 1; }
 /* Not while the strip is held or gliding: cards would flick in and out as
    they pass under the pointer. */
-.swipe-carousel:is([data-dragging], [data-move]) .group > picture > .photo-reveal { scale: var(--fill, 1); }
-.swipe-carousel:is([data-dragging], [data-move]) .group > picture > .photo-lift { filter: none; }
+.swipe-carousel:is([data-dragging], [data-move]) .group .photo-reveal { scale: var(--fill, 1); }
+.swipe-carousel:is([data-dragging], [data-move]) .group .photo-lift { filter: none; }
 @media (prefers-reduced-motion: reduce) {
     .photo-reveal, .photo-lift { transition: none; }
 }

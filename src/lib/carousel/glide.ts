@@ -46,12 +46,25 @@ export function releaseVelocity(samples: PositionSample[], releasedAt: number): 
     if (!Number.isFinite(atEnd)) return average;
     // Fitted to be turning round: the hand was coming to a stop.
     if (Math.sign(atEnd) !== Math.sign(average)) return 0;
-    // A curve can overshoot on uneven samples; never faster than the
-    // fastest stretch the hand actually moved at.
-    const fastest = Math.max(
-        ...recent.slice(1).map((sample, i) => Math.abs((sample.position - recent[i].position) / Math.max(1, sample.time - recent[i].time))),
-    );
-    return Math.sign(atEnd) * Math.min(Math.abs(atEnd), fastest);
+    // A curve can overshoot: through a flick that sped up and then slowed
+    // inside the window it ran high (23 px a frame for a hand ending at 12).
+    // So never faster than the hand's latest stretch (the last 16ms or so,
+    // long enough to smooth over a high-rate mouse's tiny steps).
+    const latest = latestSpeed(recent, last);
+    return Math.sign(atEnd) * Math.min(Math.abs(atEnd), Math.abs(latest));
+}
+
+const LATEST_STRETCH_MS = 16;
+
+// Speed from the newest sample at least LATEST_STRETCH_MS older than the last
+// one (or the oldest there is) to the last.
+function latestSpeed(samples: PositionSample[], last: PositionSample): number {
+    let from = samples[0];
+    for (const sample of samples) {
+        if (last.time - sample.time >= LATEST_STRETCH_MS) from = sample;
+    }
+    const elapsed = last.time - from.time;
+    return elapsed > 0 ? (last.position - from.position) / elapsed : 0;
 }
 
 // Least-squares fit of position = a + b*t + c*t^2, with t measured back from

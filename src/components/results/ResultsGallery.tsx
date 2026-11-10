@@ -48,18 +48,26 @@ export default function ResultsGallery({photos, hover = "none"}: ResultsGalleryP
         // button stretches over the whole card, because a tap and a swipe
         // are easy to tell apart there.
         content: (
-            <div className="group relative isolate w-full transform-gpu overflow-hidden rounded-2xl bg-card transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60">
-                {showsBackdrop(photo, hover) && <PhotoBackdrop placeholder={photo.thumb.placeholder}/>}
-                <ResponsivePicture
-                    image={photo.thumb}
-                    // With a backdrop the photo's own background would be the
-                    // stretched placeholder again, so it's left clear.
-                    showPlaceholder={!showsBackdrop(photo, hover)}
-                    loading={preload.has(index) ? "eager" : "lazy"}
-                    draggable={false}
-                    className={cn("relative block aspect-[3/4] w-full", photoHoverClasses(photo, hover))}
-                    style={hover === "reveal" ? ({"--fill": fillScale(photo)} as CSSProperties) : undefined}
-                />
+            // The outer card carries the glow and border; the inner one clips
+            // the photo to the rounded corners. Clipped with clip-path as well
+            // as overflow + radius: while the strip moves, the browser moves
+            // the cards as separate graphics layers and can drop a radius
+            // clip, flashing square corners mid-swipe. clip-path holds.
+            // (On one element the clip would cut off the outer glow too.)
+            <div className="group relative w-full rounded-2xl transition-shadow duration-300 after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:border after:border-white/10 after:transition-colors after:duration-300 hover:shadow-[0_0_30px_var(--achieve-blue-glow)] hover:after:border-achieve-blue/60">
+                <div className="relative isolate overflow-hidden rounded-[inherit] bg-card [clip-path:inset(0_round_var(--radius-2xl))]">
+                    {showsBackdrop(photo, hover) && <PhotoBackdrop placeholder={photo.thumb.placeholder}/>}
+                    <ResponsivePicture
+                        image={photo.thumb}
+                        // With a backdrop the photo's own background would be the
+                        // stretched placeholder again, so it's left clear.
+                        showPlaceholder={!showsBackdrop(photo, hover)}
+                        loading={preload.has(index) ? "eager" : "lazy"}
+                        draggable={false}
+                        className={cn("relative block aspect-[3/4] w-full", photoHoverClasses(photo, hover))}
+                        style={hover === "reveal" ? ({"--fill": fillScale(photo)} as CSSProperties) : undefined}
+                    />
+                </div>
                 <button
                     type="button"
                     onClick={() => setOpenIndex(index)}

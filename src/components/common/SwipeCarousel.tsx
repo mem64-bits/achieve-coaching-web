@@ -245,6 +245,17 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
             delete swiper.el.dataset.dragging;
             releasing = samples.length > 0;
             releasedAt = performance.now();
+            // Pressed and let go without moving. Pressing during a glide
+            // stops the strip where it is, as on a phone, but Swiper counts
+            // a press with no movement as nothing happening, so it never
+            // settled: the strip stayed between two cards and the next drag
+            // or arrow press jumped to line up. Ease onto the nearest card
+            // from rest instead (after Swiper finishes its own release).
+            if (!releasing) {
+                requestAnimationFrame(() => {
+                    if (!held && !restingOnCard(swiper)) glide(0);
+                });
+            }
         };
         const onRelease = () => {
             if (!releasing) return;
@@ -363,6 +374,11 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
 }
 
 // How many cards fit across at the current screen width.
+// Whether the strip is lined up on a card (within half a pixel).
+function restingOnCard(instance: SwiperInstance): boolean {
+    return instance.snapGrid.some((snap) => Math.abs(snap + instance.translate) < 0.5);
+}
+
 // Back to the stylesheet's easing (effects.css) once a custom glide is over.
 function clearGlideCurve(instance: SwiperInstance) {
     instance.wrapperEl.style.removeProperty("transition-timing-function");
