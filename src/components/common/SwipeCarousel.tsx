@@ -167,11 +167,16 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
                 snaps: swiper.snapGrid.map((offset) => -offset),
                 maxTravel: cardSize * MAX_FLICK_CARDS,
             });
-            // A capped glide brings its own easing so it still leaves at the
-            // finger's speed; the stylesheet's curve covers the rest.
+            // Each glide brings its own easing so it starts at the speed the
+            // strip already has (none, if the mouse stopped before letting go).
             if (plan.curve) swiper.wrapperEl.style.transitionTimingFunction = plan.curve;
             else clearGlideCurve(swiper);
-            swiper.slideTo(plan.index, reduceMotion ? 0 : plan.duration);
+            // Animated even with reduced motion on: it finishes the visitor's
+            // own drag, like ordinary scrolling, which phones keep under that
+            // setting too. Made instant, the strip jumped onto the card the
+            // moment the button came up. The arrows' three-card jump is the
+            // automatic motion that setting is about, and stays instant.
+            swiper.slideTo(plan.index, plan.duration);
         };
 
         const onTouchStart = () => {
@@ -215,7 +220,7 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
             swiper.off("_freeModeStaticRelease", onRelease);
             swiper.off("scroll", onWheel);
         };
-    }, [swiper, loop, reduceMotion]);
+    }, [swiper, loop]);
 
     return (
         <div className="relative">

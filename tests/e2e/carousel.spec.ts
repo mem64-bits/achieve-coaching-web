@@ -249,21 +249,25 @@ for (const pixelsPerFrame of [6, 15, 25]) {
         );
 
         // A short, slow drag eases back to the card it started on, like a
-        // phone does; anything else carries on. Either way the strip picks
-        // one direction and keeps it until it stops.
+        // phone does, leaning on in the finger's direction for a moment
+        // first; anything else carries on. So the strip turns round at most
+        // once, and only from going the finger's way to coming back.
         const glide = run.speeds.slice(run.releasedAt).filter((speed) => Math.abs(speed) > 0.015);
-        const direction = Math.sign(glide[0] ?? 0);
-        for (const speed of glide) expect(Math.sign(speed)).toBe(direction);
-        if (direction < 0) {
-            // Carrying on: no faster than the finger, give or take. Before
-            // the fix this came out at about twice the finger's speed.
-            for (const speed of glide.slice(0, 3)) {
-                expect(Math.abs(speed)).toBeLessThanOrEqual(run.fingerSpeed * 1.4 + 0.05);
-            }
+        const turns = glide.filter((speed, i) => i > 0 && Math.sign(speed) !== Math.sign(glide[i - 1])).length;
+        expect(turns).toBeLessThanOrEqual(1);
+        if (turns === 1) expect(Math.sign(glide[0])).toBe(-1);
+        // Carrying on: no faster than the finger, give or take. Before the
+        // fix this came out at about twice the finger's speed.
+        for (const speed of glide.slice(0, 3).filter((speed) => speed < 0)) {
+            expect(Math.abs(speed)).toBeLessThanOrEqual(run.fingerSpeed * 1.4 + 0.05);
         }
-        // It only ever slows down: no lurch partway through.
-        const speeds = glide.map(Math.abs);
-        for (let i = 1; i < speeds.length; i += 1) expect(speeds[i]).toBeLessThanOrEqual(speeds[i - 1] * 1.2 + 0.05);
+        // Smooth all the way: the speed never jumps between one frame and the
+        // next (px per ms). Measured from the first frame of the glide; the
+        // drag itself already wobbles by half a frame on a busy test machine.
+        const speeds = run.speeds.slice(run.releasedAt);
+        for (let i = 1; i < speeds.length; i += 1) {
+            expect(Math.abs(speeds[i] - speeds[i - 1])).toBeLessThanOrEqual(Math.max(0.25, run.fingerSpeed * 0.5));
+        }
         await settle(carousel);
     });
 }
@@ -354,6 +358,50 @@ test("with reduced motion a batch step happens at once", async ({page}) => {
     // No settle: there should be nothing to wait for.
     await page.waitForTimeout(50);
     expect(await shownIndexes(carousel)).toEqual(visibleWindow(perView, perView, total));
+});
+
+test("letting go of a stopped mouse drag eases onto a card from rest, even with reduced motion", async ({page}, testInfo) => {
+    test.skip(Boolean(testInfo.project.use.hasTouch), "mouse drag");
+    await page.emulateMedia({reducedMotion: "reduce"});
+    await page.reload();
+    const carousel = photoCarousel(page);
+    await openCarousel(carousel);
+    const box = (await carousel.boundingBox())!;
+    const y = box.y + box.height * 0.4;
+    const startX = box.x + box.width * 0.7;
+
+    // Drag part of a card and stop before letting go, as people do with a mouse.
+    await page.mouse.move(startX, y);
+    await page.mouse.down();
+    for (let step = 1; step <= 10; step += 1) await page.mouse.move(startX - step * 15, y);
+    await page.waitForTimeout(150);
+    const frames = carousel.evaluate(
+        (el) =>
+            new Promise<{position: number; time: number}[]>((resolve) => {
+                const wrapper = el.querySelector(".swiper-wrapper")!;
+                const samples: {position: number; time: number}[] = [];
+                const sample = (time: number) => {
+                    samples.push({position: new DOMMatrixReadOnly(getComputedStyle(wrapper).transform).m41, time});
+                    if (samples.length < 40) requestAnimationFrame(sample);
+                    else resolve(samples);
+                };
+                requestAnimationFrame(sample);
+            }),
+    );
+    await page.mouse.up();
+    const samples = await frames;
+
+    // Several in-between positions on the way, not one jump.
+    expect(new Set(samples.map((s) => Math.round(s.position))).size).toBeGreaterThan(6);
+    // Starting from rest it picks up speed gently: its first speed is well
+    // under its top speed. The old settle set off at its top speed.
+    const speeds = samples
+        .slice(1)
+        .map((s, i) => Math.abs(s.position - samples[i].position) / (s.time - samples[i].time))
+        .filter((speed, i, all) => speed > 0.005 || all.slice(0, i).some((before) => before > 0.005));
+    expect(speeds.length).toBeGreaterThan(3);
+    expect(speeds[0]).toBeLessThan(Math.max(...speeds) * 0.6);
+    await settle(carousel);
 });
 
 test("resizing between phone and desktop keeps the order and the place", async ({page}, testInfo) => {

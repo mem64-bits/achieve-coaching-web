@@ -46,7 +46,7 @@ export interface GlidePlan {
     index: number;
     // How long the glide takes. Zero when already there.
     duration: number;
-    // CSS easing for this glide, or undefined to use the stylesheet's.
+    // CSS easing for this glide. Missing only when there's no move to make.
     curve?: string;
 }
 
@@ -57,15 +57,23 @@ const PROJECTION_MS = 300;
 // about 1.84 (it starts 1.84x faster than its average speed). Timing the
 // glide with it makes the strip leave at exactly the finger's speed.
 export const GLIDE_CURVE_SLOPE = 1.84;
-// When the duration has to be capped, that fixed curve no longer matches, so
-// the glide gets its own: same shape as the stylesheet's, with the first
-// control point raised or lowered until the starting slope fits.
+// Every glide gets its own curve: the stylesheet's shape, with the first
+// control point raised or lowered until the strip starts at the speed it
+// already has. That matters most when it has none: a mouse usually stops
+// before the button comes up, and an ease-out from rest jumps straight to
+// full speed, which read as a snap. From rest the curve starts flat instead,
+// like a phone's spring.
 const CURVE_X1 = 0.25;
 const CURVE_END = "0.45, 0.94";
 // A first control point above 1 would overshoot the card and come back.
 const STEEPEST_START = 1 / CURVE_X1;
-// Settling onto the nearest card with no momentum behind it.
-const SETTLE_MS = 320;
+// Let go while still moving away from the card it settles on, the strip
+// carries on that way for a moment before turning back (a negative first
+// control point), as a real spring would. Capped so it only leans, never
+// swings out a long way.
+const FURTHEST_LEAN = -1;
+// Settling onto the nearest card with little or no momentum behind it.
+const SETTLE_MS = 380;
 const SHORTEST_GLIDE_MS = 220;
 const LONGEST_GLIDE_MS = 900;
 // Below this a release counts as "not moving" (0.05 px/ms = 50 px/s).
@@ -85,21 +93,25 @@ export function planGlide({position, velocity, snaps, maxTravel}: GlideInput): G
     const distance = snaps[index] - position;
     if (Math.abs(distance) < 0.5) return {index, duration: 0};
 
-    // Carrying on the way the finger was going: start at its speed.
+    // Carrying on the way the finger was going at a real speed: take about
+    // as long as the stylesheet's curve would to shed that speed. Otherwise
+    // it's a settle.
     const sameWay = Math.sign(distance) === Math.sign(velocity) && Math.abs(velocity) >= MIN_FLICK_SPEED;
-    if (!sameWay) return {index, duration: SETTLE_MS};
-
     const ideal = (GLIDE_CURVE_SLOPE * Math.abs(distance)) / Math.abs(velocity);
-    const duration = Math.round(Math.max(SHORTEST_GLIDE_MS, Math.min(LONGEST_GLIDE_MS, ideal)));
-    if (duration === Math.round(ideal)) return {index, duration};
+    const duration = sameWay
+        ? Math.round(Math.max(SHORTEST_GLIDE_MS, Math.min(LONGEST_GLIDE_MS, ideal)))
+        : SETTLE_MS;
 
-    // Capped: the starting slope a curve needs to leave at the finger's
-    // speed over this duration (slope 1 would be a straight line).
-    const slope = Math.min(STEEPEST_START, (Math.abs(velocity) * duration) / Math.abs(distance));
-    return {index, duration, curve: easeOutStartingAt(slope)};
+    // The starting slope a curve needs to leave at the strip's current speed
+    // over this duration (slope 1 would be a straight line; 0 starts from
+    // rest; below 0 leans the way it was going first).
+    const towardsCard = velocity * Math.sign(distance);
+    const slope = (towardsCard * duration) / Math.abs(distance);
+    return {index, duration, curve: easeOutStartingAt(Math.max(FURTHEST_LEAN, Math.min(STEEPEST_START, slope)))};
 }
 
-// Ease-out cubic-bezier whose speed at the start is `slope` times its average.
+// Cubic-bezier whose speed at the start is `slope` times its average, easing
+// out to a stop on the card.
 export function easeOutStartingAt(slope: number): string {
     const y1 = Math.round(CURVE_X1 * slope * 1000) / 1000;
     return `cubic-bezier(${CURVE_X1}, ${y1}, ${CURVE_END})`;

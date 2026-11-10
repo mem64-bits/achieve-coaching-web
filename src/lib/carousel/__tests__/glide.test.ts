@@ -30,8 +30,13 @@ describe("releaseVelocity", () => {
 
 describe("planGlide", () => {
     it("settles on the nearest card when let go without moving", () => {
-        expect(planGlide({position: -150, velocity: 0, snaps, maxTravel})).toEqual({index: 0, duration: 320});
-        expect(planGlide({position: -260, velocity: 0, snaps, maxTravel})).toEqual({index: 1, duration: 320});
+        expect(planGlide({position: -150, velocity: 0, snaps, maxTravel})).toMatchObject({index: 0, duration: 380});
+        expect(planGlide({position: -260, velocity: 0, snaps, maxTravel})).toMatchObject({index: 1, duration: 380});
+    });
+
+    it("from rest, starts from rest: no jump to full speed when a mouse stops before letting go", () => {
+        const plan = planGlide({position: -260, velocity: 0, snaps, maxTravel});
+        expect(startingSlope(plan.curve!)).toBe(0);
     });
 
     it("does nothing when already resting on a card", () => {
@@ -69,8 +74,9 @@ describe("planGlide", () => {
         expect(fast.duration).toBeGreaterThanOrEqual(220);
     });
 
-    it("uses the stylesheet's curve when the duration didn't need capping", () => {
-        expect(planGlide({position: -100, velocity: -1.5, snaps, maxTravel}).curve).toBeUndefined();
+    it("matches the stylesheet's curve when the duration didn't need capping", () => {
+        const plan = planGlide({position: -100, velocity: -1.5, snaps, maxTravel});
+        expect(startingSlope(plan.curve!)).toBeCloseTo(1.84, 1);
     });
 
     it("still leaves at the finger's speed when a slow glide is capped at the longest duration", () => {
@@ -80,8 +86,7 @@ describe("planGlide", () => {
         const position = -100;
         const plan = planGlide({position, velocity, snaps, maxTravel});
         expect(plan.duration).toBe(900);
-        const y1 = Number(plan.curve!.match(/cubic-bezier\(0\.25, ([\d.]+),/)![1]);
-        const startingSpeed = ((y1 / 0.25) * Math.abs(snaps[plan.index] - position)) / plan.duration;
+        const startingSpeed = (startingSlope(plan.curve!) * Math.abs(snaps[plan.index] - position)) / plan.duration;
         expect(startingSpeed).toBeCloseTo(Math.abs(velocity), 2);
     });
 
@@ -90,16 +95,23 @@ describe("planGlide", () => {
         // A huge flick over a short distance is capped at the shortest
         // duration; its curve's first point stays at or below 1.
         const plan = planGlide({position: -390, velocity: -8, snaps, maxTravel: 10});
-        const y1 = Number(plan.curve!.match(/cubic-bezier\(0\.25, ([\d.]+),/)![1]);
-        expect(y1).toBeLessThanOrEqual(1);
+        expect(startingSlope(plan.curve!) * 0.25).toBeLessThanOrEqual(1);
     });
 
-    it("settles back gently when let go moving the other way from the nearest card", () => {
+    it("let go moving away from the nearest card, leans that way a little before settling back", () => {
         const plan = planGlide({position: -390, velocity: 0.06, snaps, maxTravel});
-        expect(plan).toEqual({index: 1, duration: 320});
+        expect(plan).toMatchObject({index: 1, duration: 380});
+        // Negative start: carries on briefly, as a spring would, but capped.
+        expect(startingSlope(plan.curve!)).toBe(-1);
     });
 
     it("copes with a single card", () => {
-        expect(planGlide({position: -30, velocity: -3, snaps: [0], maxTravel})).toEqual({index: 0, duration: 320});
+        expect(planGlide({position: -30, velocity: -3, snaps: [0], maxTravel})).toMatchObject({index: 0, duration: 380});
     });
 });
+
+// How many times its average speed a planned curve starts at.
+function startingSlope(curve: string): number {
+    const [x1, y1] = curve.match(/-?[\d.]+/g)!.map(Number);
+    return y1 / x1;
+}
