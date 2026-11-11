@@ -3,7 +3,8 @@ import type {Swiper as SwiperInstance} from "swiper";
 import {ChevronLeft, ChevronRight, X} from "lucide-react";
 import {GALLERY_LABELS} from "@constants/results";
 import type {GalleryPhoto} from "@/types/results";
-import {prefersReducedMotion} from "./useSnapIndex";
+import {BrandLoader} from "@/components/common/BrandLoader";
+import {prefersReducedMotion} from "@/lib/motion";
 
 const LightboxSwiper = lazy(() => import("./LightboxSwiper"));
 
@@ -59,7 +60,7 @@ export function Lightbox({photos, openIndex, onClose}: LightboxProps) {
                     </div>
 
                     <div className="min-h-0 grow">
-                        <Suspense fallback={<div className="grid h-full place-items-center"><div className="swiper-lazy-preloader"/></div>}>
+                        <Suspense fallback={<div className="grid h-full place-items-center"><BrandLoader label="Loading photos" className="size-16"/></div>}>
                             <LightboxSwiper
                                 photos={photos}
                                 initialIndex={openIndex}
@@ -77,7 +78,8 @@ export function Lightbox({photos, openIndex, onClose}: LightboxProps) {
                         <button
                             type="button"
                             onClick={() => swiperRef.current?.slidePrev()}
-                            disabled={activeIndex === 0}
+                            // The viewer loops, so only a single photo has nowhere to go.
+                            disabled={photos.length < 2}
                             aria-label={GALLERY_LABELS.previous}
                             className={iconButton}
                         >
@@ -86,7 +88,7 @@ export function Lightbox({photos, openIndex, onClose}: LightboxProps) {
                         <button
                             type="button"
                             onClick={() => swiperRef.current?.slideNext()}
-                            disabled={activeIndex === photos.length - 1}
+                            disabled={photos.length < 2}
                             aria-label={GALLERY_LABELS.next}
                             className={iconButton}
                         >

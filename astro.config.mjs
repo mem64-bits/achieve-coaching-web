@@ -8,7 +8,7 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 
 export default defineConfig({
-    site: 'https://www.achieve-coaching.net',
+    site: 'https://www.achievecoaching.net',
 
     integrations: [react(), icon(), compress({
         CSS: false,
@@ -16,7 +16,10 @@ export default defineConfig({
         HTML: false,
         SVG: true,
         Logger: 1,
-    }), sitemap()],
+    }), sitemap({
+        // Test pages under /lab are not part of the site.
+        filter: (page) => !page.includes('/lab/'),
+    })],
 
     env: {
         schema: {
@@ -33,6 +36,12 @@ export default defineConfig({
         plugins: [tailwindcss()],
         build: {
             cssMinify: 'lightningcss',
+        },
+        // Dev server only. Bundle Swiper up front: when Vite discovers it late
+        // (the viewer's lazy import), it re-bundles it and the open page asks
+        // for a stale copy (a 504 and a viewer that won't open).
+        optimizeDeps: {
+            include: ['swiper/react', 'swiper/modules'],
         },
     },
 

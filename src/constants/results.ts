@@ -29,7 +29,9 @@ export const RESULTS_SECTION: ResultsSectionCopy = {
 };
 
 export const GALLERY_LABELS = {
+    carousel: "Client results",
     openPhoto: (position: number, total: number) => `Open fullscreen, photo ${position} of ${total}`,
+    viewFullSize: "View full size",
     previous: "Previous photo",
     next: "Next photo",
     close: "Close photo viewer",

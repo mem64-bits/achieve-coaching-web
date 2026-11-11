@@ -1,6 +1,6 @@
 # Achieve Coaching Web
 
-Marketing and lead-capture site for Achieve Coaching (achieve-coaching.net). Visitors read about the coaching program and submit an application form; the form posts to a serverless API route that emails the coach through Resend.
+Marketing and lead-capture site for Achieve Coaching (achievecoaching.net; achieve-coaching.net redirects to it). Visitors read about the coaching program and submit an application form; the form posts to a serverless API route that emails the coach through Resend.
 
 Shared instructions for every coding agent (Claude Code, Gemini, Copilot, Junie). Architecture principles were first written in `GEMINI.md`; the maintained version is the "Architecture principles" section of `CLAUDE.md`. Read it before structural changes.
 
@@ -27,7 +27,7 @@ Node 22.12 or newer. Use `npm`, not pnpm or yarn; `package-lock.json` is the loc
 
 ## Branches and deployment
 
-`main` is production on Vercel. Every push to `main` deploys achieve-coaching.net.
+`main` is production on Vercel. Every push to `main` deploys achievecoaching.net.
 
 ```
 feature/* or chore/*  ->  dev  ->  preview  ->  main

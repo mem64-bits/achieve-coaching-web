@@ -36,3 +36,8 @@ repomix-output.xml
 CLAUDE.local.md
 
 .playwright-mcp/
+
+# Playwright test output
+/test-results/
+/playwright-report/
+/blob-report/
