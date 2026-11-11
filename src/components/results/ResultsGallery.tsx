@@ -4,7 +4,7 @@ import {Expand} from "lucide-react";
 import {GALLERY_LABELS} from "@constants/results";
 import type {GalleryPhoto} from "@/types/results";
 import {ResponsivePicture} from "@/components/common/ResponsivePicture";
-import {SwipeCarousel} from "@/components/common/SwipeCarousel";
+import {SwipeCarousel, type CarouselMotion} from "@/components/common/SwipeCarousel";
 import {cn} from "@/lib/utils";
 import {Lightbox} from "./Lightbox";
 
@@ -24,9 +24,10 @@ const NOTHING_TO_REVEAL = 1.04;
 interface ResultsGalleryProps {
     photos: GalleryPhoto[];
     hover?: PhotoHover;
+    motion?: CarouselMotion;
 }
 
-export default function ResultsGallery({photos, hover = "none"}: ResultsGalleryProps) {
+export default function ResultsGallery({photos, hover = "none", motion = "transition"}: ResultsGalleryProps) {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     // Photos to fetch now rather than when they reach the screen: the batch
     // in view and one batch either side, wrapping round the list. Lazy
@@ -104,6 +105,7 @@ export default function ResultsGallery({photos, hover = "none"}: ResultsGalleryP
                 // Left / right keys step the photos whenever the strip is in
                 // view, round and round, without clicking into it first.
                 pageArrowKeys
+                motion={motion}
                 // One card is never wider than 26rem (tablets would otherwise
                 // get a 960px-tall photo); three across are kept to 1100px so
                 // each is about 350 by 467 on wide screens.
