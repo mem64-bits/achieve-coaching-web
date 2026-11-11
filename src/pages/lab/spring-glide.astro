@@ -1,0 +1,16 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import {SectionContainer} from "@components/common/SectionContainer";
+import ResultsSection from "@components/home/ResultsSection.astro";
+import {SITE} from "@constants/site";
+---
+
+<BaseLayout title={`Spring glide test | ${SITE.name}`} noindex>
+    <SectionContainer maxWidth="narrow" paddingTop="normal" className="text-center">
+        <p class="eyebrow">Test page</p>
+        <p class="mt-3 text-lead text-muted-foreground">
+            The photo strip here moves on a spring. Flick it, catch it mid-glide, press the arrows quickly, and compare with the home page.
+        </p>
+    </SectionContainer>
+    <ResultsSection carouselMotion="spring"/>
+</BaseLayout>

@@ -1,5 +1,7 @@
 import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from "react";
 import {planGlide, releaseVelocity, type PositionSample} from "@/lib/carousel/glide";
+import {omegaForGlide, omegaForSettleTime} from "@/lib/carousel/spring";
+import {SpringDriver} from "@/lib/carousel/SpringDriver";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {A11y, FreeMode, Mousewheel} from "swiper/modules";
 import type {Swiper as SwiperInstance} from "swiper";
@@ -45,10 +47,21 @@ export interface SwipeCarouselProps {
     // while at least half the carousel is on screen, not only once it has
     // focus. For one carousel per page (the photos): two would both move.
     pageArrowKeys?: boolean;
+    motion?: CarouselMotion;
     slideClassName?: string;
     className?: string;
     style?: CSSProperties;
 }
+
+export type CarouselMotion = "transition" | "spring";
+
+const SPRING = {
+    atRest: omegaForSettleTime(450),
+    quickest: omegaForSettleTime(250),
+    slowest: omegaForSettleTime(1400),
+};
+
+const SMOOTH_STEP_MS = 750;
 
 // Three cards side by side from this width up. Below it there's only one,
 // so tablets get a single card rather than three squeezed ones.
@@ -88,7 +101,7 @@ const NO_SWIPE_ON = "input, select, option, textarea, video, label";
 const stepButton =
     "grid size-11 place-items-center rounded-full border border-border-strong text-foreground transition-colors hover:border-achieve-blue hover:bg-achieve-soft disabled:opacity-30 lg:pointer-events-auto lg:size-12 lg:border-white/20 lg:bg-black/65 lg:backdrop-blur lg:hover:bg-achieve-blue";
 
-export function SwipeCarousel({items, label, onPositionChange, controls, controlsClassName, pageArrowKeys = false, slideClassName, className, style}: SwipeCarouselProps) {
+export function SwipeCarousel({items, label, onPositionChange, controls, controlsClassName, pageArrowKeys = false, motion = "transition", slideClassName, className, style}: SwipeCarouselProps) {
     const loop = items.length >= LOOP_FROM;
     const reduceMotion = prefersReducedMotion();
     const [swiper, setSwiper] = useState<SwiperInstance | null>(null);
@@ -107,8 +120,62 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
     // A press that arrives while a batch is still gliding is kept and run as
     // soon as that move ends, so quick taps or key presses all count.
     const queued = useRef<1 | -1 | null>(null);
+    const spring = useRef<{driver: SpringDriver; targetIndex: number} | null>(null);
+
+    useEffect(() => {
+        if (!swiper || motion !== "spring") return;
+        const driver = new SpringDriver((position) => {
+            swiper.setTranslate(position);
+            swiper.updateActiveIndex();
+            swiper.updateSlidesClasses();
+        });
+        spring.current = {driver, targetIndex: swiper.activeIndex};
+        return () => {
+            driver.stop();
+            spring.current = null;
+        };
+    }, [swiper, motion]);
+
+    const springTo = (instance: SwiperInstance, index: number, velocity: number, curve: {omega: number} | {duration: number}, kind: "glide" | "step") => {
+        const current = spring.current;
+        if (!current) return;
+        const last = instance.snapGrid.length - 1;
+        const target = Math.min(Math.max(index, 0), last);
+        current.targetIndex = target;
+        instance.setTransition(0);
+        clearGlideCurve(instance);
+        instance.el.dataset.move = kind;
+        current.driver.go(instance.translate, velocity, {
+            target: -instance.snapGrid[target],
+            ...curve,
+            onDone: () => {
+                instance.slideTo(target, 0);
+                delete instance.el.dataset.move;
+                sync(instance);
+            },
+        });
+    };
+
+    const springStep = (instance: SwiperInstance, direction: 1 | -1) => {
+        const current = spring.current;
+        if (!current) return;
+        const caught = current.driver.stop();
+        if (caught) instance.setTranslate(caught.position);
+        let base = caught ? current.targetIndex : nearestSnapIndex(instance);
+        if (loop) {
+            const before = instance.translate;
+            instance.loopFix({direction: direction > 0 ? "next" : "prev"});
+            base += Math.round((before - instance.translate) / cardStep(instance));
+        }
+        springTo(instance, base + cardsAcross(instance) * direction, caught?.velocity ?? 0, {duration: SMOOTH_STEP_MS}, "step");
+    };
 
     const stepWith = (instance: SwiperInstance, direction: 1 | -1) => {
+        if (spring.current && !reduceMotion) {
+            springStep(instance, direction);
+            return;
+        }
+        spring.current?.driver.stop();
         if (instance.animating) {
             queued.current = direction;
             return;
@@ -195,13 +262,18 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
 
         const glide = (velocity: number) => {
             if (loop && velocity !== 0) swiper.loopFix({direction: velocity < 0 ? "next" : "prev"});
-            const cardSize = (swiper.slidesSizesGrid[0] ?? 0) + Number(swiper.params.spaceBetween ?? 0);
             const plan = planGlide({
                 position: swiper.translate,
                 velocity,
                 snaps: swiper.snapGrid.map((offset) => -offset),
-                maxTravel: cardSize * MAX_FLICK_CARDS,
+                maxTravel: cardStep(swiper) * MAX_FLICK_CARDS,
             });
+            if (spring.current) {
+                if (plan.duration === 0) return;
+                const offset = swiper.translate + swiper.snapGrid[plan.index];
+                springTo(swiper, plan.index, velocity, {omega: omegaForGlide(offset, velocity, SPRING)}, "glide");
+                return;
+            }
             // Each glide brings its own easing so it starts at the speed the
             // strip already has (none, if the mouse stopped before letting go).
             if (plan.curve) swiper.wrapperEl.style.transitionTimingFunction = plan.curve;
@@ -220,6 +292,7 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
         // True while a finger or mouse button is down on the strip.
         let held = false;
         const onTouchStart = () => {
+            spring.current?.driver.stop();
             held = true;
             releasing = false;
             samples = [];
@@ -264,6 +337,7 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
             samples = [];
         };
         const onWheel = () => {
+            if (spring.current?.driver.stop()) delete swiper.el.dataset.move;
             window.clearTimeout(wheelTimer);
             wheelTimer = window.setTimeout(() => glide(0), WHEEL_SETTLE_DELAY_MS);
         };
@@ -377,6 +451,19 @@ export function SwipeCarousel({items, label, onPositionChange, controls, control
 // Whether the strip is lined up on a card (within half a pixel).
 function restingOnCard(instance: SwiperInstance): boolean {
     return instance.snapGrid.some((snap) => Math.abs(snap + instance.translate) < 0.5);
+}
+
+function nearestSnapIndex(instance: SwiperInstance): number {
+    const offset = -instance.translate;
+    let nearest = 0;
+    instance.snapGrid.forEach((snap, index) => {
+        if (Math.abs(snap - offset) < Math.abs(instance.snapGrid[nearest] - offset)) nearest = index;
+    });
+    return nearest;
+}
+
+function cardStep(instance: SwiperInstance): number {
+    return (instance.slidesSizesGrid[0] ?? 0) + Number(instance.params.spaceBetween ?? 0);
 }
 
 // Back to the stylesheet's easing (effects.css) once a custom glide is over.

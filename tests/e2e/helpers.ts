@@ -62,7 +62,7 @@ export async function settle(carousel: Locator) {
                 const swiper = (el as SwiperHost).swiper;
                 const offset = -swiper.translate;
                 const onCard = swiper.snapGrid.some((snap) => Math.abs(snap - offset) < 1);
-                return !swiper.animating && onCard;
+                return !swiper.animating && onCard && !el.dataset.move && !el.dataset.dragging;
             }),
         )
         .toBe(true);

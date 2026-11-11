@@ -9,13 +9,15 @@ import {RESULTS_SECTION as copy, TESTIMONIALS as testimonials} from "@constants/
 import {toResponsiveImage} from "@/lib/images";
 import type {GalleryPhoto} from "@/types/results";
 import type {PhotoHover} from "@components/results/ResultsGallery";
+import type {CarouselMotion} from "@components/common/SwipeCarousel";
 
 interface Props {
     // What photo cards do under the pointer; see ResultsGallery.
     photoHover?: PhotoHover;
+    carouselMotion?: CarouselMotion;
 }
 
-const {photoHover = "none"} = Astro.props;
+const {photoHover = "none", carouselMotion = "transition"} = Astro.props;
 
 const titleId = `${copy.id}-title`;
 
@@ -68,7 +70,7 @@ const photos: GalleryPhoto[] = await Promise.all(
         className="mb-8 sm:mb-10"
     />
 
-    <ResultsGallery client:visible={{rootMargin: "600px"}} photos={photos} hover={photoHover}/>
+    <ResultsGallery client:visible={{rootMargin: "600px"}} photos={photos} hover={photoHover} motion={carouselMotion}/>
 
     {testimonials.length === 1 && (
         <div class="mx-auto mt-10 max-w-[44rem] sm:mt-14">
