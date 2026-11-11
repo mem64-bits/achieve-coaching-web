@@ -3,32 +3,41 @@ import {SectionContainer} from "@components/common/SectionContainer";
 import {SectionTitle} from "@components/common/SectionTitle";
 import ResultsGallery from "@components/results/ResultsGallery";
 import {QuoteCard} from "./QuoteCard";
+import ReviewsCarousel from "./ReviewsCarousel";
 import {RESULT_PHOTOS} from "@constants/resultPhotos";
 import {RESULTS_SECTION as copy, TESTIMONIALS as testimonials} from "@constants/results";
 import {toResponsiveImage} from "@/lib/images";
 import type {GalleryPhoto} from "@/types/results";
+import type {PhotoHover} from "@components/results/ResultsGallery";
+
+interface Props {
+    // What photo cards do under the pointer; see ResultsGallery.
+    photoHover?: PhotoHover;
+}
+
+const {photoHover = "none"} = Astro.props;
 
 const titleId = `${copy.id}-title`;
 
-const THUMB_HEIGHT = 480;
-const DESKTOP_THUMB_HEIGHT = 320;
-const THUMB_WIDTHS = [320, 480, 720];
+// Strip photos are 3:4 cards: one at a time below 1024px (the screen minus
+// its margins, never over 26rem), then three side by side in a carousel
+// capped at 1100px wide, so about a third of that each.
+const THUMB_WIDTHS = [320, 480, 720, 960];
 const FULL_WIDTHS = [720, 1080, 1440];
 
 const photos: GalleryPhoto[] = await Promise.all(
     RESULT_PHOTOS.map(async (photo, index) => {
         const aspectRatio = photo.image.width / photo.image.height;
-        const mobileWidth = Math.round(THUMB_HEIGHT * aspectRatio);
-        const desktopWidth = Math.round(DESKTOP_THUMB_HEIGHT * aspectRatio);
 
         return {
             id: `result-${index + 1}`,
             aspectRatio,
+            showWhole: photo.showWhole ?? false,
             kind: photo.kind,
             thumb: await toResponsiveImage(photo.image, {
                 alt: photo.alt,
                 widths: THUMB_WIDTHS,
-                sizes: `(min-width: 1024px) ${desktopWidth}px, ${mobileWidth}px`,
+                sizes: "(min-width: 1024px) min(32vw, 360px), min(calc(100vw - 2rem), 416px)",
                 quality: {avif: 50, webp: 68},
                 placeholder: true,
             }),
@@ -42,9 +51,11 @@ const photos: GalleryPhoto[] = await Promise.all(
 );
 ---
 
+<!-- Full width so the photo strip runs edge to edge on every screen.
+     The title and reviews keep their own widths. -->
 <SectionContainer
     id={copy.id}
-    maxWidth="wide"
+    maxWidth="full"
     aria-labelledby={titleId}
 >
     <SectionTitle
@@ -57,7 +68,7 @@ const photos: GalleryPhoto[] = await Promise.all(
         className="mb-8 sm:mb-10"
     />
 
-    <ResultsGallery client:visible={{rootMargin: "600px"}} photos={photos}/>
+    <ResultsGallery client:visible={{rootMargin: "600px"}} photos={photos} hover={photoHover}/>
 
     {testimonials.length === 1 && (
         <div class="mx-auto mt-10 max-w-[44rem] sm:mt-14">
@@ -72,17 +83,11 @@ const photos: GalleryPhoto[] = await Promise.all(
                     {copy.testimonialsTitle} <span class="text-achieve-blue">{copy.testimonialsAccent}</span>
                 </h3>
             )}
-            <ul
-                tabindex="0"
-                aria-label={`${copy.testimonialsTitle} ${copy.testimonialsAccent}`}
-                class="snap-row -mx-gutter items-start px-gutter pb-2 lg:mx-auto lg:max-w-[72rem] lg:items-stretch lg:gap-5 lg:overflow-visible lg:px-0"
-            >
-                {testimonials.map((testimonial) => (
-                    <li class="w-[85%] max-w-[22rem] shrink-0 lg:w-auto lg:max-w-none lg:flex-1">
-                        <QuoteCard {...testimonial}/>
-                    </li>
-                ))}
-            </ul>
+            <ReviewsCarousel
+                client:visible={{rootMargin: "600px"}}
+                testimonials={testimonials}
+                label={`${copy.testimonialsTitle} ${copy.testimonialsAccent}`}
+            />
         </>
     )}
 </SectionContainer>

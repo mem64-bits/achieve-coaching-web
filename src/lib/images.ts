@@ -78,16 +78,22 @@ export async function toResponsiveImage(image: ImageMetadata, options: Responsiv
     const height = Math.round((largest / image.width) * image.height);
     const quality = options.quality ?? DEFAULT_QUALITY;
 
+    // The dev server makes each image the first time a browser asks for it,
+    // and AVIF is slow to encode: photos sat as blurred placeholders for
+    // seconds while you browsed. In dev only WebP is offered; builds keep
+    // AVIF, which is the smaller download for visitors.
+    const withAvif = !import.meta.env.DEV;
+
     const [avif, webp, placeholder] = await Promise.all([
-        sourceFor(image, "avif", widths, height, options.sizes, quality.avif),
+        withAvif ? sourceFor(image, "avif", widths, height, options.sizes, quality.avif) : Promise.resolve(undefined),
         sourceFor(image, "webp", widths, height, options.sizes, quality.webp),
         options.placeholder ? placeholderFor(image) : Promise.resolve(undefined),
     ]);
 
-    const sources: ImageSource[] = [
-        {type: "image/avif", srcSet: avif.srcSet.attribute},
-        {type: "image/webp", srcSet: webp.srcSet.attribute},
-    ];
+    // AVIF first when there is one: the browser takes the first it supports.
+    const sources: ImageSource[] = [];
+    if (avif) sources.push({type: "image/avif", srcSet: avif.srcSet.attribute});
+    sources.push({type: "image/webp", srcSet: webp.srcSet.attribute});
 
     return {
         src: webp.src,
