@@ -1,4 +1,5 @@
 import {AchieveBtn} from "@/components/common/AchieveBtn";
+import {BrandLoader} from "@/components/common/BrandLoader";
 import {APPLY_FORM_COPY} from "@constants/applyForm";
 import {APPLY_ENDPOINT} from "@/lib/api";
 import {ApplySuccess} from "./ApplySuccess";
@@ -21,6 +22,13 @@ export default function ApplyForm() {
 
     return (
         <form noValidate method="post" action={APPLY_ENDPOINT} onSubmit={apply.onSubmit} className="flex flex-col gap-7">
+            {isSubmitting && (
+                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-5 rounded-3xl bg-card/85 backdrop-blur-sm animate-in fade-in-0 duration-200 motion-reduce:animate-none">
+                    <BrandLoader label={APPLY_FORM_COPY.actions.submittingStatus} className="size-20"/>
+                    <p aria-hidden="true" className="eyebrow text-subtle">{APPLY_FORM_COPY.actions.submittingStatus}</p>
+                </div>
+            )}
+
             <div aria-hidden="true" className="absolute -left-[9999px] size-px overflow-hidden">
                 <label>
                     Leave this field empty

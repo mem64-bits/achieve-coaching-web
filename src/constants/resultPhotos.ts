@@ -28,6 +28,11 @@ export interface ResultPhoto {
     image: ImageMetadata;
     alt: string;
     kind: ResultKind;
+    // Gallery cards are zoomed to fill a 3:4 card, so a photo of another
+    // shape loses its edges there (side-by-side pairs about an eighth off
+    // each side). Set this to show a photo whole instead, on a soft backdrop.
+    // The full-size viewer always shows the whole photo.
+    showWhole?: boolean;
 }
 
 export const RESULT_PHOTOS: ResultPhoto[] = [

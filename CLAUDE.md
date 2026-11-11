@@ -37,6 +37,8 @@ Ported from `GEMINI.md`, which stays as Gemini's copy. This section is the maint
 
 - Validation helpers and utilities get Vitest unit tests in a `__tests__/` folder next to the code (`npm test`).
 - Work is finished only when `npm run verify` passes (`astro check`, Vitest, `astro build`).
+- Anything that changes the carousels, header links or page layout also needs `npm run test:e2e` (Playwright, `tests/e2e/`). It builds the site and runs every test at four widths (1440, 1024, 768 and a phone). First time on a machine: `npx playwright install chromium`.
+- Browser tests aim at things only once they've stopped moving (`openCarousel`, `settle` in `tests/e2e/helpers.ts`). Sections render as they near the screen and the page shifts, so measuring straight after a jump points at the wrong place.
 
 ### 5. DRY component design and SectionContainer
 
@@ -71,7 +73,13 @@ Astro 7, Tailwind 4, React 19, shadcn base-nova and Resend all changed recently,
 - For UI effects, look at Magic UI (MIT, shadcn-compatible) first and prefer CSS-only components; record anything adapted in `THIRD_PARTY_NOTICES.md` and `src/components/effects/README.md`.
 - For UI changes, run the dev server and check the page with the Playwright MCP tools (desktop and a 390px mobile viewport) before saying it looks right. Also check that `document.documentElement.scrollWidth` equals the viewport width at 360px.
 - Check hydration on a production build (`npm run build`, then serve `.vercel/output/static`), not only in `astro dev`: some mismatches only appear after the build.
-- Heavy client libraries load on demand with `React.lazy` or `import()` (Swiper only loads when the photo viewer opens). Do not add one to an island's main bundle without measuring the gzipped size first.
+- Heavy client libraries load on demand with `React.lazy` or `import()`, or in an island that hydrates on `client:visible`. Swiper (about 27 KB gzipped) loads with the carousel islands, and the viewer's Zoom code only when it opens. Do not add a library to an island's main bundle without measuring the gzipped size first.
+- Every carousel uses `SwipeCarousel`. Don't build another scroll strip, and don't import `swiper/css` outside `global.css`.
+- Carousels show items in the order the constants list them, first item first: one card below 1024px, three from 1024px, flat. Long lists loop like a circular list (after the last comes the first); arrows and arrow keys move a whole batch, gestures move one card. Never turn on `centeredSlides` or Swiper's `slidesPerGroup`: the first changes which card shows first, the second pads the loop with blank cards when the count isn't a multiple of the batch. `SwipeCarousel` moves batches by hand (`stepWith`); the expected order comes from `src/lib/carousel/circular.ts`. Don't turn Swiper's free-mode `momentum` or `sticky` back on: the release glide comes from `src/lib/carousel/glide.ts` so the strip carries on at the finger's speed instead of lurching. The gesture easing in `effects.css` and `GLIDE_CURVE_SLOPE` are tuned together; change both or neither. Reduced motion makes the arrows' batch jump instant but must not make the drag-release glide instant (it finishes the visitor's own gesture). If motion looks missing when testing on a Windows machine, check `matchMedia('(prefers-reduced-motion: reduce)')` first: Windows' Animation effects switch sets it.
+- Try out a UI variant on a test page under `src/pages/lab/` (noindex, out of the sitemap) with a prop switching it on, rather than changing the live page; the live page keeps its current behaviour until the client decides.
+- Don't remove `InPageJumps` while `deferRender` is in use: `#section` links rely on it to land on the right spot.
+- Looping decorative motion runs a few times and then rests; nothing should animate forever in the header.
+- Loading and broken-image states use `BrandLoader` (`state="loading"` or `"idle"`); do not add other spinners.
 - Section sub-headings use the `eyebrow-pill` class, list bullets use `bullet-mark`, and short highlights use `chip`. Reuse them instead of adding tick icons.
 - Do not turn on `astro-compress` HTML minification. It rewrites the text markers React uses for hydration (see `docs/ARCHITECTURE.md`).
 - When a fix reveals a rule the codebase was missing, add that rule to this file (or to `.claude/rules/`) in the same change.

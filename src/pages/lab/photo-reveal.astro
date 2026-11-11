@@ -1,0 +1,21 @@
+---
+// Test page for the "reveal" photo hover: the live results section with
+// cards that zoom out to the whole photo when the pointer is over them.
+// Not linked from the site, kept out of search (noindex) and the sitemap
+// (astro.config). Delete this page once the effect is decided either way.
+import BaseLayout from "@layouts/BaseLayout.astro";
+import {SectionContainer} from "@components/common/SectionContainer";
+import ResultsSection from "@components/home/ResultsSection.astro";
+import {SITE} from "@constants/site";
+---
+
+<BaseLayout title={`Photo reveal test | ${SITE.name}`} noindex>
+    <SectionContainer maxWidth="narrow" paddingTop="normal" className="text-center">
+        <p class="eyebrow">Test page</p>
+        <p class="mt-3 text-lead text-muted-foreground">
+            Hover a photo on a computer: it zooms out to show the whole picture. Photos already the card's shape brighten slightly instead.
+            Phones and tablets keep the filled cards.
+        </p>
+    </SectionContainer>
+    <ResultsSection photoHover="reveal"/>
+</BaseLayout>

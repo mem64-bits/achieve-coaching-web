@@ -1,7 +1,7 @@
 export const SITE = {
     name: "Achieve Coaching",
-    alternateName: "achieve-coaching.net",
-    url: "https://www.achieve-coaching.net",
+    alternateName: ["achievecoaching.net", "achieve-coaching.net"],
+    url: "https://www.achievecoaching.net",
     defaultTitle: "Achieve Coaching | Online coaching that fits your life",
     description:
         "Online coaching for busy people who want visible results and still want to eat out, travel and enjoy their weekends.",
